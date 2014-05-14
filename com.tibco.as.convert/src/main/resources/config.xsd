@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:element name="config" type="config" />
+
+	<xsd:complexType name="config">
+		<xsd:sequence>
+			<xsd:element name="types" type="types" minOccurs="0" />
+			<xsd:element name="converters" type="converters" />
+			<xsd:element name="pivots" type="pivots" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="types">
+		<xsd:sequence>
+			<xsd:element name="type" type="type" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="type">
+		<xsd:sequence>
+			<xsd:element name="field" type="fieldType" />
+			<xsd:element name="java" type="javaType" />
+		</xsd:sequence>
+		<xsd:attribute name="default" type="xsd:boolean" />
+	</xsd:complexType>
+
+	<xsd:simpleType name="javaType">
+		<xsd:restriction base="xsd:string" />
+	</xsd:simpleType>
+
+	<xsd:complexType name="converters">
+		<xsd:sequence>
+			<xsd:element name="converter" type="converter" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="pivots">
+		<xsd:sequence>
+			<xsd:element name="pivot" type="javaType" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="converter">
+		<xsd:sequence>
+			<xsd:element name="from" type="javaType" />
+			<xsd:element name="to" type="javaType" />
+		</xsd:sequence>
+		<xsd:attribute name="type" type="javaType" />
+	</xsd:complexType>
+
+	<xsd:simpleType name="fieldType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="blob" />
+			<xsd:enumeration value="boolean" />
+			<xsd:enumeration value="char" />
+			<xsd:enumeration value="datetime" />
+			<xsd:enumeration value="double" />
+			<xsd:enumeration value="float" />
+			<xsd:enumeration value="integer" />
+			<xsd:enumeration value="long" />
+			<xsd:enumeration value="short" />
+			<xsd:enumeration value="string" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

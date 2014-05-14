@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+	version="2.1">
+
+	<jaxb:bindings schemaLocation="config.xsd" node="/xs:schema">
+		<jaxb:schemaBindings>
+			<jaxb:package name="com.tibco.as.convert"></jaxb:package>
+		</jaxb:schemaBindings>
+		<jaxb:bindings node="//xs:simpleType[@name='javaType']">
+			<jaxb:javaType name="java.lang.Class"
+				parseMethod="com.tibco.as.convert.Adapter.parseClass"
+				printMethod="com.tibco.as.convert.Adapter.printClass" />
+		</jaxb:bindings>
+		<jaxb:bindings node="//xs:simpleType[@name='fieldType']">
+			<jaxb:javaType name="com.tibco.as.space.FieldDef.FieldType"
+				parseMethod="com.tibco.as.convert.Adapter.parseFieldType"
+				printMethod="com.tibco.as.convert.Adapter.printFieldType" />
+		</jaxb:bindings>
+	</jaxb:bindings>
+
+</jaxb:bindings>

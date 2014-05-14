@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<space batchSize="1" distributionRole="seeder" name="simulation"
+		sleep="1000">
+		<fields>
+			<address />
+			<addressLine2 />
+			<birthDate />
+			<blob />
+			<boolean />
+			<businessName />
+			<city />
+			<constant>
+				<value xsi:type="xsd:string">value</value>
+			</constant>
+			<dateTime />
+			<double />
+			<emailAddress />
+			<firstName />
+			<float />
+			<integer />
+			<item>
+				<value xsi:type="xsd:string">Item 1</value>
+				<value xsi:type="xsd:string">Item 2</value>
+				<value xsi:type="xsd:string">Item 3</value>
+			</item>
+			<lastName />
+			<long />
+			<name />
+			<now />
+			<numberText />
+			<prefix />
+			<randomChars />
+			<randomText />
+			<randomWord />
+			<randomWords />
+			<regex regex="[2-9][0-9]{2}-[0-9]{3}-[0-9]{4}" />
+			<sequence />
+			<short />
+			<streetName />
+			<streetSuffix />
+			<suffix />
+		</fields>
+	</space>
+
+</simulation>

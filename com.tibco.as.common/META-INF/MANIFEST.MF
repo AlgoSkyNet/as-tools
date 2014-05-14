@@ -1,0 +1,19 @@
+Bundle-ManifestVersion: 2
+Bundle-Name: AS Common
+Bundle-SymbolicName: com.tibco.as.common
+Bundle-Version: 2.1.2
+Bundle-Classpath: external:$AS_HOME$/lib/as-common.jar
+Export-Package: com.tibco.as.space,
+ com.tibco.as.space.browser,
+ com.tibco.as.space.event,
+ com.tibco.as.space.filter,
+ com.tibco.as.space.impl,
+ com.tibco.as.space.impl.data,
+ com.tibco.as.space.impl.serializer,
+ com.tibco.as.space.listener,
+ com.tibco.as.space.persistence,
+ com.tibco.as.space.remote,
+ com.tibco.as.space.router,
+ com.tibco.as.space.security
+Bundle-Vendor: TIBCO
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

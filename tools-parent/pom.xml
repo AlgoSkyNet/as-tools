@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.tibco.as</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>tools-parent</artifactId>
+	<packaging>pom</packaging>
+	<name>ActiveSpaces Tools Parent Project</name>
+	<description>Common project for all ActiveSpaces tools projects</description>
+	<url>${tools-site-url}</url>
+
+	<properties>
+		<manifest-location>META-INF</manifest-location>
+		<manifest-path>META-INF/MANIFEST.MF</manifest-path>
+		<tools-site-url>${site-url}tools/</tools-site-url>
+		<tools.site.deploy.url>${site.deploy.url}tools/</tools.site.deploy.url>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<distributionManagement>
+		<site>
+			<id>${project.artifactId}</id>
+			<url>${tools.site.deploy.url}</url>
+		</site>
+	</distributionManagement>
+
+	<issueManagement>
+		<system>JIRA</system>
+		<url>http://jira.tibco.com/browse/ASTL</url>
+	</issueManagement>
+
+	<scm>
+		<url>scm:svn:http://svn.tibco.com/fieldprojects/trunk/as/tools-parent</url>
+		<connection>scm:svn:http://svn.tibco.com/fieldprojects/trunk/as/tools-parent</connection>
+		<developerConnection>scm:svn:http://svn.tibco.com/fieldprojects/trunk/as/tools-parent</developerConnection>
+	</scm>
+</project>
