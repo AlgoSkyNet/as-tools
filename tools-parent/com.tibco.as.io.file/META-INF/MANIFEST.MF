@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1400100335109
+Build-Jdk: 1.6.0_65
+Built-By: jruaux
+Bundle-Description: Text file import/export bundle
+Bundle-DocURL: http://www.tibco.com/
+Bundle-ManifestVersion: 2
+Bundle-Name: com.tibco.as.io.file
+Bundle-SymbolicName: com.tibco.as.io.file
+Bundle-Vendor: TIBCO Software
+Bundle-Version: 1.0.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: com.tibco.as.io.file.text;uses:="com.tibco.as.convert,co
+ m.tibco.as.io,com.tibco.as.space";version="1.0.0.SNAPSHOT",com.tibco.as
+ .io.file.text.delimited;uses:="com.tibco.as.io,com.tibco.as.io.file.tex
+ t,com.tibco.as.space";version="1.0.0.SNAPSHOT",com.tibco.as.io.file.tex
+ t.fixedwidth;version="1.0.0.SNAPSHOT",com.tibco.as.io.file;version="1.0
+ .0.SNAPSHOT",org.apache.commons.io;version="1.0.0.SNAPSHOT"
+Import-Package: au.com.bytecode.opencsv,com.tibco.as.convert;version="[1
+ .0,2)",com.tibco.as.convert.array;version="[1.0,2)",com.tibco.as.io;ver
+ sion="[1.0,2)",com.tibco.as.space
+Tool: Bnd-2.1.0.20130426-122213

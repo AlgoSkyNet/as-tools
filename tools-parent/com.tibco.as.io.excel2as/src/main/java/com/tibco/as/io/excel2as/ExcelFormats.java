@@ -1,0 +1,20 @@
+package com.tibco.as.io.excel2as;
+
+import com.beust.jcommander.Parameter;
+import com.tibco.as.convert.Attribute;
+import com.tibco.as.convert.Attributes;
+import com.tibco.as.convert.ConverterFactory.Blob;
+import com.tibco.as.io.cli.BlobConverter;
+
+public class ExcelFormats {
+
+	@Parameter(description = "Blob format (base64, hex)", names = { "-blob_format" }, converter = BlobConverter.class, validateWith = BlobConverter.class)
+	private Blob blobFormat;
+
+	public Attributes getConversion() {
+		Attributes conversion = new Attributes();
+		conversion.put(Attribute.FORMAT_BLOB, blobFormat);
+		return conversion;
+	}
+
+}

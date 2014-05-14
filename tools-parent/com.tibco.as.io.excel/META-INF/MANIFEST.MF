@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1400100278258
+Build-Jdk: 1.6.0_65
+Built-By: jruaux
+Bundle-Description: Excel import/export bundle
+Bundle-DocURL: http://www.tibco.com/
+Bundle-ManifestVersion: 2
+Bundle-Name: com.tibco.as.io.excel
+Bundle-SymbolicName: com.tibco.as.io.excel
+Bundle-Vendor: TIBCO Software
+Bundle-Version: 1.0.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: com.tibco.as.io.file.excel;uses:="com.tibco.as.accessors
+ ,com.tibco.as.convert,com.tibco.as.io,com.tibco.as.space,org.apache.poi
+ .ss,org.apache.poi.ss.usermodel";version="1.0.0.SNAPSHOT"
+Import-Package: com.tibco.as.accessors;version="[1.0,2)",com.tibco.as.co
+ nvert;version="[1.0,2)",com.tibco.as.convert.array;version="[1.0,2)",co
+ m.tibco.as.io;version="[1.0,2)",com.tibco.as.space,org.apache.poi.hssf.
+ usermodel,org.apache.poi.openxml4j.exceptions,org.apache.poi.ss,org.apa
+ che.poi.ss.usermodel,org.apache.poi.xssf.streaming,org.apache.poi.xssf.
+ usermodel
+Tool: Bnd-2.1.0.20130426-122213

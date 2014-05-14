@@ -19,7 +19,27 @@
 		<tools.site.deploy.url>${site.deploy.url}tools/</tools.site.deploy.url>
 	</properties>
 
+	<modules>
+	   <module>com.tibco.as.common</module>
+           <module>com.tibco.as.convert</module>
+           <module>com.tibco.as.io</module>
+           <module>com.tibco.as.io-dependencies</module>
+           <module>com.tibco.as.io.cli</module>
+           <module>com.tibco.as.io.excel</module>
+           <module>com.tibco.as.io.excel2as</module>
+           <module>com.tibco.as.io.file</module>
+           <module>com.tibco.as.io.file2as</module>
+           <module>com.tibco.as.io.simulation</module>
+           <module>com.tibco.as.io.simulator</module>
+	</modules>
+
 	<dependencies>
+                <dependency>
+			<groupId>com.tibco.as</groupId>
+			<artifactId>as-common</artifactId>
+			<version>${as.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

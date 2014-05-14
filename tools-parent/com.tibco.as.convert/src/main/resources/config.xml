@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="config.xsd">
+	<types>
+		<type default="true">
+			<field>blob</field>
+			<java>[B</java>
+		</type>
+		<type default="true">
+			<field>boolean</field>
+			<java>java.lang.Boolean</java>
+		</type>
+		<type default="true">
+			<field>char</field>
+			<java>java.lang.Character</java>
+		</type>
+		<type default="true">
+			<field>datetime</field>
+			<java>com.tibco.as.space.DateTime</java>
+		</type>
+		<type default="true">
+			<field>double</field>
+			<java>java.lang.Double</java>
+		</type>
+		<type default="true">
+			<field>float</field>
+			<java>java.lang.Float</java>
+		</type>
+		<type default="true">
+			<field>integer</field>
+			<java>java.lang.Integer</java>
+		</type>
+		<type default="true">
+			<field>long</field>
+			<java>java.lang.Long</java>
+		</type>
+		<type default="true">
+			<field>short</field>
+			<java>java.lang.Short</java>
+		</type>
+		<type default="true">
+			<field>string</field>
+			<java>java.lang.String</java>
+		</type>
+		<type>
+			<field>datetime</field>
+			<java>java.util.Date</java>
+		</type>
+		<type>
+			<field>datetime</field>
+			<java>java.util.Calendar</java>
+		</type>
+	</types>
+	<converters>
+		<converter type="com.tibco.as.convert.converters.BigIntegerToBlob">
+			<from>java.math.BigInteger</from>
+			<to>[B</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BlobToBigInteger">
+			<from>[B</from>
+			<to>java.math.BigInteger</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BlobToBoolean">
+			<from>[B</from>
+			<to>java.lang.Boolean</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BlobToCharacter">
+			<from>[B</from>
+			<to>java.lang.Character</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BlobToDouble">
+			<from>[B</from>
+			<to>java.lang.Double</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BlobToFloat">
+			<from>[B</from>
+			<to>java.lang.Float</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BlobToInteger">
+			<from>[B</from>
+			<to>java.lang.Integer</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BlobToLong">
+			<from>[B</from>
+			<to>java.lang.Long</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BlobToShort">
+			<from>[B</from>
+			<to>java.lang.Short</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BlobToString">
+			<from>[B</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BooleanToBlob">
+			<from>java.lang.Boolean</from>
+			<to>[B</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BooleanToNumber">
+			<from>java.lang.Boolean</from>
+			<to>java.lang.Number</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.BooleanToString">
+			<from>java.lang.Boolean</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.CalendarToDate">
+			<from>java.util.Calendar</from>
+			<to>java.util.Date</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.CalendarToDateTime">
+			<from>java.util.Calendar</from>
+			<to>com.tibco.as.space.DateTime</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.CharacterToBlob">
+			<from>java.lang.Character</from>
+			<to>[B</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.CharacterToNumber">
+			<from>java.lang.Character</from>
+			<to>java.lang.Number</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.CharacterToString">
+			<from>java.lang.Character</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DateTimeToDate">
+			<from>com.tibco.as.space.DateTime</from>
+			<to>java.util.Date</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DateTimeToCalendar">
+			<from>com.tibco.as.space.DateTime</from>
+			<to>java.util.Calendar</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DateToCalendar">
+			<from>java.util.Date</from>
+			<to>java.util.Calendar</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DateToDateTime">
+			<from>java.util.Date</from>
+			<to>com.tibco.as.space.DateTime</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DateToLong">
+			<from>java.util.Date</from>
+			<to>java.lang.Long</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DateToString">
+			<from>java.util.Date</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DoubleToBigDecimal">
+			<from>java.lang.Double</from>
+			<to>java.math.BigDecimal</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DoubleToBlob">
+			<from>java.lang.Double</from>
+			<to>[B</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DoubleToString">
+			<from>java.lang.Double</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.DoubleToString">
+			<from>java.lang.Double</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.FloatToBlob">
+			<from>java.lang.Float</from>
+			<to>[B</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.FloatToString">
+			<from>java.lang.Float</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.IntegerToBlob">
+			<from>java.lang.Integer</from>
+			<to>[B</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.IntegerToString">
+			<from>java.lang.Integer</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.LongToBigInteger">
+			<from>java.lang.Long</from>
+			<to>java.math.BigInteger</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.LongToBlob">
+			<from>java.lang.Long</from>
+			<to>[B</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.LongToBoolean">
+			<from>java.lang.Long</from>
+			<to>java.lang.Boolean</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.LongToDate">
+			<from>java.lang.Long</from>
+			<to>java.util.Date</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.LongToDouble">
+			<from>java.lang.Long</from>
+			<to>java.lang.Double</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.LongToFloat">
+			<from>java.lang.Long</from>
+			<to>java.lang.Float</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.LongToInteger">
+			<from>java.lang.Long</from>
+			<to>java.lang.Integer</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.LongToShort">
+			<from>java.lang.Long</from>
+			<to>java.lang.Short</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.LongToString">
+			<from>java.lang.Long</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.ShortToBlob">
+			<from>java.lang.Short</from>
+			<to>[B</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.ShortToString">
+			<from>java.lang.Short</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToBigDecimal">
+			<from>java.lang.String</from>
+			<to>java.math.BigDecimal</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToBlob">
+			<from>java.lang.String</from>
+			<to>[B</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToBoolean">
+			<from>java.lang.String</from>
+			<to>java.lang.Boolean</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToCharacter">
+			<from>java.lang.String</from>
+			<to>java.lang.Character</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToDate">
+			<from>java.lang.String</from>
+			<to>java.util.Date</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToDouble">
+			<from>java.lang.String</from>
+			<to>java.lang.Double</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToFloat">
+			<from>java.lang.String</from>
+			<to>java.lang.Float</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToInteger">
+			<from>java.lang.String</from>
+			<to>java.lang.Integer</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToLong">
+			<from>java.lang.String</from>
+			<to>java.lang.Long</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToShort">
+			<from>java.lang.String</from>
+			<to>java.lang.Short</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.StringToURL">
+			<from>java.lang.String</from>
+			<to>java.net.URL</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.URLToString">
+			<from>java.net.URL</from>
+			<to>java.lang.String</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.NumberToBoolean">
+			<from>java.lang.Number</from>
+			<to>java.lang.Boolean</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.NumberToCharacter">
+			<from>java.lang.Number</from>
+			<to>java.lang.Character</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.NumberToDouble">
+			<from>java.lang.Number</from>
+			<to>java.lang.Double</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.NumberToFloat">
+			<from>java.lang.Number</from>
+			<to>java.lang.Float</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.NumberToInteger">
+			<from>java.lang.Number</from>
+			<to>java.lang.Integer</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.NumberToLong">
+			<from>java.lang.Number</from>
+			<to>java.lang.Long</to>
+		</converter>
+		<converter type="com.tibco.as.convert.converters.NumberToShort">
+			<from>java.lang.Number</from>
+			<to>java.lang.Short</to>
+		</converter>
+	</converters>
+	<pivots>
+		<pivot>java.lang.Long</pivot>
+		<pivot>java.util.Date</pivot>
+	</pivots>
+</config>
