@@ -15,5 +15,5 @@ Export-Package: com.tibco.as.space,
  com.tibco.as.space.remote,
  com.tibco.as.space.router,
  com.tibco.as.space.security
-Bundle-Vendor: TIBCO
+Bundle-Vendor: TIBCO Software
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
