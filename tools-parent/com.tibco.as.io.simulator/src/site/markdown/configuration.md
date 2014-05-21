@@ -5,7 +5,7 @@ Simulations are described in XML files. For example the following configuration:
 
 ```xml
 <simulation>
-	<space name="people" end="10" distributionRole="seeder">
+	<space name="people" size="10" distributionRole="seeder">
 		<fields>
 			<sequence name="id" />
 			<firstName />
@@ -66,7 +66,7 @@ Here is the schema that configuration files adhere to:
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="sleep" type="xsd:long" />
-		<xsd:attribute name="end" type="xsd:long" />
+		<xsd:attribute name="size" type="xsd:long" />
 		<xsd:attribute name="batchSize" type="xsd:int" />
 		<xsd:attribute name="distributionRole" type="distributionRole" />
 	</xsd:complexType>

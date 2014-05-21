@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<simulation>
-
-	<space name="customer" end="1000000" distributionRole="seeder">
+<simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="simulation.xsd">
+	<space name="customer" size="1000000" distributionRole="seeder">
 		<fields>
 			<sequence name="id" key="true" />
 			<firstName name="firstName" />
@@ -16,5 +14,4 @@
 			<now name="creationTime" />
 		</fields>
 	</space>
-
 </simulation>

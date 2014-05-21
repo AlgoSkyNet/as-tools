@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xsi:noNamespaceSchemaLocation="simulation.xsd">
 
-	<space name="quote" batchSize="1" end="10" distributionRole="seeder">
+	<space name="quote" batchSize="1" size="10" distributionRole="seeder">
 		<fields>
 			<item name="ticker" key="true">
 				<value xsi:type="xsd:string">TIBX</value>
@@ -37,7 +38,7 @@
 			<integer name="volume" min="0" max="10000" />
 		</fields>
 	</space>
-	<space name="position" batchSize="1000" end="100000"
+	<space name="position" batchSize="1000" size="100000"
 		distributionRole="seeder">
 		<fields>
 			<sequence name="portfolioId" key="true" />

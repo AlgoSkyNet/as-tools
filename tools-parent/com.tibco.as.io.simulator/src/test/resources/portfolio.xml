@@ -2,7 +2,7 @@
 <simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-	<space name="customer" end="1000" distributionRole="seeder">
+	<space name="customer" size="1000" distributionRole="seeder">
 		<fields>
 			<sequence name="id" key="true" />
 			<firstName name="firstName" />
@@ -53,7 +53,7 @@
 		</fields>
 	</space>
 
-	<space name="position" batchSize="1000" end="1000000"
+	<space name="position" batchSize="1000" size="1000000"
 		distributionRole="seeder">
 		<fields>
 			<integer name="portfolioId" key="true" min="1" max="100000" />

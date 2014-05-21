@@ -6,11 +6,13 @@ public class SimulationInputStream implements IInputStream<Object[]> {
 
 	private IValueProvider[] providers;
 
-	private long position = 0;
+	private long position;
 
 	private Space space;
 
 	private SimulationImport config;
+
+	private long size;
 
 	public SimulationInputStream(SimulationImport config,
 			IValueProvider[] providers) {
@@ -25,7 +27,15 @@ public class SimulationInputStream implements IInputStream<Object[]> {
 
 	@Override
 	public void open() throws Exception {
-		// do nothing
+		position = 0;
+		size = getSize();
+	}
+
+	private long getSize() {
+		if (space.getSize() == null) {
+			return UNKNOWN_SIZE;
+		}
+		return space.getSize();
 	}
 
 	@Override
@@ -47,7 +57,7 @@ public class SimulationInputStream implements IInputStream<Object[]> {
 		if (isClosed()) {
 			return null;
 		}
-		if (space.getEnd() == null || position < space.getEnd()) {
+		if (space.getSize() == null || position < space.getSize()) {
 			Object[] data = new Object[providers.length];
 			for (int i = 0; i < providers.length; i++) {
 				data[i] = providers[i].getValue();
@@ -60,11 +70,7 @@ public class SimulationInputStream implements IInputStream<Object[]> {
 
 	@Override
 	public long size() {
-		Long end = space.getEnd();
-		if (end == null) {
-			return UNKNOWN_SIZE;
-		}
-		return end;
+		return size;
 	}
 
 	@Override

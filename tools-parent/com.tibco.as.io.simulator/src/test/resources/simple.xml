@@ -1,5 +1,5 @@
 <simulation>
-	<space name="people" end="10" distributionRole="seeder">
+	<space name="people" size="10" distributionRole="seeder">
 		<fields>
 			<sequence name="id" />
 			<firstName />
