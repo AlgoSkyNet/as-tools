@@ -1,6 +1,9 @@
 package com.tibco.as.io.simulation;
 
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -21,7 +24,37 @@ import com.tibco.as.space.browser.Browser;
 public class TestSimulation {
 
 	@Test
-	public void testSpaceDef() throws Exception {
+	public void testCustomers() throws Exception {
+		Simulation simulation = getSimulation("customers.xml");
+		MemberDef memberDef = MemberDef.create(null, "tcp", null);
+		memberDef.setConnectTimeout(10000);
+		Metaspace metaspace = Metaspace.connect(null, memberDef);
+		SimulationImporter importer = new SimulationImporter(metaspace,
+				simulation);
+		SpaceDef spaceDef = importer.getSpaceDef("customer");
+		Collection<FieldDef> fieldDefs = spaceDef.getFieldDefs();
+		Assert.assertEquals(10, fieldDefs.size());
+		Assert.assertEquals("id", fieldDefs.iterator().next().getName());
+		importer.execute();
+		Browser browser = metaspace.browse("customer",
+				com.tibco.as.space.browser.BrowserDef.BrowserType.GET);
+		Pattern pattern = Pattern
+				.compile("([2-9][0-9]{2})-([0-9]{3})-([0-9]{4})");
+		Tuple tuple;
+		while ((tuple = browser.next()) != null) {
+			String phone = tuple.getString("phone");
+			Matcher matcher = pattern.matcher(phone);
+			Assert.assertTrue(matcher.find());
+			Integer.parseInt(matcher.group(1));
+			Integer.parseInt(matcher.group(2));
+			Integer.parseInt(matcher.group(3));
+		}
+		com.tibco.as.space.Space customerSpace = metaspace.getSpace("customer");
+		Assert.assertEquals(100, customerSpace.size());
+	}
+
+	@Test
+	public void testSimulation() throws Exception {
 		Simulation simulation = getSimulation("simulation.xml");
 		MemberDef memberDef = MemberDef.create(null, "tcp", null);
 		memberDef.setConnectTimeout(10000);
@@ -54,7 +87,7 @@ public class TestSimulation {
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		@SuppressWarnings("unchecked")
 		JAXBElement<Simulation> element = (JAXBElement<Simulation>) unmarshaller
-				.unmarshal(classLoader.getResourceAsStream("simulation.xml"));
+				.unmarshal(classLoader.getResourceAsStream(resourceName));
 		return element.getValue();
 	}
 

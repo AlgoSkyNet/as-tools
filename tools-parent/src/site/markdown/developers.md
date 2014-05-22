@@ -61,10 +61,10 @@ All projects should be building successfully.
 
 Now the `com.tibco.as.io.simulation` project has a dependency on a third-party project called `xeger` which is not available in the public Maven repositories.
 
-Download the Xeger JAR from [http://code.google.com/p/xeger/](http://code.google.com/p/xeger/) and run the following command to add it to your local Maven repository:
+Check out the Xeger project from [https://github.com/bluezio/xeger](https://github.com/bluezio/xeger) and build it with the following command:
 
 ```
-mvn install:install-file -Dfile=xeger-1.0-SNAPSHOT.jar -DgroupId=nl.flotsam -DartifactId=xeger -Dversion=1.0-SNAPSHOT -Dpackaging=jar
+mvn clean install
 ```
 
 Build the simulation projects:
