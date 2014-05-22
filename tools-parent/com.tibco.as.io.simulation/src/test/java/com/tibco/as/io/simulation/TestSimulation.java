@@ -10,9 +10,12 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import com.tibco.as.space.ASException;
 import com.tibco.as.space.DateTime;
 import com.tibco.as.space.FieldDef;
 import com.tibco.as.space.MemberDef;
@@ -23,12 +26,26 @@ import com.tibco.as.space.browser.Browser;
 
 public class TestSimulation {
 
+	private Metaspace metaspace;
+
+	@Before
+	public void setup() throws ASException {
+		MemberDef memberDef = MemberDef.create(null, "tcp", null);
+		memberDef.setConnectTimeout(10000);
+		metaspace = Metaspace.connect(null, memberDef);
+	}
+
+	@After
+	public void tearDown() throws ASException {
+		if (metaspace == null) {
+			return;
+		}
+		metaspace.closeAll();
+	}
+
 	@Test
 	public void testCustomers() throws Exception {
 		Simulation simulation = getSimulation("customers.xml");
-		MemberDef memberDef = MemberDef.create(null, "tcp", null);
-		memberDef.setConnectTimeout(10000);
-		Metaspace metaspace = Metaspace.connect(null, memberDef);
 		SimulationImporter importer = new SimulationImporter(metaspace,
 				simulation);
 		SpaceDef spaceDef = importer.getSpaceDef("customer");
@@ -56,9 +73,6 @@ public class TestSimulation {
 	@Test
 	public void testSimulation() throws Exception {
 		Simulation simulation = getSimulation("simulation.xml");
-		MemberDef memberDef = MemberDef.create(null, "tcp", null);
-		memberDef.setConnectTimeout(10000);
-		Metaspace metaspace = Metaspace.connect(null, memberDef);
 		SimulationImporter importer = new SimulationImporter(metaspace,
 				simulation);
 		SpaceDef spaceDef = importer.getSpaceDef("position");
