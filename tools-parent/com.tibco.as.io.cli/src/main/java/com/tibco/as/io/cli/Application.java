@@ -49,6 +49,9 @@ public abstract class Application implements IEventListener {
 		case WARN:
 		case ERROR:
 			System.err.println(event.getMessage());
+			if (event.getException() != null) {
+				event.getException().printStackTrace();
+			}
 			break;
 		}
 	}
