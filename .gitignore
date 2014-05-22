@@ -6,4 +6,4 @@ release.properties
 .DS_Store
 .project
 .classpath
-./.settings
+/.settings
