@@ -3,7 +3,7 @@ package com.tibco.as.convert;
 /**
  * Converter for a Java type into another Java type.
  * 
- * @author jruaux
+ * @author Julien Ruaux
  * 
  */
 public interface IConverter<S, T> {
