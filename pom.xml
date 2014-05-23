@@ -38,11 +38,11 @@
 		<module>com.tibco.as.io-dependencies</module>
 		<module>com.tibco.as.io.cli</module>
 		<module>com.tibco.as.io.excel</module>
-		<module>com.tibco.as.io.excel2as</module>
 		<module>com.tibco.as.io.file</module>
-		<module>com.tibco.as.io.file2as</module>
 		<module>com.tibco.as.io.simulation</module>
-		<module>com.tibco.as.io.simulator</module>
+		<module>as-spreadsheets</module>
+		<module>as-files</module>
+		<module>as-simulator</module>
 	</modules>
 
 	<dependencies>

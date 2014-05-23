@@ -77,6 +77,8 @@ public abstract class TextFileImporter extends Importer<String[]> {
 								"Could not close input stream", e);
 					}
 				}
+			} else {
+				System.err.println("No header, could not define space");
 			}
 		}
 		return FieldUtils.createSpaceDef(spaceName, textFileImport.getFields());

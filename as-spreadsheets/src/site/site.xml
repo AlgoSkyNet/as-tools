@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Spreadsheets" xmlns="http://maven.apache.org/DECORATION/1.3.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd">
+
+	<bannerLeft>
+		<name>Spreadsheets</name>
+		<href>index.html</href>
+	</bannerLeft>
+
+	<publishDate position="bottom" format="yyyy-MM-dd" />
+	<version position="bottom" />
+
+	<skin>
+		<groupId>lt.velykis.maven.skins</groupId>
+		<artifactId>reflow-maven-skin</artifactId>
+		<version>1.1.0</version>
+	</skin>
+
+	<custom>
+		<reflowSkin>
+			<protocolRelativeURLs>true</protocolRelativeURLs>
+			<smoothScroll>true</smoothScroll>
+			<theme>bootswatch-spacelab</theme>
+			<highlightJs>true</highlightJs>
+			<highlightJsTheme>github</highlightJsTheme>
+			<absoluteResourceURL>${project.url}</absoluteResourceURL>
+			<brand>
+				<name>Spreadsheets</name>
+				<href>index.html</href>
+			</brand>
+			<slogan>Excel import/export utility for ActiveSpaces</slogan>
+			<topNav>Documentation</topNav>
+			<bottomNav maxSpan="9">
+				<column>Main</column>
+				<column>Documentation</column>
+				<column>ActiveSpaces</column>
+			</bottomNav>
+			<pages>
+				<index>
+					<titleTemplate>Spreadsheets</titleTemplate>
+					<breadcrumbs>false</breadcrumbs>
+					<toc>false</toc>
+					<markPageHeader>false</markPageHeader>
+					<sections>
+						<body />
+					</sections>
+				</index>
+				<faq>
+					<titleTemplate>Spreadsheets - FAQ</titleTemplate>
+				</faq>
+			</pages>
+		</reflowSkin>
+	</custom>
+
+	<body>
+		<head>
+			<link rel="icon" type="image/png" href="/favicon.ico" />
+		</head>
+		<links>
+			<item name="Download" href="download.html" />
+			<item name="Get Started" href="getstarted.html" />
+		</links>
+		<breadcrumbs>
+			<item name="Spreadsheets" href="index.html" />
+		</breadcrumbs>
+		<menu name="Main" inherit="top">
+			<item name="Home" href="index.html" />
+			<item name="Download" href="download.html" />
+			<item name="Get Started" href="getstarted.html" />
+		</menu>
+		<menu name="Documentation" inherit="bottom">
+			<item name="Introduction" href="introduction.html" />
+			<item name="Usage" href="usage.html" />
+			<item name="FAQ" href="faq.html" />
+		</menu>
+		<menu name="ActiveSpaces" inherit="bottom">
+			<item name="Tools" href="${site-url}" />
+		</menu>
+	</body>
+
+</project>

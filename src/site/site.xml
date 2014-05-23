@@ -62,9 +62,9 @@
 		</head>
 
 		<menu name="Tools">
-			<item name="SpaceInvader" href="spaceinvader" />
-			<item name="File2AS" href="file2as" />
-			<item name="Excel2AS" href="excel2as" />
+			<item name="SpaceBar" href="spacebar" />
+			<item name="Files" href="files" />
+			<item name="Spreadsheets" href="spreadsheets" />
 			<item name="Simulator" href="simulator" />
 		</menu>
 

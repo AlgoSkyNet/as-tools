@@ -18,21 +18,27 @@ mvn install:install-file -Dfile=$AS_HOME/lib/as-common.jar -DgroupId=com.tibco.a
 ### Getting the Source
 
 ```
-svn checkout http://svn.tibco.com/fieldprojects/trunk/as
+git clone https://github.com/TIBCOSoftware/as-tools.git
 ```
 
 
 ### Building the Projects
 
-Open a terminal and cd to the checkout location.
-
-cd to the `parent` directory and run the following command:
+Clone the Xeger project from [https://github.com/bluezio/xeger](https://github.com/bluezio/xeger) and build it with the following command:
 
 ```
 mvn clean install
 ```
 
-You should see the following message indicating that the project built successfully:
+Open a terminal and cd to the `as-tools` checkout location.
+
+Build all modules using the following command:
+
+```
+mvn clean install
+```
+
+You should see the following message indicating that the projects built successfully:
 
 ```
 [INFO] ------------------------------------------------------------------------
@@ -43,33 +49,3 @@ You should see the following message indicating that the project built successfu
 [INFO] Final Memory: 29M/81M
 [INFO] ------------------------------------------------------------------------
 ```
-
-Run the same command for each of the following projects:
-
-* `com.tibco.as.common`
-* `com.tibco.as.convert`
-* `com.tibco.as.io`
-* `com.tibco.as.io.cli`
-* `com.tibco.as.io.excel`
-* `com.tibco.as.io.excel2as`
-* `com.tibco.as.io.file`
-* `com.tibco.as.io.file2as`
-
-All projects should be building successfully.
-
-Now the `com.tibco.as.io.simulation` project has a dependency on a third-party project called `xeger` which is not available in the public Maven repositories.
-
-Check out the Xeger project from [https://github.com/bluezio/xeger](https://github.com/bluezio/xeger) and build it with the following command:
-
-```
-mvn clean install
-```
-
-Build the simulation projects:
-
-* `com.tibco.as.io.simulation`
-* `com.tibco.as.io.simulator`
-
-And finally build this project:
-
-* `com.tibco.as.io-dependencies`
