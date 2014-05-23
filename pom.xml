@@ -2,18 +2,20 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.tibco.as</groupId>
-	<artifactId>parent</artifactId>
+	<artifactId>as-tools-parent</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>ActiveSpaces Parent Project</name>
-	<description>Common project for all ActiveSpaces projects</description>
+	<name>ActiveSpaces Tools Parent Project</name>
+	<description>Common project for ActiveSpaces tools</description>
 	<url>${site-url}</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<as.version>2.1.2</as.version>
-		<site-url>http://activespaces.tibco.com/</site-url>
-		<site.deploy.url>file:///var/www/html/</site.deploy.url>
+		<site-url>http://activespaces.tibco.com/tools/</site-url>
+		<site.deploy.url>file:///var/www/html/tools/</site.deploy.url>
+		<manifest-location>META-INF</manifest-location>
+		<manifest-path>META-INF/MANIFEST.MF</manifest-path>
 	</properties>
 
 	<organization>
@@ -29,9 +31,34 @@
 	</contributors>
 
 
-        <modules>
-           <module>tools-parent</module>
-        </modules>
+	<modules>
+		<module>com.tibco.as.common</module>
+		<module>com.tibco.as.convert</module>
+		<module>com.tibco.as.io</module>
+		<module>com.tibco.as.io-dependencies</module>
+		<module>com.tibco.as.io.cli</module>
+		<module>com.tibco.as.io.excel</module>
+		<module>com.tibco.as.io.excel2as</module>
+		<module>com.tibco.as.io.file</module>
+		<module>com.tibco.as.io.file2as</module>
+		<module>com.tibco.as.io.simulation</module>
+		<module>com.tibco.as.io.simulator</module>
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.tibco.as</groupId>
+			<artifactId>as-common</artifactId>
+			<version>${as.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
@@ -75,12 +102,17 @@
 				<version>2.4</version>
 				<configuration>
 					<descriptorRefs>
-						<descriptorRef>project</descriptorRef>						
+						<descriptorRef>project</descriptorRef>
 					</descriptorRefs>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
+	<issueManagement>
+		<system>JIRA</system>
+		<url>http://jira.tibco.com/browse/ASTL</url>
+	</issueManagement>
 
 	<distributionManagement>
 		<repository>
@@ -98,5 +130,11 @@
 			<url>${site.deploy.url}</url>
 		</site>
 	</distributionManagement>
-	
+
+	<scm>
+		<url>https://github.com/TIBCOSoftware/as-tools</url>
+		<connection>scm:git:git://github.com/TIBCOSoftware/as-tools.git</connection>
+		<developerConnection>scm:git:git@github.com:TIBCOSoftware/as-tools.git</developerConnection>
+	</scm>
+
 </project>
