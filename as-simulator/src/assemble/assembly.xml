@@ -9,7 +9,7 @@
 	<baseDirectory>simulator-${project.version}</baseDirectory>
 	<fileSets>
 		<fileSet>
-			<directory>${project.build.directory}/simulator-${project.version}</directory>
+			<directory>${project.build.directory}/${project.artifactId}-${project.version}</directory>
 			<outputDirectory>/</outputDirectory>
 			<excludes>
 				<exclude>lib/as-common-${as.version}.jar</exclude>
