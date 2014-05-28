@@ -1,4 +1,4 @@
-```
+~~~
                 TIBCO ActiveSpaces JDBC Driver
 
 Overview
@@ -474,7 +474,7 @@ specifying the QUERY_LIMIT property in the CREATE command. For example,
 
     CREATE TABLE mytable (name VARCHAR(255) NOT NULL PRIMARY KEY, age INTEGER, city VARCHAR(255), zipcode INTEGER,
         INDEX age hash (name, age)) QUERY_LIMIT 1000
-```
+~~~
 
 
 
