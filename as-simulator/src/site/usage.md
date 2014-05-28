@@ -1,6 +1,6 @@
 # Usage
 
-```bash
+~~~
 Usage: as-simulator [options] The list of simulation files to execute
   Options:
     -batch_size
@@ -31,4 +31,4 @@ Usage: as-simulator [options] The list of simulation files to execute
        Worker thread count
     -writer_thread_count
        Number of writer threads
-```
+~~~
