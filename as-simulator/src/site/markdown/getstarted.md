@@ -11,17 +11,17 @@ Unzip the distribution and make sure the executable, located under the bin folde
 ### Get help
 
 ```bash
-simulator -help
+as-simulator -help
 ````
 
 ### Run the *simple* simulation example 
 
 ```bash
-simulator ../examples/simple.xml
+as-simulator ../examples/simple.xml
 ```
 
 ### Run the *portfolio* simulation example 
 
 ```bash
-simulator ../examples/portfolio.xml
+as-simulator ../examples/portfolio.xml
 ```	

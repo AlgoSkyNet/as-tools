@@ -1,7 +1,7 @@
 # Usage
 
 ```bash
-Usage: simulator [options] The list of simulation files to execute
+Usage: as-simulator [options] The list of simulation files to execute
   Options:
     -batch_size
        Transfer output batch size
@@ -11,8 +11,6 @@ Usage: simulator [options] The list of simulation files to execute
        Discovery URL
     -distribution_role
        Distribution role (none, leech, seeder)
-    -fields
-       Comma separated fields
     -?, -help
        Print this help message
     -listen
@@ -29,8 +27,8 @@ Usage: simulator [options] The list of simulation files to execute
        Receive buffer size
     -wait_for_ready_timeout
        Wait for ready timeout
-    -writer_thread_count
-       Number of writer threads
     -worker_thread_count
        Worker thread count
+    -writer_thread_count
+       Number of writer threads
 ```
