@@ -3,7 +3,7 @@
 
 ## Import
 
-![Architecture Diagram](../resources/images/architecture.png "Import Process")
+![Architecture Diagram](images/architecture.png "Import Process")
 
 
 ### Reading
