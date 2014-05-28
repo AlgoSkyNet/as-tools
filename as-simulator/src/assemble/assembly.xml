@@ -6,7 +6,7 @@
 	<formats>
 		<format>zip</format>
 	</formats>
-	<baseDirectory>simulator-${project.version}</baseDirectory>
+	<baseDirectory>${project.artifactId}-${project.version}</baseDirectory>
 	<fileSets>
 		<fileSet>
 			<directory>${project.build.directory}/${project.artifactId}-${project.version}</directory>
