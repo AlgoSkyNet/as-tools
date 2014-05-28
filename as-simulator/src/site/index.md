@@ -1,11 +1,3 @@
----
-layout: page-side-nav-with-header
-title: Simulator for TIBCO ActiveSpaces®
-subhead: Simulator for TIBCO ActiveSpaces®
-lead: Data simulator for TIBCO ActiveSpaces®
-top_nav_list_name: activespaces
-side_nav_list_name: simulator
----
 # Get Started
 
 ### Download
