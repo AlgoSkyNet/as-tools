@@ -1,19 +1,20 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
 // -------------------------------------------------------------------
 package com.tibco.as.sql;
 
-import java.nio.ByteBuffer;
+import java.sql.Blob;
 import java.sql.Date;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+
+import javax.sql.rowset.serial.SerialBlob;
 
 import com.tibco.as.space.DateTime;
 import com.tibco.as.space.FieldDef;
@@ -27,19 +28,19 @@ import com.tibco.as.space.Tuple;
  */
 public class ASSQLTuple
 {
-    private Tuple   tuple;
+    private Tuple   m_tuple;
     // holds whether the last value retrieved from the Tuple was null
-    private boolean wasNull = true;
+    private boolean m_wasNull = true;
 
     public ASSQLTuple (List<String> spaceList, List<Tuple> tupleList, List<Tuple> columnInfo,
             Map<String, FieldDef> columnSpec) throws IllegalArgumentException
     {
-        tuple = getTuple(spaceList, tupleList, columnInfo, columnSpec);
+        m_tuple = getTuple(spaceList, tupleList, columnInfo, columnSpec);
     }
 
     public boolean wasLastValueNull ()
     {
-        return wasNull;
+        return m_wasNull;
     }
 
     /**
@@ -57,8 +58,8 @@ public class ASSQLTuple
      */
     public Object getObject (String fieldName) throws SQLException
     {
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
         return value;
     }
 
@@ -77,9 +78,9 @@ public class ASSQLTuple
      */
     public String getString (String fieldName) throws SQLException
     {
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
-        return (wasNull) ? null : value.toString();
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
+        return (m_wasNull) ? null : value.toString();
     }
 
     /**
@@ -103,40 +104,12 @@ public class ASSQLTuple
     public boolean getBoolean (String fieldName) throws SQLException
     {
         boolean result = false;
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
-        if (wasNull)
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
+        if (m_wasNull)
             result = false;
-        else if (value instanceof Boolean)
-            result = (Boolean) value;
-        else if (value instanceof Character && ((Character) value).equals('0'))
-            result = false;
-        else if (value instanceof Character && ((Character) value).equals('1'))
-            result = true;
-        else if (value instanceof String && ((String) value).equals("0"))
-            result = false;
-        else if (value instanceof String && ((String) value).equals("1"))
-            result = true;
-        else if (value instanceof String && ((String) value).equalsIgnoreCase("false"))
-            result = false;
-        else if (value instanceof String && ((String) value).equalsIgnoreCase("true"))
-            result = true;
-        else if (value instanceof Short && ((Short) value) == 0)
-            result = false;
-        else if (value instanceof Short && ((Short) value) == 1)
-            result = true;
-        else if (value instanceof Integer && ((Integer) value) == 0)
-            result = false;
-        else if (value instanceof Integer && ((Integer) value) == 1)
-            result = true;
-        else if (value instanceof Long && ((Long) value) == 0)
-            result = false;
-        else if (value instanceof Long && ((Long) value) == 1)
-            result = true;
         else
-            throw new SQLDataException("The " + value.getClass().getSimpleName() + " value in field " + fieldName
-                    + " cannot be returned as a boolean.");
-
+            result = TypeUtil.getBoolean(value);
         return result;
     }
 
@@ -156,47 +129,12 @@ public class ASSQLTuple
     public byte getByte (String fieldName) throws SQLException
     {
         byte result;
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
-        if (wasNull)
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
+        if (m_wasNull)
             result = 0;
-        else if (value instanceof Short)
-            result = ((Short) value).byteValue();
-        else if (value instanceof Integer)
-            result = ((Integer) value).byteValue();
-        else if (value instanceof Long)
-            result = ((Long) value).byteValue();
-        else if (value instanceof Float)
-            result = ((Float) value).byteValue();
-        else if (value instanceof Double)
-            result = ((Double) value).byteValue();
-        else if (value instanceof Character)
-        {
-            try
-            {
-                result = Byte.parseByte(((Character) value).toString());
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-
-        }
-        else if (value instanceof String)
-        {
-            try
-            {
-                result = Byte.parseByte((String) value);
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-
-        }
         else
-            throw new SQLDataException("The " + value.getClass().getSimpleName() + " value in field " + fieldName
-                    + " cannot be returned as a byte.");
+            result = TypeUtil.getByte(value);
         return result;
     }
 
@@ -216,47 +154,12 @@ public class ASSQLTuple
     public short getShort (String fieldName) throws SQLException
     {
         short result;
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
-        if (wasNull)
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
+        if (m_wasNull)
             result = 0;
-        else if (value instanceof Short)
-            result = ((Short) value).shortValue();
-        else if (value instanceof Integer)
-            result = ((Integer) value).shortValue();
-        else if (value instanceof Long)
-            result = ((Long) value).shortValue();
-        else if (value instanceof Float)
-            result = ((Float) value).shortValue();
-        else if (value instanceof Double)
-            result = ((Double) value).shortValue();
-        else if (value instanceof Character)
-        {
-            try
-            {
-                result = Short.parseShort(((Character) value).toString());
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-
-        }
-        else if (value instanceof String)
-        {
-            try
-            {
-                result = Short.parseShort((String) value);
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-
-        }
         else
-            throw new SQLDataException("The " + value.getClass().getSimpleName() + " value in field " + fieldName
-                    + " cannot be returned as a short.");
+            result = TypeUtil.getShort(value);
         return result;
     }
 
@@ -275,47 +178,12 @@ public class ASSQLTuple
     public int getInt (String fieldName) throws SQLException
     {
         int result;
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
-        if (wasNull)
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
+        if (m_wasNull)
             result = 0;
-        else if (value instanceof Short)
-            result = ((Short) value).intValue();
-        else if (value instanceof Integer)
-            result = ((Integer) value).intValue();
-        else if (value instanceof Long)
-            result = ((Long) value).intValue();
-        else if (value instanceof Float)
-            result = ((Float) value).intValue();
-        else if (value instanceof Double)
-            result = ((Double) value).intValue();
-        else if (value instanceof Character)
-        {
-            try
-            {
-                result = Integer.parseInt(((Character) value).toString());
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-
-        }
-        else if (value instanceof String)
-        {
-            try
-            {
-                result = Integer.parseInt((String) value);
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-
-        }
         else
-            throw new SQLDataException("The " + value.getClass().getSimpleName() + " value in field " + fieldName
-                    + " cannot be returned as an int.");
+            result = TypeUtil.getInt(value);
         return result;
     }
 
@@ -334,45 +202,12 @@ public class ASSQLTuple
     public long getLong (String fieldName) throws SQLException
     {
         long result;
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
-        if (wasNull)
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
+        if (m_wasNull)
             result = 0;
-        else if (value instanceof Short)
-            result = ((Short) value).longValue();
-        else if (value instanceof Integer)
-            result = ((Integer) value).longValue();
-        else if (value instanceof Long)
-            result = ((Long) value).longValue();
-        else if (value instanceof Float)
-            result = ((Float) value).longValue();
-        else if (value instanceof Double)
-            result = ((Double) value).longValue();
-        else if (value instanceof Character)
-        {
-            try
-            {
-                result = Long.parseLong(((Character) value).toString());
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-        }
-        else if (value instanceof String)
-        {
-            try
-            {
-                result = Long.parseLong((String) value);
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-        }
         else
-            throw new SQLDataException("The " + value.getClass().getSimpleName() + " value in field " + fieldName
-                    + " cannot be returned as a long.");
+            result = TypeUtil.getLong(value);
         return result;
     }
 
@@ -391,34 +226,12 @@ public class ASSQLTuple
     public float getFloat (String fieldName) throws SQLException
     {
         float result;
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
-        if (wasNull)
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
+        if (m_wasNull)
             result = 0;
-        else if (value instanceof Short)
-            result = ((Short) value).floatValue();
-        else if (value instanceof Integer)
-            result = ((Integer) value).floatValue();
-        else if (value instanceof Long)
-            result = ((Long) value).floatValue();
-        else if (value instanceof Float)
-            result = ((Float) value).floatValue();
-        else if (value instanceof Double)
-            result = ((Double) value).floatValue();
-        else if (value instanceof String)
-        {
-            try
-            {
-                result = Float.parseFloat((String) value);
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-        }
         else
-            throw new SQLDataException("The " + value.getClass().getSimpleName() + " value in field " + fieldName
-                    + " cannot be returned as a float.");
+            result = TypeUtil.getFloat(value);
         return result;
     }
 
@@ -437,34 +250,12 @@ public class ASSQLTuple
     public double getDouble (String fieldName) throws SQLException
     {
         double result;
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
-        if (wasNull)
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
+        if (m_wasNull)
             result = 0;
-        else if (value instanceof Short)
-            result = ((Short) value).doubleValue();
-        else if (value instanceof Integer)
-            result = ((Integer) value).doubleValue();
-        else if (value instanceof Long)
-            result = ((Long) value).doubleValue();
-        else if (value instanceof Float)
-            result = ((Float) value).doubleValue();
-        else if (value instanceof Double)
-            result = ((Double) value).doubleValue();
-        else if (value instanceof String)
-        {
-            try
-            {
-                result = Double.parseDouble((String) value);
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new SQLDataException(ex);
-            }
-        }
         else
-            throw new SQLDataException("The " + value.getClass().getSimpleName() + " value in field " + fieldName
-                    + " cannot be returned as a double.");
+            result = TypeUtil.getDouble(value);
         return result;
     }
 
@@ -483,59 +274,12 @@ public class ASSQLTuple
     public byte[] getBytes (String fieldName) throws SQLException
     {
         byte[] result;
-        Object value = tuple.get(fieldName);
-        wasNull = value == null;
-        if (wasNull)
+        Object value = m_tuple.get(fieldName);
+        m_wasNull = value == null;
+        if (m_wasNull)
             result = null;
-        else if (value instanceof Short)
-        {
-            ByteBuffer buffer = ByteBuffer.allocate(2);
-            buffer.putShort((Short) value);
-            buffer.flip();
-            result = buffer.array();
-        }
-        else if (value instanceof Integer)
-        {
-            ByteBuffer buffer = ByteBuffer.allocate(4);
-            buffer.putInt((Integer) value);
-            buffer.flip();
-            result = buffer.array();
-        }
-        else if (value instanceof Long)
-        {
-            ByteBuffer buffer = ByteBuffer.allocate(8);
-            buffer.putLong((Long) value);
-            buffer.flip();
-            result = buffer.array();
-        }
-        else if (value instanceof Float)
-        {
-            ByteBuffer buffer = ByteBuffer.allocate(4);
-            buffer.putFloat((Float) value);
-            buffer.flip();
-            result = buffer.array();
-        }
-        else if (value instanceof Double)
-        {
-            ByteBuffer buffer = ByteBuffer.allocate(8);
-            buffer.putDouble((Double) value);
-            buffer.flip();
-            result = buffer.array();
-        }
-        else if (value instanceof Character)
-        {
-            ByteBuffer buffer = ByteBuffer.allocate(2);
-            buffer.putChar(((Character) value).charValue());
-            buffer.flip();
-            result = buffer.array();
-        }
-        else if (value instanceof String)
-        {
-            result = ((String) value).getBytes();
-        }
         else
-            throw new SQLDataException("The " + value.getClass().getSimpleName() + " value in field " + fieldName
-                    + " cannot be returned as a byte array.");
+            result = TypeUtil.getBytes(value);
         return result;
     }
 
@@ -548,15 +292,15 @@ public class ASSQLTuple
      *
      * @param fieldName
      *            the name of the tuple field to return
-     * @return the field value as a String
+     * @return the field value as a Date object
      * @exception SQLException
      *                if the fieldName is not valid
      */
     public Date getDate (String fieldName) throws SQLException
     {
-        DateTime dt = tuple.getDateTime(fieldName);
-        wasNull = dt == null;
-        return (wasNull) ? null : new Date(dt.getTime().getTimeInMillis());
+        DateTime dt = m_tuple.getDateTime(fieldName);
+        m_wasNull = dt == null;
+        return (m_wasNull) ? null : new Date(dt.getTimeInMillis());
     }
 
     /**
@@ -568,17 +312,17 @@ public class ASSQLTuple
      *
      * @param fieldName
      *            the name of the tuple field to return
-     * @return the field value as a String
+     * @return the field value as a Time object
      * @exception SQLException
      *                if the fieldName is not valid
      */
     public Time getTime (String fieldName) throws SQLException
     {
-        DateTime dt = tuple.getDateTime(fieldName);
-        wasNull = dt == null;
+        DateTime dt = m_tuple.getDateTime(fieldName);
+        m_wasNull = dt == null;
         // milliseconds should be since January 1, 1970, 00:00:00 GMT
         // this is the same for SQL Time object or AS DateTime object
-        return (wasNull) ? null : new Time(dt.getTime().getTimeInMillis());
+        return (m_wasNull) ? null : new Time(dt.getTime().getTimeInMillis());
     }
 
     /**
@@ -590,17 +334,37 @@ public class ASSQLTuple
      *
      * @param fieldName
      *            the name of the tuple field to return
-     * @return the field value as a String
+     * @return the field value as a Timestamp object
      * @exception SQLException
      *                if the fieldName is not valid
      */
     public Timestamp getTimestamp (String fieldName) throws SQLException
     {
-        DateTime dt = tuple.getDateTime(fieldName);
-        wasNull = dt == null;
+        DateTime dt = m_tuple.getDateTime(fieldName);
+        m_wasNull = dt == null;
         // milliseconds should be since January 1, 1970, 00:00:00 GMT
         // this is the same for SQL Timestamp object or AS DateTime object
-        return (wasNull) ? null : new Timestamp(dt.getTime().getTimeInMillis());
+        return (m_wasNull) ? null : new Timestamp(dt.getTime().getTimeInMillis());
+    }
+
+    /**
+     * Retrieves the value of the designated column from the Tuple as an SQL <code>Blob</code>
+     * object.
+     * <P>
+     * If the column value is null, null is returned.
+     * <P>
+     *
+     * @param fieldName
+     *            the name of the tuple field to return
+     * @return the field value as a Blob object
+     * @exception SQLException
+     *                if the fieldName is not valid
+     */
+    public Blob getBlob (String fieldName) throws SQLException
+    {
+        byte[] bytearray = m_tuple.getBlob(fieldName);
+        m_wasNull = bytearray == null;
+        return (m_wasNull) ? null : new SerialBlob(bytearray);
     }
 
     // ---- internal helper methods ----
@@ -609,7 +373,7 @@ public class ASSQLTuple
     {
         // we need to create a tuple which holds only those fields from each
         // space that is designated in the columnInfo object
-        tuple = Tuple.create();
+        m_tuple = Tuple.create();
         int numColumns = columnInfo.size();
         for (int i = 0; i < numColumns; i++)
         {
@@ -638,8 +402,8 @@ public class ASSQLTuple
             // we always use the column alias when creating our result tuple
             // if the SQL statement didn't specify an alias for a column, the
             // column name was filled in as the alias
-            TypeUtil.setTupleField(tuple, fieldDef, columnAlias, columnValue);
+            TupleUtil.setTupleField(m_tuple, fieldDef, columnAlias, columnValue);
         }
-        return tuple;
+        return m_tuple;
     }
 }

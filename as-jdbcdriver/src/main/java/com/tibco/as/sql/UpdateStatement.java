@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -26,15 +26,16 @@ import com.tibco.as.space.browser.BrowserDef.TimeScope;
 
 public class UpdateStatement implements ASSQLUpdateStatement
 {
-    String                  spaceName;
-    HashMap<String, String> columnValues;
-    String                  filter;
+    String                  m_spaceName;
+    HashMap<String, String> m_columnValues;
+    String                  m_filter;
 
     public UpdateStatement (String spaceName, HashMap<String, String> columnValues, String whereClause)
     {
-        this.spaceName = spaceName;
-        this.columnValues = columnValues;
-        this.filter = whereClause;
+        m_spaceName = spaceName;
+        m_columnValues = columnValues;
+        m_filter = whereClause;
+        checkFilterForTableName();
     }
 
     public int processUpdate (Metaspace metaspace) throws SQLException
@@ -45,7 +46,7 @@ public class UpdateStatement implements ASSQLUpdateStatement
         {
             // Join the space. If the space is not already joined, it will be joined
             // as a leech. If it has already been joined, the role will not be changed.
-            space = metaspace.getSpace(spaceName);
+            space = metaspace.getSpace(m_spaceName);
             result = processUpdate(metaspace, space);
         }
         catch (ASException ex)
@@ -87,7 +88,7 @@ public class UpdateStatement implements ASSQLUpdateStatement
             // Try first to see if you can do gets followed by update rather than create a browser
             // TODO: This can be further optimized if all of the fields are being updated and to use a single put space call rather than a get and update calls
             Collection<String> keyfields = space.getSpaceDef().getKeyDef().getFieldNames();
-            HashMap<String, String> keyMap = ASSQLUtils.getKeyValues(keyfields, filter);
+            HashMap<String, String> keyMap = ASSQLUtils.getKeyValues(keyfields, m_filter);
 
             if (keyMap != null && !keyMap.isEmpty() && (keyMap.size() == keyfields.size()))
             {
@@ -132,13 +133,13 @@ public class UpdateStatement implements ASSQLUpdateStatement
                         if (tuple == null)
                             tuple = Tuple.create();
 
-                        TypeUtil.setTupleField (tuple, fieldDef, fieldName, fieldValue);
+                        TupleUtil.setTupleField (tuple, fieldDef, fieldName, fieldValue);
                     }
                     if (tuple != null)
                     {
                         // now retrieve the tuple we were given key values for
                         Tuple oldTuple = space.get(tuple);
-                        Tuple newTuple = TypeUtil.updateTuple(oldTuple, columnValues, spaceDef);
+                        Tuple newTuple = TupleUtil.updateTuple(oldTuple, m_columnValues, spaceDef);
 
                         Tuple update = space.compareAndPut(oldTuple,newTuple);
 
@@ -158,9 +159,9 @@ public class UpdateStatement implements ASSQLUpdateStatement
             if (getOptimized != true)
             {
 
-                if (this.filter != null)
+                if (m_filter != null)
                 {
-                    browser = space.browse(BrowserType.GET, BrowserDef.create(0, TimeScope.SNAPSHOT), filter);
+                    browser = space.browse(BrowserType.GET, BrowserDef.create(0, TimeScope.SNAPSHOT), m_filter);
                 }
                 else
                     browser = space.browse(BrowserType.GET, BrowserDef.create(0, TimeScope.SNAPSHOT));
@@ -169,7 +170,7 @@ public class UpdateStatement implements ASSQLUpdateStatement
                 Tuple oldTuple = null;
                 while ((oldTuple = browser.next()) != null)
                 {
-                    Tuple newTuple = TypeUtil.updateTuple(oldTuple, columnValues, spaceDef);
+                    Tuple newTuple = TupleUtil.updateTuple(oldTuple, m_columnValues, spaceDef);
                     if (newTuple != null)
                     {
                         Tuple storedTuple = space.compareAndPut(oldTuple, newTuple);
@@ -230,6 +231,27 @@ public class UpdateStatement implements ASSQLUpdateStatement
         {
             // do nothing
         }
+    }
+
+    protected void checkFilterForTableName()
+    {
+        if (m_filter == null || m_filter.isEmpty())
+        {
+            return;
+        }
+        if (m_spaceName == null || m_spaceName.isEmpty())
+        {
+            return;  // just return, error will be caught later
+        }
+        // Check the filter for any table names and remove them from the filter.
+        // AS filters only work on a single space.
+        // Could have done this in the grammar but more flexible this way if the driver ends
+        // up applying filters to more than one space in the future.
+        String tfilter = m_filter;
+        String tablePrefix = m_spaceName + ".";
+        if (tfilter.contains(tablePrefix))
+            tfilter = tfilter.replace(tablePrefix, "");
+        m_filter = tfilter;
     }
 
 }

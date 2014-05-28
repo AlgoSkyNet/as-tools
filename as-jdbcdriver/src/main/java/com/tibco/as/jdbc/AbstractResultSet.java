@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -47,7 +47,7 @@ public class AbstractResultSet
 
     // -- Other unimplemented methods
 
-    public BigDecimal getBigDecimal (int columnIndex, int scale) throws SQLException
+    @Deprecated public BigDecimal getBigDecimal (int columnIndex, int scale) throws SQLException
     {
         return null;
     }
@@ -57,7 +57,7 @@ public class AbstractResultSet
         return null;
     }
 
-    public InputStream getUnicodeStream (int columnIndex) throws SQLException
+    @Deprecated public InputStream getUnicodeStream (int columnIndex) throws SQLException
     {
         return null;
     }
@@ -67,7 +67,7 @@ public class AbstractResultSet
         return null;
     }
 
-    public BigDecimal getBigDecimal (String columnLabel, int scale) throws SQLException
+    @Deprecated public BigDecimal getBigDecimal (String columnLabel, int scale) throws SQLException
     {
         return null;
     }
@@ -77,7 +77,7 @@ public class AbstractResultSet
         return null;
     }
 
-    public InputStream getUnicodeStream (String columnLabel) throws SQLException
+    @Deprecated public InputStream getUnicodeStream (String columnLabel) throws SQLException
     {
         return null;
     }
@@ -142,11 +142,6 @@ public class AbstractResultSet
         return null;
     }
 
-    public Blob getBlob (int columnIndex) throws SQLException
-    {
-        return null;
-    }
-
     public Clob getClob (int columnIndex) throws SQLException
     {
         return null;
@@ -163,11 +158,6 @@ public class AbstractResultSet
     }
 
     public Ref getRef (String columnLabel) throws SQLException
-    {
-        return null;
-    }
-
-    public Blob getBlob (String columnLabel) throws SQLException
     {
         return null;
     }
@@ -365,17 +355,7 @@ public class AbstractResultSet
         throw new SQLFeatureNotSupportedException();
     }
 
-    public void beforeFirst () throws SQLException
-    {
-        throw new SQLFeatureNotSupportedException();
-    }
-
     public void afterLast () throws SQLException
-    {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    public boolean first () throws SQLException
     {
         throw new SQLFeatureNotSupportedException();
     }

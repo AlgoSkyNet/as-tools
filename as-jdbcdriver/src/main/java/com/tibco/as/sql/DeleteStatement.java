@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -16,13 +16,14 @@ import com.tibco.as.space.browser.BrowserDef.BrowserType;
 
 public class DeleteStatement implements ASSQLUpdateStatement
 {
-    String spaceName;
-    String whereCondition;
+    String m_spaceName;
+    String m_whereCondition;
 
     public DeleteStatement (String spaceName, String whereCondition)
     {
-        this.spaceName = spaceName;
-        this.whereCondition = whereCondition;
+        m_spaceName = spaceName;
+        m_whereCondition = whereCondition;
+        checkFilterForTableName();
     }
 
     public int processUpdate (Metaspace metaspace) throws SQLException
@@ -33,7 +34,7 @@ public class DeleteStatement implements ASSQLUpdateStatement
         {
             // Join the space. If the space is not already joined, it will be joined
             // as a leech. If it has already been joined, the role will not be changed.
-            space = metaspace.getSpace(spaceName);
+            space = metaspace.getSpace(m_spaceName);
             result = processUpdate(metaspace, space);
         }
         catch (ASException ex)
@@ -57,7 +58,7 @@ public class DeleteStatement implements ASSQLUpdateStatement
         try
         {
             // TODO parse whereCondition to see if we can do a take instead of using a browser
-            Browser browser = ASSQLUtils.getBrowser(space, whereCondition, BrowserType.TAKE);
+            Browser browser = ASSQLUtils.getBrowser(space, m_whereCondition, BrowserType.TAKE);
             for (; browser.next() != null;)
             {
                 numRowsDeleted++;
@@ -84,6 +85,27 @@ public class DeleteStatement implements ASSQLUpdateStatement
         {
             // do nothing
         }
+    }
+
+    protected void checkFilterForTableName()
+    {
+        if (m_whereCondition == null || m_whereCondition.isEmpty())
+        {
+            return;
+        }
+        if (m_spaceName == null || m_spaceName.isEmpty())
+        {
+            return;  // just return, error will be caught later
+        }
+        // Check the filter for any table names and remove them from the filter.
+        // AS filters only work on a single space.
+        // Could have done this in the grammar but more flexible this way if the driver ends
+        // up applying filters to more than one space in the future.
+        String tfilter = m_whereCondition;
+        String tablePrefix = m_spaceName + ".";
+        if (tfilter.contains(tablePrefix))
+            tfilter = tfilter.replace(tablePrefix, "");
+        m_whereCondition = tfilter;
     }
 
 }

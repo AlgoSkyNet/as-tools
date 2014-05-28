@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -12,6 +12,6 @@ import com.tibco.as.space.Metaspace;
 
 public interface ASSQLQueryStatement extends ASSQLStatement
 {
-    public ASSQLResult processQuery (Metaspace metaspace) throws SQLException;
+    public ASSQLResult processQuery (java.sql.Statement statement, Metaspace metaspace) throws SQLException;
 
 }

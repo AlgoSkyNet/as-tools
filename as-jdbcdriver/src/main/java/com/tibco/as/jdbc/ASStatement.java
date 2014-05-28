@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -20,25 +20,25 @@ import com.tibco.as.sql.ASSQLResult;
 public class ASStatement extends AbstractStatement implements Statement, Comparable<Object>
 {
 
-    protected ASConnection connection;
-    protected int          maxFieldSize         = 0;
-    protected int          maxRows              = 0;
-    protected int          fetchSize            = 0;
-    protected int          fetchDirection       = ResultSet.FETCH_FORWARD;
-    protected int          resultSetType        = ResultSet.TYPE_FORWARD_ONLY;
-    protected int          resultSetConcurrency = ResultSet.CONCUR_READ_ONLY;
-    protected int          resultSetHoldability = ResultSet.HOLD_CURSORS_OVER_COMMIT;
-    protected ResultSet    currentResultSet     = null;
-    protected int          currentUpdateCount   = -1;
+    protected ASConnection m_connection;
+    protected int          m_maxFieldSize         = 0;
+    protected int          m_maxRows              = 0;
+    protected int          m_fetchSize            = 0;
+    protected int          m_fetchDirection       = ResultSet.FETCH_FORWARD;
+    protected int          m_resultSetType        = ResultSet.TYPE_FORWARD_ONLY;
+    protected int          m_resultSetConcurrency = ResultSet.CONCUR_READ_ONLY;
+    protected int          m_resultSetHoldability = ResultSet.HOLD_CURSORS_OVER_COMMIT;
+    protected ResultSet    m_currentResultSet     = null;
+    protected int          m_currentUpdateCount   = -1;
 
     protected ASStatement (Connection conn)
     {
-        this.connection = (ASConnection) conn;
+        m_connection = (ASConnection) conn;
     }
 
     protected ASStatement (Connection conn, int resultSetType, int resultSetConcurrency) throws SQLException
     {
-        this.connection = (ASConnection) conn;
+        m_connection = (ASConnection) conn;
         checkResultSetType(resultSetType);
         // we only support TYPE_FORWARD_ONLY at this time, quietly swallow the given setting
         // this.resultSetType = resultSetType;
@@ -50,7 +50,7 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
     protected ASStatement (Connection conn, int resultSetType, int resultSetConcurrency, int resultSetHoldability)
             throws SQLException
     {
-        this.connection = (ASConnection) conn;
+        m_connection = (ASConnection) conn;
         checkResultSetType(resultSetType);
         // we only support TYPE_FORWARD_ONLY at this time, quietly swallow the given setting
         // this.resultSetType = resultSetType;
@@ -64,18 +64,18 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
 
     public void close () throws SQLException
     {
-        connection.removeStatement(this);
-        connection = null;
+        m_connection.removeStatement(this);
+        m_connection = null;
     }
 
     public boolean isClosed () throws SQLException
     {
-        return connection == null;
+        return m_connection == null;
     }
 
     public Connection getConnection () throws SQLException
     {
-        return connection;
+        return m_connection;
     }
 
     /**
@@ -92,12 +92,13 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
      */
     public ResultSet executeQuery (String sql) throws SQLException
     {
+        m_connection.getLogger().logTrace("Statement.executeQuery(\"" + sql + "\") called");
         checkForConnection();
-        Metaspace metaspace = connection.getMetaspace();
-        ASSQLResult asresult = ASSQLProcessor.executeQuery(metaspace, sql);
-        currentResultSet = new ASResultSet(asresult, this);
-        currentUpdateCount = -1;
-        return currentResultSet;
+        Metaspace metaspace = m_connection.getMetaspace();
+        ASSQLResult asresult = ASSQLProcessor.executeQuery(this, metaspace, sql);
+        m_currentResultSet = new ASResultSet(asresult, this);
+        m_currentUpdateCount = -1;
+        return m_currentResultSet;
     }
 
     /**
@@ -115,14 +116,15 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
      */
     public int executeUpdate (String sql) throws SQLException
     {
+        m_connection.getLogger().logTrace("Statement.executeUpdate(\"" + sql + "\") called");
         checkForConnection();
-        currentUpdateCount = -1;
-        Metaspace metaspace = connection.getMetaspace();
-        currentUpdateCount = ASSQLProcessor.executeUpdate(metaspace, sql);
-        if (currentUpdateCount == -1)
+        m_currentUpdateCount = -1;
+        Metaspace metaspace = m_connection.getMetaspace();
+        m_currentUpdateCount = ASSQLProcessor.executeUpdate(metaspace, sql);
+        if (m_currentUpdateCount == -1)
             throw new SQLSyntaxErrorException("Invalid query string passed for processing.");
-        currentResultSet = null;
-        return currentUpdateCount;
+        m_currentResultSet = null;
+        return m_currentUpdateCount;
     }
 
     // ----------------------- Multiple Results --------------------------
@@ -144,6 +146,7 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
      */
     public boolean execute (String sql) throws SQLException
     {
+        m_connection.getLogger().logTrace("Statement.execute(\"" + sql + "\") called");
         boolean result = true;
         // determine the type of query and invoke the appropriate execute method
         if (sql.toLowerCase().startsWith("create") || sql.toLowerCase().startsWith("insert")
@@ -168,7 +171,7 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
     public int getUpdateCount () throws SQLException
     {
         checkForConnection();
-        return currentUpdateCount;
+        return m_currentUpdateCount;
     }
 
     /**
@@ -178,7 +181,7 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
     public ResultSet getResultSet () throws SQLException
     {
         checkForConnection();
-        return currentResultSet;
+        return m_currentResultSet;
     }
 
     /**
@@ -197,31 +200,39 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
     public int getMaxFieldSize () throws SQLException
     {
         checkForConnection();
-        return maxFieldSize;
+        return m_maxFieldSize;
     }
 
     public void setMaxFieldSize (int max) throws SQLException
     {
         checkForConnection();
-        maxFieldSize = max;
+        m_maxFieldSize = max;
     }
 
     public int getMaxRows () throws SQLException
     {
         checkForConnection();
-        return maxRows;
+        // 0 means there is no limit
+        // by default, the AS JDBC driver will use a CURRENT browser which
+        // does not use a limit, so max rows will be 0
+        return m_maxRows;
     }
 
     public void setMaxRows (int max) throws SQLException
     {
         checkForConnection();
-        maxRows = max;
+        // if setMaxRows is called to specify a limit for results in a ResultSet,
+        // the AS JDBC driver will use a SNAPSHOT browser with the specified
+        // query limit
+        // if -1 is specified, the SNAPSHOT browser will use its own query_limit
+        // setting
+        m_maxRows = max;
     }
 
     public int getFetchSize () throws SQLException
     {
         checkForConnection();
-        return fetchSize;
+        return m_fetchSize;
     }
 
     public void setFetchSize (int rows) throws SQLException
@@ -229,13 +240,13 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
         checkForConnection();
         if (rows < 0)
             throw new SQLSyntaxErrorException("Fetch size cannot be less than zero.");
-        fetchSize = rows;
+        m_fetchSize = rows;
     }
 
     public int getFetchDirection () throws SQLException
     {
         checkForConnection();
-        return fetchDirection;
+        return m_fetchDirection;
     }
 
     public void setFetchDirection (int direction) throws SQLException
@@ -249,12 +260,12 @@ public class ASStatement extends AbstractStatement implements Statement, Compara
     public int getResultSetType () throws SQLException
     {
         checkForConnection();
-        return resultSetType;
+        return m_resultSetType;
     }
 
     protected final void checkForConnection () throws SQLException
     {
-        if (connection == null)
+        if (m_connection == null)
             throw new SQLRecoverableException(Utils.AS_STATEMENT_CLOSED);
     }
 

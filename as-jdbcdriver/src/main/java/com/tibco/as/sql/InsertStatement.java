@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -19,15 +19,15 @@ import com.tibco.as.space.Tuple;
 
 public class InsertStatement implements ASSQLUpdateStatement
 {
-    String       spaceName;
-    List<String> columnNames;
-    List<String> columnValues;
+    String       m_spaceName;
+    List<String> m_columnNames;
+    List<String> m_columnValues;
 
     public InsertStatement (String spaceName, List<String> columnNames, List<String> columnValues)
     {
-        this.spaceName = spaceName;
-        this.columnNames = columnNames;
-        this.columnValues = columnValues;
+        m_spaceName = spaceName;
+        m_columnNames = columnNames;
+        m_columnValues = columnValues;
     }
 
     public int processUpdate (Metaspace metaspace) throws SQLException
@@ -38,7 +38,7 @@ public class InsertStatement implements ASSQLUpdateStatement
         {
             // Join the space. If the space is not already joined, it will be joined
             // as a leech. If it has already been joined, the role will not be changed.
-            space = metaspace.getSpace(spaceName);
+            space = metaspace.getSpace(m_spaceName);
             result = processUpdate(metaspace, space);
         }
         catch (ASException ex)
@@ -67,14 +67,14 @@ public class InsertStatement implements ASSQLUpdateStatement
         }
 
         Tuple tuple = Tuple.create();
-        for (int i = 0; i < columnNames.size(); i++)
+        for (int i = 0; i < m_columnNames.size(); i++)
         {
-            String columnName = columnNames.get(i);
-            String columnValue = columnValues.get(i);
+            String columnName = m_columnNames.get(i);
+            String columnValue = m_columnValues.get(i);
             FieldDef fieldDef = spaceDef.getFieldDef(columnName);
             try
             {
-                TypeUtil.setTupleField(tuple, fieldDef, columnName, columnValue);
+                TupleUtil.setTupleField(tuple, fieldDef, columnName, columnValue);
             }
             catch (IllegalArgumentException ex)
             {

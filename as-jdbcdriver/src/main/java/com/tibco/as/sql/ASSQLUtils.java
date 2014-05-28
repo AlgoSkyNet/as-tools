@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -31,12 +31,16 @@ public class ASSQLUtils
 {
     public static final String COLUMN_NAME     = "columnName";
     public static final String COLUMN_ALIAS    = "columnAlias";
+    public static final String COLUMN_FUNCTION = "columnFunction";
     public static final String TABLE_NAME      = "tableName";
     public static final String METASPACE_NAME  = "metaspaceName";
     public static final String COLUMN_TYPE     = "columnType";
+    public static final String COLUMN_VALUE    = "columnValue";
+    public static final String COLUMN_NULLABLE = "columnNullable";
     public static final String NULL_CONSTRAINT = "nullConstraint";
     public static final String PKEY_CONSTRAINT = "pkeyConstraint";
     public static final String PKEY_TYPE       = "pkeyType";
+    public static final String TABLE_CORRELATION_NAME = "tableCorrelationName";
 
     public static HashMap<String, FieldDef> getColumnSpec (Metaspace metaspace, List<Tuple> columnInfo)
             throws ASException
@@ -49,11 +53,28 @@ public class ASSQLUtils
             String cname = cinfo.getString(ASSQLUtils.COLUMN_NAME);
             String calias = cinfo.getString(ASSQLUtils.COLUMN_ALIAS);
             String tname = cinfo.getString(ASSQLUtils.TABLE_NAME);
-            SpaceDef spaceDef = metaspace.getSpaceDef(tname);
-            // store the FieldDef under the alias since columns from two
-            // different tables could have the same names, but the alias
-            // should uniquely identify them
-            columnSpec.put(calias, spaceDef.getFieldDef(cname));
+            String fname = cinfo.getString(ASSQLUtils.COLUMN_FUNCTION);
+            if (fname == null || fname.isEmpty())
+            {
+                SpaceDef spaceDef = metaspace.getSpaceDef(tname);
+                // store the FieldDef under the alias since columns from two
+                // different tables could have the same names, but the alias
+                // should uniquely identify them
+                columnSpec.put(calias, spaceDef.getFieldDef(cname));
+            }
+            else
+            {
+                if (fname.toLowerCase().equals("count"))
+                {
+                    // we are returning the count of the field or space
+                    // so create an appropriate FieldDef for returning a count
+                    // we use the column alias for the field name as we will use
+                    // the column alias to retrieve the field def
+                    FieldDef fdef = FieldDef.create(calias, FieldDef.FieldType.LONG);
+                    fdef.setNullable(true);
+                    columnSpec.put(calias,  fdef);
+                }
+            }
         }
         return columnSpec;
     }

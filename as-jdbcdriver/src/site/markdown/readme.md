@@ -1,5 +1,8 @@
-## Overview
+```
+                TIBCO ActiveSpaces JDBC Driver
 
+Overview
+--------
 The TIBCO ActiveSpaces JDBC Driver provides Java applications with the ability to interact with
 ActiveSpaces through the use of SQL commands. The driver can be used to port existing applications,
 which already use a JDBC driver to interact with a database, to TIBCO ActiveSpaces. The
@@ -9,11 +12,11 @@ who are familiar with the use of JDBC drivers by reducing their learning curve.
 This is a partial implementation of a JDBC driver for TIBCO ActiveSpaces. The driver has
 been developed to support the following SQL commands:
 
-* CREATE TABLE
-* INSERT
-* UPDATE
-* DELETE
-* SELECT
+    - CREATE TABLE
+    - INSERT
+    - UPDATE
+    - DELETE
+    - SELECT
 
 It is important to note that in some cases only partial support for a command has been implemented.
 This is especially true for the SELECT command. See the sections for each command below
@@ -29,25 +32,31 @@ protocol (JDBC Type 3 driver). Since TIBCO ActiveSpaces does not really have a s
 protocol, it also did not make sense to implement a JDBC Type 4 driver.
 
 
-## SQL Syntax Support
+SQL Syntax Support
+------------------
+The ActiveSpaces JDBC Driver has been developed to support common SQL syntax but the syntax has 
+been simplified and customized for ActiveSpaces. It is *not* intended that the TIBCO ActiveSpaces 
+JDBC Driver should be a JDBC Driver "adapter" for other databases. Therefore, in some cases the SQL
+syntax recognized by other databases may not be recognized by the ActiveSpaces JDBC driver. Currently,
+the ActiveSpaces JDBC Driver really only supports basic SQL command functionality.
 
-The ActiveSpaces JDBC Driver has been developed to support common SQL syntax but the syntax has been simplified and customized for ActiveSpaces. It is *not* intended that the TIBCO ActiveSpaces JDBC Driver should be a JDBC Driver "adapter" for other databases. Therefore, in some cases the SQL syntax recognized by other databases may not be recognized by the ActiveSpaces JDBC driver. Currently, the ActiveSpaces JDBC Driver really only supports basic SQL command functionality.
-
-The ActiveSpaces JDBC driver provides additional syntax support for cases where a normal SQL command  does not provide adequate functionality for ActiveSpaces. For example, the syntax of the CREATE TABLE  command has been extended to accept additional parameters which provide full support for defining an ActiveSpaces space.
+The ActiveSpaces JDBC driver provides additional syntax support for cases where a normal SQL command 
+does not provide adequate functionality for ActiveSpaces. For example, the syntax of the CREATE TABLE 
+command has been extended to accept additional parameters which provide full support for defining an 
+ActiveSpaces space.
 
 The ActiveSpaces JDBC Driver does not support the following (this is a partial list):
 
-* Schemas
-* Modules
-* Unicode String & Identifiers
-* Prepared statements
+    - Schemas
+    - Modules
+    - Unicode String & Identifiers
 
 See the sections on the individual commands for information about the limitations of a particular
 command.
 
 
-## JDBC Driver Implemenation Directories
-
+JDBC Driver Implemenation Directories
+-------------------------------------
 The TIBCO ActiveSpaces JDBC Driver sources reside in several directories as described below:
 
     src/com/tibco/as/jdbc - Contains the classes which implement the Java JDBC interfaces.
@@ -63,8 +72,8 @@ The TIBCO ActiveSpaces JDBC Driver sources reside in several directories as desc
         TIBCO ActiveSpaces JDBC Driver.
 
 
-## Getting Started
-
+Getting Started
+---------------
 Several examples are provided with the TIBCO ActiveSpaces JDBC Driver which are intended to help
 teach you how to use the driver in different scenarios as follows:
 
@@ -90,14 +99,15 @@ the developer's guide and the JavaDoc for the API.
 Both of the 'mixed' examples point out important things about how to use the TIBCO ActiveSpaces
 JDBC Driver with the TIBCO ActiveSpaces Java API. Read the comments in the code!
 
+Note: If you get a Java Verify Error when running the examples, you will need to specify the
+following VM argument to get past the error:
+    -XX:-UseSplitVerifier
 
-## JDBC URL
 
+JDBC URL
+--------
 The standard syntax for JDBC URLs is:
-```
-jdbc:<subprotocol>:<subname>
-```
-    
+    jdbc:<subprotocol>:<subname>    
 where:
     subprotocol is the name of the driver or the name of a database connectivity mechanism
     subname is a way to identify the data source 
@@ -105,18 +115,15 @@ where:
 The ActiveSpaces JDBC URL has been extended from the standard JDBC URL syntax to provide users the ability
 to specify the various settings for connecting to an ActiveSpaces metaspace.  The ActiveSpaces JDBC URL format
 is:
-```
-jdbc:tibco:as[:<data-source-name>][;<propertyName>=<propertyValue>]*
-```
+
+    jdbc:tibco:as[:<data-source-name>][;<propertyName>=<propertyValue>]*
     
-The `<data-source-name>` is optional and specifies the metaspace name. The metaspace name can also be specified
+The <data-source-name> is optional and specifies the metaspace name. The metaspace name can also be specified
 as a property as in the following example URL:
 
-```
-jdbc:tibco:as;metaspace=mymetaspace
-```
+    jdbc:tibco:as;metaspace=mymetaspace
     
-If the metaspace name is not specified as a property or as `<data-source-name>`, the default metaspace name of 'ms'
+If the metaspace name is not specified as a property or as <data-source-name>, the default metaspace name of 'ms'
 is used.
 
 This format for the JDBC URL for ActiveSpaces was chosen because it is similar to the formats used by the MySQL,
@@ -148,8 +155,8 @@ to the supported properties. For example:
 This is similar to how user names and passwords are specified in the Microsoft SQL Server JDBC URL.
 
 
-## ANTLR Grammar
-
+ANTLR Grammar
+-------------
 An ANTLR grammar is used to parse the SQL query strings passed to the ActiveSpaces JDBC Driver. The grammar file is 
 com/tibco/as/sql/grammar/ASSQL.g. Three files are automatically generated by ANTLR for this grammar. They are:
 
@@ -169,15 +176,12 @@ ignored by the driver implementation. The idea in developing the grammar for thi
 common SQL syntax even though full support for the command may not have been implemented in the driver.
 For example, the following command is successfully parsed by the driver even though support for
 LIMIT and OFFSET has not been implemented:
-```
     SELECT * FROM mytable LIMIT 100 OFFSET 0
-```
 
 Important!! SQL WHERE clauses are not fully supported. Currently the WHERE clause is used, in its
 entirety, as an ActiveSpaces filter. However, the grammar still needs work to completely support
 the successful parsing of all possible filter formats. Only simple filters are currently
 supported such as:
-```
     key=value
     name='Joe Smith'  (Note, the driver converts SQL single quotes to the double-quotes used by filters.)
     age>50
@@ -187,10 +191,28 @@ supported such as:
     name = 'John'' Doe' or (income > 50150.50 and age > 0)
     city is not null
     where city is null
-```
 
-## SQL Command Overview
 
+Building the ANTLR Grammar
+--------------------------
+If you find that you need to modify the grammar and build it yourself, you will
+need to download the ANTLR v3 task for ant from:
+    http://www.antlr3.org/share/list.html
+
+Extract the contents of the zip file and copy the file ant-antlr3.jar into
+your ANT lib directory.
+
+Ensure you have both your AS_HOME and ANT_HOME environment variables set.
+Change to the AS_HOME/examples/java/JDBCDriver directory and type:
+    ant grammar -verbose
+
+This will build the grammar in a temporary 'grammar' directory and if the build
+is successful, it will then copy the resulting Lexer and Parser files into the
+AS_HOME/examples/java/JDBCDriver/src/com/tibco/as/sql/grammar directory.
+
+
+SQL Command Overview
+--------------------
 As mentioned above, the following SQL commands are supported:
 
     - CREATE TABLE
@@ -212,52 +234,47 @@ For example:
     
 When you need to use a table name or column name that matches an SQL keyword, you should enclose the name in escaped
 double-quotes to allow the ANTLR parser to differentiate between the keyword and the name. For example:
-```
-CREATE TABLE myspace (\"key\" INTEGER NOT NULL, value VARCHAR, \"time\" DATETIME, PRIMARY KEY (\"key\"))
-```
 
-## CREATE TABLE Basic Syntax
+    CREATE TABLE myspace (\"key\" INTEGER NOT NULL, value VARCHAR, \"time\" DATETIME, PRIMARY KEY (\"key\"))
 
+
+CREATE TABLE Basic Syntax
+-------------------------
 CREATE TABLE is used to define a TIBCO ActiveSpaces space, which is the equivalent of a database table.
 Since an ActiveSpaces space is defined using specific space properties other than the normal field definitions
 of a database table, the CREATE TABLE syntax has been extended to allow users to specify space properties.
 
 Basic Syntax:
-```
-CREATE  TABLE  <table_name>   (  <table_element>   [,  <table_element>  ]...  )
-``` 
+
+    CREATE  TABLE  <table_name>   (  <table_element>   [,  <table_element>  ]...  ) 
     
 Where:
-```
+
   <table_element> =
       <column_name>  <column_type>  [ NOT NULL]  [PRIMARY KEY]
-```
      
 Or:
-```
+
   <table_element> = 
       [CONSTRAINT Identifier]  PRIMARY KEY  [ <key_type>  ]   ( <column_name>  [,  <column_name> ]...  )
-```
 Or:
-```
+
   <table_element> = 
-      INDEX  <table_index_name>   [ <key_type> ]  ( <column_name>  [, <column_name> ]...  )
-``` 
+      INDEX  <table_index_name>   [ <key_type> ]  ( <column_name>  [, <column_name> ]...  ) 
 
 Example:
-```
-    CREATE TABLE mytable (name VARCHAR(255) NOT NULL, age INTEGER, city VARCHAR(255), zipcode INTEGER, income REAL, PRIMARY KEY (name), INDEX age ( age))
-```     
+
+    CREATE TABLE mytable (name VARCHAR(255) NOT NULL, age INTEGER, city VARCHAR(255), zipcode INTEGER, income REAL, PRIMARY KEY (name), INDEX age ( age)) 
     
 Notes:
 
 CONSTRAINT Identifier is ignored, if specified, but is allowed by the grammar in order to be compatible with other 
 common SQL syntax variations.
 
-`<key_type>` is an ActiveSpaces extension to allow the setting of the type of index to generate.  For key fields, 
+<key_type> is an ActiveSpaces extension to allow the setting of the type of index to generate.  For key fields, 
 ActiveSpaces by default will automatically generate an index of type HASH which speeds up queries where the filter 
 is an exact match (ë=í operator). Regular indexes are created with a default index type of TREE. TREE indexes speed
-up queries where the filter is a range match (ë>í, ë<í, ë>=í, ë<=í operators). The `<key_type>` extension allows you
+up queries where the filter is a range match (ë>í, ë<í, ë>=í, ë<=í operators). The <key_type> extension allows you
 to control which type of index is created to suit your particular needs. 
 
 Columns in a table are the equivalent of ActiveSpaces fields in a space. ActiveSpaces does not support all of the
@@ -296,36 +313,43 @@ The implementation of an ActiveSpaces field type may be different from the SQL c
 the ActiveSpaces field types, see the ActiveSpaces documentation. 
 
 
-## CREATE TABLE Extended Syntax
-
+CREATE TABLE Extended Syntax
+----------------------------
 An extended form of the CREATE TABLE syntax is available which additionally allows setting the properties of a space.
 If not specified, the normal ActiveSpaces default for these properties will be used.
 
 Extended Syntax:
-```
+
     CREATE  TABLE  <table_name>   ( <table_element>  [, <table_element>]...  )  [ <space_property>  =  <value> [,  <space_property>  =  <value> ]...
-```
     
-Where `<space_property>` can be any of the following (case insensitive):
+Where <space_property> can be any of the following (case insensitive):
 
     capacity
+    cache_policy
     distribution_policy
     eviction_policy
+    file_sync_interval
+    forget_old_value
+    host_aware_replication
     lock_scope
     lock_TTL
+    lock_wait
     min_seeders
     persistence_policy
     persistence_type
     phase_count
     phase_interval
+    query_limit
+    query_timeout
     read_timeout
     replication_count
     replication_policy
+    routed
     space_wait
     ttl
-    update_transport
+    virtual_node_count
     write_timeout
-    
+
 See the ActiveSpaces documentation for the valid values for these properties.
 
 Example:
@@ -333,103 +357,124 @@ Example:
     CREATE TABLE mytable (name VARCHAR(255) NOT NULL, age INTEGER, city VARCHAR(255), zipcode INTEGER, income REAL, PRIMARY KEY (name, age), INDEX income ( income)) DISTRIBUTION_POLICY distributed, TTL -1, REPLICATION_COUNT 1
 
 
-## INSERT Command
-
+INSERT Command
+--------------
 The INSERT command is used to add data into a space. If an entry already exists in the space, an error will be returned.
 
 Syntax:
-```
+
     INSERT  INTO  <table_name>  ( <column_name>  [,  <column_name> ]... )  VALUES  ( <column_value>  [, <column_value> ]...  )
-```
     
 Example:
-```
+
     INSERT INTO mytable (name, city) VALUES (ëJohn Doeí, ëDallasí)
-```
 
-## UPDATE Command
 
+UPDATE Command
+--------------
 The UPDATE command is used to modify the values of data which already resides in the space.
 
 Syntax:
-```
+
     UPDATE  <table_name>  SET  ( <column_name> = <column_value>  [, <column_name> = <column_value> ]... )  WHERE  [ <where_condition> ]
-```
 Example:
-```
+
     UPDATE mytable SET age=80 WHERE name = ëGeorge Washingtoní
-``` 
+    
 Notes:
-If a `<where_condition>` is not specified, all entries in the table will be updated.
-Currently the `<where_condition>` is not parsed but is used in its entirety as a filter for browsing the space entries.
-Therefore, the `<where_condition>` cannot handle things like embedded SELECT queries and must be specified in such a way
+If a <where_condition> is not specified, all entries in the table will be updated.
+Currently the <where_condition> is not parsed but is used in its entirety as a filter for browsing the space entries.
+Therefore, the <where_condition> cannot handle things like embedded SELECT queries and must be specified in such a way
 that ActiveSpaces will be able to properly use it as a filter. See the ActiveSpaces documentation for information on
 how to format filter strings. The one exception for specifying a where clause is that the value for strings should be
 specified with single qutoes to follow SQL syntax rules as opposed to double quotes which is the normal ActiveSpaces
 filter syntax rule.
 
 
-## DELETE Command
-
+DELETE Command
+--------------
 The DELETE command is used to remove entries from a space.
 
 Syntax:
-```
+
     DELETE  FROM  <table_name>  WHERE  [ <where_condition>  ]
-```    
+    
 Example:
-```
+
     DELETE FROM mytable WHERE name = 'Joe Smith'
-``` 
+    
 Notes:
-If a `<where_condition>` is not specified, all entries in the table will be deleted.
-Currently the `<where_condition>` is not parsed but is used in its entirety as a filter for browsing the space entries.
-Therefore, the `<where_condition>` cannot handle things like embedded SELECT queries and must be specified in such a way
+If a <where_condition> is not specified, all entries in the table will be deleted.
+Currently the <where_condition> is not parsed but is used in its entirety as a filter for browsing the space entries.
+Therefore, the <where_condition> cannot handle things like embedded SELECT queries and must be specified in such a way
 that ActiveSpaces will be able to properly use it as a filter. See the ActiveSpaces documentation for information on how
 to format filter strings. The one exception for specifying a where clause is that the value for strings should be specified
 with single qutoes to follow SQL syntax rules as opposed to double quotes which is the normal ActiveSpaces filter syntax rule.
 
 
-## SELECT Command
-
+SELECT Command
+--------------
 The SELECT Command is used for retrieving data from a space.
 
 Syntax:
-```
+
     SELECT  [ <select_quantifier> ]  <select_list>  FROM  <table_list>  [ <where_condition> ]
-```    
+    
 Where:
 
-  `<select_quantifier>` is currently ignored but allowed values are ALL or DISTINCT
+  <select_quantifier> is currently ignored but allowed values are ALL or DISTINCT
   
-  `<select_list>`  can be any of:
-
-* `*` (Asterisk, meaning all columns)
-* `<table_name>.*`  (meaning all columns of the specified table, the table must also be in the FROM table list)
-* `<column_name>  [ AS  <column_alias>  ] [,  <column_name>  [ AS  <column_alias>  ] ]...`   (use when only a single table is in the FROM table list)
-* `<table_name>.<column_name>  [ AS  <column_alias>  ]  [,  <table_name>.<column_name>  [ AS  <column_alias>  ]  ]...`  (use when multiple tables are specified in the FROM table list)
+  <select_list>  can be any of:
+      -    * (Asterisk, meaning all columns)
+      -    <table_name>.*  (meaning all columns of the specified table, the table must also be in the FROM table list)
+      -    <column_name>  [ AS  <column_alias>  ] [,  <column_name>  [ AS  <column_alias>  ] ]...   (use when only a single table is in the FROM table list)
+      -    <table_name>.<column_name>  [ AS  <column_alias>  ]  [,  <table_name>.<column_name>  [ AS  <column_alias>  ]  ]...  (use when multiple tables are specified in the FROM table list)
       
-  `<table_list>` has the format:
-```
+  <table_list> has the format:
       <table_name>  [,  <table_name>  ]...
-```      
+      
 Examples:
-```
+
     SELECT * FROM mytable
     SELECT * FROM mytable WHERE field1 = ësuccessí
     SELECT firstname, lastname FROM mytable
     SELECT firstname, lastname FROM table1, table2 (table2 is ignored, use qualified column names when there are multiple tables)
     SELECT table1.name, table2.address FROM table1, table2  (null values will be filled in for missing values if one table is larger than the other)
     SELECT table1.name AS table1name, table2.address AS table2address FROM table1, table2  (results of select statement are retrieved from the ResultSet object using the specified column alias names)
-```    
+    
 Notes:
 When multiple FROM tables are listed, the dot notation for specifying the columns to retrieve is required even if a column is
 only present in one of the tables.
-If a `<where_condition>` is not specified, all entries in the table will be selected.
-Currently the `<where_condition>` is not parsed but is used in its entirety as a filter for browsing the space entries. Therefore,
-the `<where_condition>` cannot handle things like embedded SELECT queries and must be specified in such a way that ActiveSpaces
+If a <where_condition> is not specified, all entries in the table will be selected.
+Currently the <where_condition> is not parsed but is used in its entirety as a filter for browsing the space entries. Therefore,
+the <where_condition> cannot handle things like embedded SELECT queries and must be specified in such a way that ActiveSpaces
 will be able to properly use it as a filter. See the ActiveSpaces documentation for information on how to format filter strings.
 The one exception for specifying a where clause is that the value for strings should be specified with single qutoes to follow
 SQL syntax rules as opposed to double quotes which is the normal ActiveSpaces filter syntax rule.
+
+Limiting The Number of SELECT Results
+-------------------------------------
+By default, the AS JDBC driver will use an ActiveSpaces CURRENT browser for retrieving data from a space/table when a SELECT
+command is issued. The CURRENT browser ignores any query limit setting, so the number of rows returned for the SELECT command
+will not be limited.
+
+To limit the number of rows returned for a SELECT command, Statement.setMaxRows() should be invoked prior to issuing a
+SELECT command.
+
+When max rows is set to 0, no limit is applied to the number of rows returned for a SELECT command.
+
+If max rows is set to a number other than 0, the SELECT command will use a SNAPSHOT browser instead of a CURRENT browser.
+
+If max rows is greater than 0, the number of rows returned for a SELECT command will be limited to what has been specified 
+for max rows.
+
+If max rows is set to -1, the number of rows returned for a SELECT command will be limited to the query limit setting of 
+the space/table. When a space/table is created, the default query limit is set to 10,000. This value can be changed by
+specifying the QUERY_LIMIT property in the CREATE command. For example,
+
+    CREATE TABLE mytable (name VARCHAR(255) NOT NULL PRIMARY KEY, age INTEGER, city VARCHAR(255), zipcode INTEGER,
+        INDEX age hash (name, age)) QUERY_LIMIT 1000
+```
+
 
 

@@ -1,11 +1,12 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
 // -------------------------------------------------------------------
 package com.tibco.as.sql;
 
+import java.sql.Blob;
 import java.sql.Date;
 import java.sql.SQLDataException;
 import java.sql.SQLException;
@@ -27,63 +28,63 @@ public class ASSQLResult
 {
     // the simplest result just contains the count of rows affected by an SQL query statement
     // the name of the table/space, and the columns in the row which were affected
-    protected int                   queryUpdateCount = -1;
-    protected List<String>          queryColumnNames;
-    protected List<Tuple>           queryColumnInfo;
+    protected int                   m_queryUpdateCount = -1;
+    protected List<String>          m_queryColumnNames;
+    protected List<Tuple>           m_queryColumnInfo;
 
     // results which return data contain the table/space information, the rows of data (contained
     // in the AS browser or an ArrayList for simple queries which can be performed as gets), the
     // name and type of each column
-    protected List<String>          querySpaceNames;
-    protected List<Browser>         queryBrowserList;
-    protected SpaceResultList       queryTupleList;
-    protected Map<String, FieldDef> queryColumnSpec;
+    protected List<String>          m_querySpaceNames;
+    protected List<Browser>         m_queryBrowserList;
+    protected SpaceResultList       m_queryTupleList;
+    protected Map<String, FieldDef> m_queryColumnSpec;
 
-    protected ASSQLTuple            currentTuple;
-    protected boolean               queryBeforeFirst = true;
-    protected boolean               queryAfterLast   = false;
-    protected boolean               queryIsFirst     = false;
+    protected ASSQLTuple            m_currentTuple;
+    protected boolean               m_queryBeforeFirst = true;
+    protected boolean               m_queryAfterLast   = false;
+    protected boolean               m_queryIsFirst     = false;
 
     public ASSQLResult (String spaceName, int updateCount, List<Tuple> cinfo, Map<String, FieldDef> cspec)
     {
         // constructor used when SQL query statements do not return data from the database
-        querySpaceNames = new ArrayList<String>();
-        querySpaceNames.add(spaceName);
-        queryUpdateCount = updateCount;
-        queryColumnInfo = cinfo;
-        queryColumnNames = getColumnNameList(cinfo);
-        queryColumnSpec = cspec;
+        m_querySpaceNames = new ArrayList<String>();
+        m_querySpaceNames.add(spaceName);
+        m_queryUpdateCount = updateCount;
+        m_queryColumnInfo = cinfo;
+        m_queryColumnNames = getColumnNameList(cinfo);
+        m_queryColumnSpec = cspec;
     }
 
     public ASSQLResult (List<String> snames, List<Browser> browsers, List<Tuple> cinfo, Map<String, FieldDef> cspec)
     {
-        querySpaceNames = snames;
-        queryBrowserList = browsers;
-        queryColumnInfo = cinfo;
-        queryColumnSpec = cspec;
-        queryColumnNames = new ArrayList<String>();
-        int csize = queryColumnInfo.size();
+        m_querySpaceNames = snames;
+        m_queryBrowserList = browsers;
+        m_queryColumnInfo = cinfo;
+        m_queryColumnSpec = cspec;
+        m_queryColumnNames = new ArrayList<String>();
+        int csize = m_queryColumnInfo.size();
         for (int i = 0; i < csize; i++)
         {
-            Tuple tuple = queryColumnInfo.get(i);
+            Tuple tuple = m_queryColumnInfo.get(i);
             String calias = tuple.getString(ASSQLUtils.COLUMN_ALIAS);
-            queryColumnNames.add(calias);
+            m_queryColumnNames.add(calias);
         }
     }
 
     public ASSQLResult (List<String> snames, SpaceResultList tuples, List<Tuple> cinfo, Map<String, FieldDef> cspec)
     {
-        querySpaceNames = snames;
-        queryTupleList = tuples;
-        queryColumnInfo = cinfo;
-        queryColumnSpec = cspec;
-        queryColumnNames = new ArrayList<String>();
-        int csize = queryColumnInfo.size();
+        m_querySpaceNames = snames;
+        m_queryTupleList = tuples;
+        m_queryColumnInfo = cinfo;
+        m_queryColumnSpec = cspec;
+        m_queryColumnNames = new ArrayList<String>();
+        int csize = m_queryColumnInfo.size();
         for (int i = 0; i < csize; i++)
         {
-            Tuple tuple = queryColumnInfo.get(i);
+            Tuple tuple = m_queryColumnInfo.get(i);
             String calias = tuple.getString(ASSQLUtils.COLUMN_ALIAS);
-            queryColumnNames.add(calias);
+            m_queryColumnNames.add(calias);
         }
     }
 
@@ -91,11 +92,11 @@ public class ASSQLResult
     {
         try
         {
-            if (queryBrowserList != null && !queryBrowserList.isEmpty())
+            if (m_queryBrowserList != null && !m_queryBrowserList.isEmpty())
             {
-                int bsize = queryBrowserList.size();
+                int bsize = m_queryBrowserList.size();
                 for (int i = 0; i < bsize; i++)
-                    queryBrowserList.get(i).stop();
+                    m_queryBrowserList.get(i).stop();
             }
         }
         catch (ASException ex)
@@ -106,36 +107,36 @@ public class ASSQLResult
 
     public int getQueryUpdateCount ()
     {
-        return queryUpdateCount;
+        return m_queryUpdateCount;
     }
 
     public List<String> getQueryColumnNames ()
     {
-        return queryColumnNames;
+        return m_queryColumnNames;
     }
 
     public List<Tuple> getQueryColumnInfo ()
     {
-        return queryColumnInfo;
+        return m_queryColumnInfo;
     }
 
     public Map<String, FieldDef> getQueryColumnSpec ()
     {
-        return queryColumnSpec;
+        return m_queryColumnSpec;
     }
 
     public boolean checkPosition ()
     {
         boolean result = false;
-        if ((queryTupleList != null || (queryBrowserList != null && !queryBrowserList.isEmpty()))
-                && currentTuple != null)
+        if ((m_queryTupleList != null || (m_queryBrowserList != null && !m_queryBrowserList.isEmpty()))
+                && m_currentTuple != null)
             result = true;
         return result;
     }
 
     public boolean wasLastValueNull ()
     {
-        return currentTuple.wasLastValueNull();
+        return m_currentTuple.wasLastValueNull();
     }
 
     /**
@@ -143,7 +144,7 @@ public class ASSQLResult
      */
     public boolean isBeforeFirst ()
     {
-        return queryBeforeFirst;
+        return m_queryBeforeFirst;
     }
 
     /**
@@ -151,7 +152,7 @@ public class ASSQLResult
      */
     public boolean isAfterLast ()
     {
-        return queryAfterLast;
+        return m_queryAfterLast;
     }
 
     /**
@@ -159,7 +160,7 @@ public class ASSQLResult
      */
     public boolean isFirst ()
     {
-        return queryIsFirst;
+        return m_queryIsFirst;
     }
 
     /**
@@ -180,28 +181,32 @@ public class ASSQLResult
 
         // queryTupleList will be non-null when we were able to do a get on a single
         // space instead of having to create browsers to browse for tuples
-        if (queryTupleList != null && !queryTupleList.isEmpty())
+        if (m_queryTupleList != null && !m_queryTupleList.isEmpty())
         {
-            // get the first tuple in the results list and add it to our
-            // tupleList, then remove it from the results list
-            SpaceResult sresult = queryTupleList.get(0);
-            Tuple tuple = sresult.getTuple();
-            if (tuple != null)
+            int rsize = m_queryTupleList.size();
+            for (int i=0; i<rsize; i++)
             {
-                tupleList.add(tuple);
-                queryTupleList.remove(0);
+                // get the first tuple in the results list and add it to our
+                // tupleList, then remove it from the results list
+                SpaceResult sresult = m_queryTupleList.get(0);
+                Tuple tuple = sresult.getTuple();
+                if (tuple != null)
+                {
+                    tupleList.add(tuple);
+                    m_queryTupleList.remove(0);
+                }
             }
         }
-        else if (queryBrowserList != null && !queryBrowserList.isEmpty())
+        else if (m_queryBrowserList != null && !m_queryBrowserList.isEmpty())
         {
             // we have a list of spaces and we have a list of corresponding browsers
             // now get the next tuple from each browser
             // we end up with a list of tuples which have a 1-to-1 correspondence to
             // the list of spaces
-            int bsize = queryBrowserList.size();
+            int bsize = m_queryBrowserList.size();
             for (int i = 0; i < bsize; i++)
             {
-                Browser browser = queryBrowserList.get(i);
+                Browser browser = m_queryBrowserList.get(i);
                 try
                 {
                     Tuple tuple = browser.next();
@@ -226,25 +231,25 @@ public class ASSQLResult
         }
         if (isTupleListEmpty(tupleList))
         {
-            currentTuple = null;
-            queryBeforeFirst = false;
-            queryIsFirst = false;
-            queryAfterLast = true;
+            m_currentTuple = null;
+            m_queryBeforeFirst = false;
+            m_queryIsFirst = false;
+            m_queryAfterLast = true;
             tupleList.clear();
         }
         else
         {
             try
             {
-                currentTuple = new ASSQLTuple(querySpaceNames, tupleList, queryColumnInfo, queryColumnSpec);
-                if (queryBeforeFirst)
+                m_currentTuple = new ASSQLTuple(m_querySpaceNames, tupleList, m_queryColumnInfo, m_queryColumnSpec);
+                if (m_queryBeforeFirst)
                 {
-                    queryIsFirst = true;
-                    queryBeforeFirst = false;
+                    m_queryIsFirst = true;
+                    m_queryBeforeFirst = false;
                 }
                 else
                 {
-                    queryIsFirst = false;
+                    m_queryIsFirst = false;
                 }
                 result = true;
             }
@@ -260,91 +265,98 @@ public class ASSQLResult
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getObject(fieldName);
+        return m_currentTuple.getObject(fieldName);
     }
 
     public String getString (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getString(fieldName);
+        return m_currentTuple.getString(fieldName);
     }
 
     public Boolean getBoolean (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getBoolean(fieldName);
+        return m_currentTuple.getBoolean(fieldName);
     }
 
     public byte getByte (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getByte(fieldName);
+        return m_currentTuple.getByte(fieldName);
     }
 
     public short getShort (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getShort(fieldName);
+        return m_currentTuple.getShort(fieldName);
     }
 
     public int getInt (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getInt(fieldName);
+        return m_currentTuple.getInt(fieldName);
     }
 
     public long getLong (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getLong(fieldName);
+        return m_currentTuple.getLong(fieldName);
     }
 
     public float getFloat (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getFloat(fieldName);
+        return m_currentTuple.getFloat(fieldName);
     }
 
     public double getDouble (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getDouble(fieldName);
+        return m_currentTuple.getDouble(fieldName);
     }
 
     public byte[] getBytes (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getBytes(fieldName);
+        return m_currentTuple.getBytes(fieldName);
     }
 
     public Date getDate (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getDate(fieldName);
+        return m_currentTuple.getDate(fieldName);
     }
 
     public Time getTime (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getTime(fieldName);
+        return m_currentTuple.getTime(fieldName);
     }
 
     public Timestamp getTimestamp (String fieldName) throws SQLException
     {
         checkFieldName(fieldName);
         checkCurrentTuple();
-        return currentTuple.getTimestamp(fieldName);
+        return m_currentTuple.getTimestamp(fieldName);
+    }
+
+    public Blob getBlob (String fieldName) throws SQLException
+    {
+        checkFieldName(fieldName);
+        checkCurrentTuple();
+        return m_currentTuple.getBlob(fieldName);
     }
 
     /* -- Internal methods -- */
@@ -366,13 +378,13 @@ public class ASSQLResult
     {
         if (fieldName == null)
             throw new SQLDataException("Missing field name parameter.");
-        if (!queryColumnNames.contains(fieldName))
+        if (!m_queryColumnNames.contains(fieldName))
             throw new SQLDataException("Invalid field name used.");
     }
 
     private final void checkCurrentTuple () throws SQLException
     {
-        if (currentTuple == null)
+        if (m_currentTuple == null)
             throw new SQLDataException("No data to read.");
     }
 

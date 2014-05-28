@@ -14,14 +14,25 @@ import com.tibco.as.space.Tuple;
 }
 
 @members {
+    // Table information <table_name, table_correlationName>
+    private List<Tuple> tableInfo = new ArrayList<Tuple>();
+    private void addTableInfo(String tname, String correlationName)
+    {
+        Tuple tableTuple = Tuple.create();
+        tableTuple.put(ASSQLUtils.TABLE_NAME, tname);
+        tableTuple.put(ASSQLUtils.TABLE_CORRELATION_NAME, correlationName);
+        tableInfo.add(tableTuple);
+    }
+    
     // Column information <column_name, table_name, alias>
     private List<Tuple> columnInfo = new ArrayList<Tuple>();
-    private void addColumnInfo(String cname, String tname, String calias)
+    private void addColumnInfo(String cname, String tname, String calias, String fname)
     {
         Tuple columnTuple = Tuple.create();
         columnTuple.put(ASSQLUtils.COLUMN_NAME, cname);
         columnTuple.put(ASSQLUtils.TABLE_NAME, tname);
         columnTuple.put(ASSQLUtils.COLUMN_ALIAS, calias);
+        columnTuple.put(ASSQLUtils.COLUMN_FUNCTION, fname);
         columnInfo.add(columnTuple);
     }
     
@@ -143,7 +154,7 @@ selectStatement returns [SelectStatement expr]
       //(order_clause)?
       //(update_clause)?
       {
-          return new SelectStatement($select_quantifier.text, columnInfo, $table_reference_list.tableNames, $where_condition.arg);
+          return new SelectStatement($select_quantifier.text, columnInfo, tableInfo, $where_condition.arg);
       }
     ;
 
@@ -211,6 +222,8 @@ column_value
     |   NegativeNumber
     |   Float
     |   NULL
+    |   TRUE
+    |   FALSE
     ;
 
 endStmnt
@@ -231,45 +244,51 @@ relation returns [String arg]
     : a=rterm type=(Equals | NotEquals | GThan | GTEquals | LThan | LTEquals) b=rterm {$arg = $a.text + $type.text + $b.text;}
     | c=relation_null {$arg = $c.arg;}
     | d=relation_not {$arg = $d.arg;}
+    | e=relation_in {$arg = $e.arg;}
+    ;
+
+relation_in returns [String arg]
+    : rterm IN OParen rterm_list CParen { $arg = $rterm.text + " IN (" + $rterm_list.text + ")"; }
     ;
 
 relation_null returns [String arg]
-    : Identifier IS_NULL {$arg = $Identifier.text + " IS NULL";}
-    | Identifier IS_NOT_NULL {$arg = $Identifier.text + " IS NOT NULL";}
+    : a=rterm_identifier IS_NULL {$arg = $a.text + " IS NULL";}
+    | b=rterm_identifier IS_NOT_NULL {$arg = $b.text + " IS NOT NULL";}
     ;
 
 relation_not returns [String arg]
-    : a=Identifier NOT b=column_value {$arg = $a.text + " NOT " + $b.text;} (NOR c=column_value {$arg += " NOR " + $c.text;})?
+    : a=rterm_identifier NOT b=column_value {$arg = $a.text + " NOT " + $b.text;} (NOR c=column_value {$arg += " NOR " + $c.text;})?
     ;
             
 rterm_list
     : rterm (Comma rterm)*
     ;
 
+rterm_identifier
+    : (table_name Dot)? Identifier
+    ;
+
 rterm
-    : Identifier
+    : rterm_identifier
     | QMark
     | column_value
     ;
-
-schema_name
-    : Identifier
-    ;
         
 select_column returns [String cname, String tname, String calias]
-    : (table_name Dot { $tname = $table_name.text; } )? column_name { $cname = $column_name.text; }
+    : (table_name Dot { $tname = $table_name.text; } )?
+      column_name { $cname = $column_name.text; }
       (AS alias { $calias = $alias.text; })?
     ;
 
 select_column_list
-    : a=select_column { addColumnInfo($a.cname, $a.tname, $a.calias); }
-      (Comma b=select_column { addColumnInfo($b.cname, $b.tname, $b.calias); })*
+    : a=select_column { addColumnInfo($a.cname, $a.tname, $a.calias, null); }
+      (Comma b=select_column { addColumnInfo($b.cname, $b.tname, $b.calias, null); })*
     ;
 
 select_list
-    : Asterisk { addColumnInfo($Asterisk.text,null,null); }
-    | a=table_name Dot b=Asterisk { addColumnInfo($b.text, $a.text, null); }
-      (Comma c=table_name Dot d=Asterisk { addColumnInfo($d.text, $c.text, null); })*
+    : (fn=COUNT OParen)? Asterisk (CParen)? { addColumnInfo($Asterisk.text, null, null, $fn.text); }
+    | a=table_name Dot b=Asterisk { addColumnInfo($b.text, $a.text, null, null); }
+      (Comma c=table_name Dot d=Asterisk { addColumnInfo($d.text, $c.text, null, null); })*
     | select_column_list
     ;
 
@@ -284,8 +303,12 @@ set_clause returns [String cname, String cvalue]
 
 space_property returns [String key, String value]
     : (   space_capacity { $key = $space_capacity.key; $value = $space_capacity.value; }
+        | space_cache_policy { $key = $space_cache_policy.key; $value = $space_cache_policy.value; }
         | space_distribution_policy { $key = $space_distribution_policy.key; $value = $space_distribution_policy.value; }
         | space_eviction_policy { $key = $space_eviction_policy.key; $value = $space_eviction_policy.value; }
+        | space_file_sync_interval { $key = $space_file_sync_interval.key; $value = $space_file_sync_interval.value; }
+        | space_forget_old_value { $key = $space_forget_old_value.key; $value = $space_forget_old_value.value; }
+        | space_host_aware_replication { $key = $space_host_aware_replication.key; $value = $space_host_aware_replication.value; }
         | space_lock_scope { $key = $space_lock_scope.key; $value = $space_lock_scope.value; }
         | space_lock_ttl { $key = $space_lock_ttl.key; $value = $space_lock_ttl.value; }
         | space_lock_wait { $key = $space_lock_wait.key; $value = $space_lock_wait.value; }
@@ -294,11 +317,15 @@ space_property returns [String key, String value]
         | space_persistence_type { $key = $space_persistence_type.key; $value = $space_persistence_type.value; }
         | space_phase_count { $key = $space_phase_count.key; $value = $space_phase_count.value; }
         | space_phase_interval { $key = $space_phase_interval.key; $value = $space_phase_interval.value; }
+        | space_query_limit { $key = $space_query_limit.key; $value = $space_query_limit.value; }
+        | space_query_timeout { $key = $space_query_timeout.key; $value = $space_query_timeout.value; }
         | space_read_timeout { $key = $space_read_timeout.key; $value = $space_read_timeout.value; }
         | space_replication_count { $key = $space_replication_count.key; $value = $space_replication_count.value; }
         | space_replication_policy { $key = $space_replication_policy.key; $value = $space_replication_policy.value; }
+        | space_routed { $key = $space_routed.key; $value = $space_routed.value; }
         | space_ttl { $key = $space_ttl.key; $value = $space_ttl.value; }
         | space_update_transport { $key = $space_update_transport.key; $value = $space_update_transport.value; }
+        | space_virtual_node_count { $key = $space_virtual_node_count.key; $value = $space_virtual_node_count.value; }
         | space_wait { $key = $space_wait.key; $value = $space_wait.value; }
         | space_write_timeout { $key = $space_write_timeout.key; $value = $space_write_timeout.value; }
       )
@@ -308,17 +335,41 @@ space_capacity returns [String key, String value]
     @init { $key = CreateStatement.CAPACITY; }
     : CAPACITY ( NegativeNumber { $value = $NegativeNumber.text; } | PositiveNumber { $value = $PositiveNumber.text; } )
     ;
+
+space_cache_policy returns [String key, String value]
+    @init { $key = CreateStatement.CACHE_POLICY; }
+    : CACHE_POLICY READ_WRITE_THROUGH { $value = $READ_WRITE_THROUGH.text.toLowerCase(); }
+    | CACHE_POLICY READ_THROUGH { $value = $READ_THROUGH.text.toLowerCase(); }
+    ;
+
      
 space_distribution_policy returns [String key, String value]
     @init { $key = CreateStatement.DISTRIBUTION_POLICY; }
-    : DISTRIBUTION_POLICY a=DISTRIBUTED { $value = $a.text.toLowerCase(); }
-    | DISTRIBUTION_POLICY b=NON_DISTRIBUTED { $value = $b.text.toLowerCase(); }
+    : DISTRIBUTION_POLICY DISTRIBUTED { $value = $DISTRIBUTED.text.toLowerCase(); }
+    | DISTRIBUTION_POLICY NON_DISTRIBUTED { $value = $NON_DISTRIBUTED.text.toLowerCase(); }
     ;
     
 space_eviction_policy returns [String key, String value]
     @init { $key = CreateStatement.EVICTION_POLICY; }
     : EVICTION_POLICY NONE { $value = $NONE.text.toLowerCase(); }
     | EVICTION_POLICY LRU { $value = $LRU.text.toLowerCase(); }
+    ;
+
+space_file_sync_interval returns [String key, String value]
+    @init { $key = CreateStatement.FILE_SYNC_INTERVAL; }
+    : FILE_SYNC_INTERVAL ( NegativeNumber { $value = $NegativeNumber.text; } | PositiveNumber { $value = $PositiveNumber.text; } )
+    ;
+
+space_forget_old_value returns [String key, String value]
+    @init { $key = CreateStatement.FORGET_OLD_VALUE; }
+    : FORGET_OLD_VALUE TRUE { $value = $TRUE.text.toLowerCase(); }
+    | FORGET_OLD_VALUE FALSE { $value = $FALSE.text.toLowerCase(); }
+    ;
+
+space_host_aware_replication returns [String key, String value]
+    @init { $key = CreateStatement.HOST_AWARE_REPLICATION; }
+    : HOST_AWARE_REPLICATION TRUE { $value = $TRUE.text.toLowerCase(); }
+    | HOST_AWARE_REPLICATION FALSE { $value = $FALSE.text.toLowerCase(); }
     ;
 
 space_lock_scope returns [String key, String value]
@@ -356,7 +407,6 @@ space_persistence_type returns [String key, String value]
     | PERSISTENCE_TYPE d=NONE { $value = $d.text.toLowerCase(); }
     | PERSISTENCE_TYPE e=(SHARED_ALL) { $value = $e.text.toLowerCase(); }
     | PERSISTENCE_TYPE f=(SHARED_NOTHING) { $value = $f.text.toLowerCase(); }
-
     ;
 
 space_phase_count returns [String key, String value]
@@ -367,6 +417,16 @@ space_phase_count returns [String key, String value]
 space_phase_interval returns [String key, String value]
     @init { $key = CreateStatement.PHASE_INTERVAL; }
     : PHASE_INTERVAL PositiveNumber { $value = $PositiveNumber.text; }
+    ;
+
+space_query_limit returns [String key, String value]
+    @init { $key = CreateStatement.QUERY_LIMIT; }
+    : QUERY_LIMIT ( NegativeNumber { $value = $NegativeNumber.text; } | PositiveNumber { $value = $PositiveNumber.text; } )
+    ;
+
+space_query_timeout returns [String key, String value]
+    @init { $key = CreateStatement.QUERY_TIMEOUT; }
+    : QUERY_TIMEOUT ( NegativeNumber { $value = $NegativeNumber.text; } | PositiveNumber { $value = $PositiveNumber.text; } )
     ;
 
 space_read_timeout returns [String key, String value]
@@ -385,6 +445,12 @@ space_replication_policy returns [String key, String value]
     | REPLICATION_POLICY ASYNC { $value = $ASYNC.text.toLowerCase(); }
     ;
 
+space_routed returns [String key, String value]
+    @init { $key = CreateStatement.ROUTED; }
+    : ROUTED TRUE { $value = $TRUE.text.toLowerCase(); }
+    | ROUTED FALSE { $value = $FALSE.text.toLowerCase(); }
+    ;
+
 space_ttl returns [String key, String value]
     @init { $key = CreateStatement.TTL; }
     : TTL ( NegativeNumber { $value = $NegativeNumber.text; } | PositiveNumber { $value = $PositiveNumber.text; } )
@@ -394,6 +460,11 @@ space_update_transport returns [String key, String value]
     @init { $key = CreateStatement.UPDATE_TRANSPORT; }
     : UPDATE_TRANSPORT UNICAST { $value = $UNICAST.text.toLowerCase(); }
     | UPDATE_TRANSPORT MULTICAST { $value = $MULTICAST.text.toLowerCase(); }
+    ;
+
+space_virtual_node_count returns [String key, String value]
+    @init { $key = CreateStatement.VIRTUAL_NODE_COUNT; }
+    : VIRTUAL_NODE_COUNT ( NegativeNumber { $value = $NegativeNumber.text; } | PositiveNumber { $value = $PositiveNumber.text; } )
     ;
 
 space_wait returns [String key, String value]
@@ -446,12 +517,11 @@ table_index_name
 table_name
     : Identifier
     ;
-
-table_reference_list returns [List<String> tableNames]
-    : {
-          $tableNames = new ArrayList<String>();
-      }
-      a=table_name {tableNames.add($a.text);}( Comma b=table_name {tableNames.add($b.text);})*
+    
+table_reference_list
+    : // first table name is the actual table name, second table name is a correlation name
+      a=table_name (b=table_name)? {addTableInfo($a.text, $b.text);}
+      ( Comma c=table_name (d=table_name)? {addTableInfo($c.text, $d.text);})*
     ;
 
 target_table returns [String arg]
@@ -466,7 +536,7 @@ where_condition returns [String arg]
     | e=where_relation OR f=where_relation_group {$arg = $e.arg + " OR " + $f.arg;}
     | g=where_relation_group OR h=where_relation_group {$arg = $g.arg + " OR " + $h.arg;}
     | i=where_relation_group AND j=where_relation_group {$arg = $i.arg + " AND " + $j.arg;}
-    | rterm IN OParen rterm_list CParen { $arg = $rterm.text + " IN (" + $rterm_list.text + ")"; }
+    | where_relation_set {$arg = $where_relation_set.arg;}
     ;
 
 where_relation returns [String arg]
@@ -479,6 +549,12 @@ where_relation_group returns [String arg]
     : OParen a=where_relation CParen {$arg = "(" + $a.arg + ")";}
     ;
 
+where_relation_set returns [String arg]
+    : OParen c=where_relation AND d=where_relation_group CParen {$arg = "(" + $c.arg + " AND " + $d.arg + ")";}
+    | OParen e=where_relation OR f=where_relation_group CParen {$arg = "(" + $e.arg + " OR " + $f.arg + ")";}
+    | OParen g=where_relation_group OR h=where_relation_group CParen {$arg = "(" + $g.arg + " OR " + $h.arg + ")";}
+    | OParen i=where_relation_group AND j=where_relation_group CParen {$arg = "(" + $i.arg + " AND " + $j.arg + ")";}
+    ;
 
 // lexer rules
 
@@ -521,10 +597,12 @@ BLOB         : B L O B;
 CHAR         : C H A R;
 CHAR1        : C H A R OParen '1' CParen;
 CONSTRAINT   : C O N S T R A I N T;
+COUNT        : C O U N T;
 DATE         : D A T E;
 DATETIME     : D A T E T I M E;
 DISTINCT     : D I S T I N C T;
 DOUBLE       : D O U B L E;
+FALSE        : F A L S E;
 FROM         : F R O M;
 IN           : I N;
 INDEX        : I N D E X;
@@ -543,6 +621,7 @@ SMALLINT     : S M A L L I N T;
 TABLE        : T A B L E;
 TIME         : T I M E;
 TIMESTAMP    : T I M E S T A M P;
+TRUE         : T R U E;
 VALUES       : V A L U E S;
 VARCHAR      : V A R C H A R;
 WHERE        : W H E R E;
@@ -550,10 +629,14 @@ WHERE        : W H E R E;
 // ActiveSpaces keywords
 ASYNC               : A S Y N C;
 CAPACITY            : C A P A C I T Y;
+CACHE_POLICY        : C A C H E '_' P O L I C Y;
 DISTRIBUTED         : D I S T R I B U T E D;
 DISTRIBUTION_POLICY : D I S T R I B U T I O N '_' P O L I C Y;
 EVICTION_POLICY     : E V I C T I O N '_' P O L I C Y;
+FILE_SYNC_INTERVAL  : F I L E '_' S Y N C '_' I N T E R V A L;
+FORGET_OLD_VALUE    : F O R G E T '_' O L D '_' V A L U E;
 HASH                : H A S H;
+HOST_AWARE_REPLICATION : H O S T '_' A W A R E '_' R E P L I C A T I O N;
 IS                  : I S;
 IS_NULL             : IS ' ' NULL;
 IS_NOT_NULL         : IS ' ' NOT ' ' NULL;
@@ -569,15 +652,20 @@ NONE                : N O N E;
 NOR                 : N O R;
 OFFSET              : O F F S E T;
 OR                  : O R;
-PHASE_COUNT         : P H A S E '_' C O U N T;
-PHASE_INTERVAL      : P H A S E '_' I N T E R V A L;
 PERSISTENCE         : P E R S I S T E N C E;
 PERSISTENCE_POLICY  : P E R S I S T E N C E '_' P O L I C Y;
 PERSISTENCE_TYPE    : P E R S I S T E N C E '_' T Y P E;
+PHASE_COUNT         : P H A S E '_' C O U N T;
+PHASE_INTERVAL      : P H A S E '_' I N T E R V A L;
 PROCESS             : P R O C E S S;
+QUERY_LIMIT         : Q U E R Y '_' L I M I T;
+QUERY_TIMEOUT       : Q U E R Y '_' T I M E O U T;
 READ_TIMEOUT        : R E A D '_' T I M E O U T;
+READ_THROUGH        : R E A D '_' T H R O U G H;
+READ_WRITE_THROUGH  : R E A D '_' W R I T E '_' T H R O U G H;
 REPLICATION_COUNT   : R E P L I C A T I O N '_' C O U N T;
 REPLICATION_POLICY  : R E P L I C A T I O N '_' P O L I C Y;
+ROUTED              : R O U T E D;
 SHARED_ALL          : S H A R E D '_' A L L;
 SHARED_NOTHING      : S H A R E D '_' N O T H I N G;
 SPACE_WAIT          : S P A C E '_' W A I T;
@@ -587,6 +675,7 @@ TREE                : T R E E;
 TTL                 : T T L;
 UNICAST             : U N I C A S T;
 UPDATE_TRANSPORT    : U P D A T E '_' T R A N S P O R T;
+VIRTUAL_NODE_COUNT  : V I R T U A L '_' N O D E '_' C O U N T;
 WRITE_TIMEOUT       : W R I T E '_' T I M E O U T;
 
 // Case-insensitive alpha characters

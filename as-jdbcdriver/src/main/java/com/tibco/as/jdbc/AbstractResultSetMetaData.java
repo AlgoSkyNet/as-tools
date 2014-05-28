@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -44,11 +44,6 @@ public class AbstractResultSetMetaData
     public boolean isSigned (int column) throws SQLException
     {
         return false;
-    }
-
-    public int getColumnDisplaySize (int column) throws SQLException
-    {
-        return 0;
     }
 
     public String getSchemaName (int column) throws SQLException

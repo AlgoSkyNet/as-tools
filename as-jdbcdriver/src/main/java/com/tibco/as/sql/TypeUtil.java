@@ -1,354 +1,27 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
 // -------------------------------------------------------------------
 package com.tibco.as.sql;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TimeZone;
+import java.nio.ByteBuffer;
+import java.sql.SQLDataException;
+import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 
-import com.tibco.as.space.DateTime;
 import com.tibco.as.space.FieldDef;
-import com.tibco.as.space.SpaceDef;
-import com.tibco.as.space.Tuple;
 import com.tibco.as.space.FieldDef.FieldType;
 
 public class TypeUtil
 {
-
-    public static void setTupleField (Tuple tuple, FieldDef fieldDef, String fieldName, Object fieldValue)
-            throws IllegalArgumentException
-    {
-        if (tuple == null)
-            throw new IllegalArgumentException("tuple parameter cannot be null");
-        if (fieldDef == null)
-            throw new IllegalArgumentException("fieldDef parameter cannot be null");
-        if (fieldName == null)
-            throw new IllegalArgumentException("fieldName parameter cannot be null");
-        boolean nullable = fieldDef.isNullable();
-        if (fieldValue == null && !nullable)
-            throw new IllegalArgumentException("Column " + fieldName + " cannot be null");
-        if (fieldValue == null && nullable)
-        {
-            // it is valid for this field to be null
-            // do nothing and return as we can't cast null below
-            return;
-        }
-
-        // now update the specified field's value
-        FieldType fieldType = fieldDef.getType();
-        switch (fieldType)
-        {
-            case STRING:
-            {
-                tuple.put(fieldName, (String) fieldValue);
-                break;
-            }
-
-            case CHAR:
-            {
-                tuple.put(fieldName, (Character) fieldValue);
-                break;
-            }
-
-            case BOOLEAN:
-            {
-                tuple.put(fieldName, (Boolean) fieldValue);
-                break;
-            }
-
-            case SHORT:
-            {
-                tuple.put(fieldName, (Short) fieldValue);
-                break;
-            }
-
-            case INTEGER:
-            {
-                tuple.put(fieldName, (Integer) fieldValue);
-                break;
-            }
-
-            case LONG:
-            {
-                tuple.put(fieldName, (Long) fieldValue);
-                break;
-            }
-
-            case FLOAT:
-            {
-                tuple.put(fieldName, (Float) fieldValue);
-                break;
-            }
-
-            case DOUBLE:
-            {
-                tuple.put(fieldName, (Double) fieldValue);
-                break;
-            }
-
-            case BLOB:
-            {
-                tuple.put(fieldName, (byte[]) fieldValue);
-                break;
-            }
-
-            case DATETIME:
-            {
-                try
-                {
-                    if (fieldValue instanceof String)
-                    {
-                        Date d = DateFormat.getInstance().parse((String) fieldValue);
-                        Calendar c = Calendar.getInstance();
-                        c.setTimeInMillis(d.getTime());
-                        DateTime dt = DateTime.create(c);
-
-                        tuple.putDateTime(fieldName, dt);
-                    }
-                    else if (fieldValue instanceof DateTime)
-                    {
-                        tuple.putDateTime(fieldName, (DateTime) fieldValue);
-                    }
-                    else
-                        throw new IllegalArgumentException("fieldValue contains invalid date value");
-                    break;
-                }
-                catch (ParseException ex)
-                {
-                    throw new IllegalArgumentException("fieldValue contains invalid date value");
-                }
-            }
-
-            default:
-                throw new UnsupportedOperationException("Unsupported type [" + fieldType + "]");
-        }
-    }
-
-    public static void setTupleField (Tuple tuple, FieldDef fieldDef, String fieldName, String fieldValue)
-            throws IllegalArgumentException
-    {
-        if (tuple == null)
-            throw new IllegalArgumentException("tuple parameter cannot be null");
-        if (fieldDef == null)
-            throw new IllegalArgumentException("fieldDef parameter cannot be null");
-        if (fieldName == null)
-            throw new IllegalArgumentException("fieldName parameter cannot be null");
-        boolean nullable = fieldDef.isNullable();
-        if (fieldValue == null && !nullable)
-            throw new IllegalArgumentException("fieldValue parameter cannot be null");
-        if (fieldValue.equalsIgnoreCase("null") && !nullable)
-            throw new IllegalArgumentException("fieldValue parameter cannot be null");
-        if ((fieldValue == null || fieldValue.equalsIgnoreCase("null")) && nullable)
-        {
-            // it is valid for this field to be null
-            // do nothing but return as if we had set the field
-            return;
-        }
-
-        FieldType fieldType = fieldDef.getType();
-        switch (fieldType)
-        {
-            case STRING:
-            {
-                String sval = stripQuotesFromString((String) fieldValue);
-                tuple.put(fieldName, sval);
-                break;
-            }
-
-            case BOOLEAN:
-            {
-                tuple.put(fieldName, Boolean.parseBoolean(fieldValue));
-                break;
-            }
-
-            case SHORT:
-            {
-                try
-                {
-                    tuple.put(fieldName, Short.parseShort(fieldValue));
-                    break;
-                }
-                catch (NumberFormatException ex)
-                {
-                    throw new IllegalArgumentException(
-                            "fieldValue parameter must be a String representing a Short number");
-                }
-            }
-
-            case INTEGER:
-            {
-                try
-                {
-                    tuple.put(fieldName, Integer.parseInt(fieldValue));
-                    break;
-                }
-                catch (NumberFormatException ex)
-                {
-                    throw new IllegalArgumentException(
-                            "fieldValue parameter must be a String representing an Integer number");
-                }
-            }
-
-            case LONG:
-            {
-                try
-                {
-                    tuple.put(fieldName, Long.parseLong(fieldValue));
-                    break;
-                }
-                catch (NumberFormatException ex)
-                {
-                    throw new IllegalArgumentException(
-                            "fieldValue parameter must be a String representing a Long number");
-                }
-            }
-
-            case FLOAT:
-            {
-                try
-                {
-                    tuple.put(fieldName, Float.parseFloat(fieldValue));
-                    break;
-                }
-                catch (NumberFormatException ex)
-                {
-                    throw new IllegalArgumentException(
-                            "fieldValue parameter must be a String representing a Float number");
-                }
-            }
-
-            case DOUBLE:
-            {
-                try
-                {
-                    tuple.put(fieldName, Double.parseDouble(fieldValue));
-                    break;
-                }
-                catch (NumberFormatException ex)
-                {
-                    throw new IllegalArgumentException(
-                            "fieldValue parameter must be a String representing a Double number");
-                }
-            }
-
-            case BLOB:
-            {
-                tuple.put(fieldName, fieldValue.getBytes());
-                break;
-            }
-
-            case DATETIME:
-            {
-                // The date string comes to us with surrounding double quotes put on
-                // by the grammar parser. AS needs those double quotes on strings in filters
-                // so we cannot have the grammar remove them. Therefore, we need to
-                // remove the double quotes here. Note: do not call stripQuotesFromString
-                // as that will leave the double quotes if a string contains a space
-                // which is not what we want for date/time strings.
-                int len = ((String) fieldValue).length();
-                String dateStr = ((String) fieldValue).substring(1, len - 1);
-
-                // we need to support several ways of entering the date and time
-                // SQL users will be used to entering the date and time one way and
-                // AS users will be used to entering the date and time another way
-
-                // first try typical SQL date and time
-                boolean found = false;
-                Date date = null;
-                DateFormat dformat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                try
-                {
-                    date = dformat.parse(dateStr);
-                    found = true;
-                }
-                catch (ParseException ex)
-                {
-                    // try parsing the string with with seconds added
-                    dformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                }
-                if (!found)
-                {
-                    try
-                    {
-                        date = dformat.parse(dateStr);
-                        found = true;
-                    }
-                    catch (ParseException ex)
-                    {
-                        // try parsing the string with time zone added
-                        dformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:sszzz");
-                    }
-                }
-                if (!found)
-                {
-                    try
-                    {
-                        date = dformat.parse(dateStr);
-                        found = true;
-                    }
-                    catch (ParseException ex)
-                    {
-                        // try parsing the string with how AS formats DateTime strings
-                        dformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                    }
-                }
-                if (!found)
-                {
-                    try
-                    {
-                        date = dformat.parse(dateStr);
-                        found = true;
-                    }
-                    catch (ParseException ex)
-                    {
-                        // try parsing the string with how AS formats DateTime strings for GMT
-                        dformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'GMT'");
-                        dformat.setTimeZone(TimeZone.getTimeZone("GMT"));
-                    }
-                }
-                if (!found)
-                {
-                    try
-                    {
-                        date = dformat.parse(dateStr);
-                    }
-                    catch (ParseException ex)
-                    {
-                        throw new IllegalArgumentException(
-                                "ParseException - invalid format for DateTime value specified: " + ex.getMessage());
-                    }
-                }
-                if (found)
-                {
-                    Calendar c = Calendar.getInstance();
-                    c.setTimeInMillis(date.getTime());
-                    DateTime dt = DateTime.create(c);
-                    tuple.putDateTime(fieldName, dt);
-                }
-                else
-                {
-                    throw new IllegalArgumentException("Unrecognized format for DateTime value: " + dateStr);
-                }
-                break;
-            }
-
-            default:
-                throw new UnsupportedOperationException("Unsupported type [" + fieldType + "]");
-        }
-    }
-
     public static int getSQLType (FieldDef fdef)
     {
-        int resultType = java.sql.Types.CHAR; // default to CHAR, no real reason
+        int resultType = java.sql.Types.VARCHAR; // default to VARCHAR, no real reason
+        if (fdef == null)
+            return resultType;
+
         FieldType fieldType = fdef.getType();
         switch (fieldType)
         {
@@ -398,7 +71,7 @@ public class TypeUtil
             }
             case DATETIME:
             {
-                resultType = java.sql.Types.DATE;
+                resultType = java.sql.Types.TIMESTAMP;
                 break;
             }
             default:
@@ -407,60 +80,644 @@ public class TypeUtil
         return resultType;
     }
 
-    public static Tuple updateTuple (Tuple oldTuple, HashMap<String, String> newValues, SpaceDef spaceDef)
-            throws IllegalArgumentException
+    public static String getASType (int sqlType)
     {
-        if (oldTuple == null)
-            throw new IllegalArgumentException("oldTuple parameter cannot be null");
-        if (spaceDef == null)
-            throw new IllegalArgumentException("spaceDef parameter cannot be null");
-
-        Tuple newTuple = null;
-        if (newValues == null || newValues.isEmpty())
+        String resultType = null;
+        switch (sqlType)
         {
-            // just return the old Tuple
-            newTuple = oldTuple;
-        }
-        else
-        {
-            // For each field in the tuple, if there is a new value for the
-            // field store that in the new tuple. Otherwise store the old value.
-            newTuple = Tuple.create();
-            Iterator<FieldDef> iter = spaceDef.getFieldDefs().iterator();
-            while (iter.hasNext())
+            case java.sql.Types.BIT:
             {
-                FieldDef fdef = iter.next();
-                String columnName = fdef.getName();
-                Object columnValue = newValues.get(columnName);
-                if (columnValue != null)
-                    TypeUtil.setTupleField(newTuple, fdef, columnName, (String) columnValue);
-                else
-                {
-                    columnValue = oldTuple.get(columnName);
-                    TypeUtil.setTupleField(newTuple, fdef, columnName, columnValue);
-                }
+                resultType = com.tibco.as.space.FieldDef.FieldType.BOOLEAN.name();
             }
+            case java.sql.Types.BIGINT:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.LONG.name();
+                break;
+            }
+            case java.sql.Types.CHAR:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.CHAR.name();
+                break;
+            }
+            case java.sql.Types.INTEGER:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.INTEGER.name();
+                break;
+            }
+            case java.sql.Types.SMALLINT:
+            case java.sql.Types.TINYINT:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.SHORT.name();
+                break;
+            }
+            case java.sql.Types.VARCHAR:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.STRING.name();
+                break;
+            }
+            case java.sql.Types.REAL:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.FLOAT.name();
+                break;
+            }
+            case java.sql.Types.DOUBLE:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.DOUBLE.name();
+                break;
+            }
+            case java.sql.Types.DATE:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.DATETIME.name();
+                break;
+            }
+            case java.sql.Types.TIME:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.DATETIME.name();
+                break;
+            }
+            case java.sql.Types.TIMESTAMP:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.DATETIME.name();
+                break;
+            }
+            case java.sql.Types.BLOB:
+            {
+                resultType = com.tibco.as.space.FieldDef.FieldType.BLOB.name();
+                break;
+            }
+            default:
+                resultType = null;
         }
-        return newTuple;
+        return resultType;
     }
 
-    public static String stripQuotesFromString (String sval)
+    /**
+     * Retrieves the value of the given object as a <code>boolean</code> in the
+     * Java programming language.
+     * <P>
+     * If the object's value is null, <code>false</code> is returned. If the object's value is a string of
+     * "0" or "false", <code>false</code> is returned. If the object's value is a number with the value
+     * 0, <code>false</code> is returned. If the object's value is a string of "1" or "true",
+     * <code>true</code> is returned. If the object's value is a number with the value 1,
+     * <code>true</code> is returned.
+     * <P>
+     *
+     * @param object
+     *            the object to return as a boolean
+     * @return the object's value as a boolean
+     * @exception SQLException
+     *                if the object cannot be returned as a boolean.
+     *
+     */
+    public static boolean getBoolean (Object object) throws SQLException
     {
-        String result = null;
-        if (sval != null && !sval.isEmpty())
+        boolean result = false;
+        if (object == null)
+            result = false;
+        else if (object instanceof Boolean)
+            result = (Boolean) object;
+        else if (object instanceof Character && ((Character) object).equals('0'))
+            result = false;
+        else if (object instanceof Character && ((Character) object).equals('1'))
+            result = true;
+        else if (object instanceof String && ((String) object).equals("0"))
+            result = false;
+        else if (object instanceof String && ((String) object).equals("1"))
+            result = true;
+        else if (object instanceof String && ((String) object).equalsIgnoreCase("false"))
+            result = false;
+        else if (object instanceof String && ((String) object).equalsIgnoreCase("true"))
+            result = true;
+        else if (object instanceof Short && ((Short) object) == 0)
+            result = false;
+        else if (object instanceof Short && ((Short) object) == 1)
+            result = true;
+        else if (object instanceof Integer && ((Integer) object) == 0)
+            result = false;
+        else if (object instanceof Integer && ((Integer) object) == 1)
+            result = true;
+        else if (object instanceof Long && ((Long) object) == 0)
+            result = false;
+        else if (object instanceof Long && ((Long) object) == 1)
+            result = true;
+        else
+            throw new SQLDataException("Cannot convert " + object.getClass().getSimpleName() + " to a boolean");
+
+        return result;
+    }
+
+    /**
+     * Retrieves the value of the given object as a <code>byte</code> in the Java programming
+     * language.
+     * <P>
+     * If the object's value is null, <code>0</code> is returned.
+     * <P>
+     *
+     * @param object
+     *            the object to return as a byte
+     * @return the object's value as a byte
+     * @exception SQLException
+     *                if the object cannot be returned as a byte.
+     */
+    public static byte getByte (Object object) throws SQLException
+    {
+        byte result;
+        if (object == null)
+            result = 0;
+        else if (object instanceof Short)
+            result = ((Short) object).byteValue();
+        else if (object instanceof Integer)
+            result = ((Integer) object).byteValue();
+        else if (object instanceof Long)
+            result = ((Long) object).byteValue();
+        else if (object instanceof Float)
+            result = ((Float) object).byteValue();
+        else if (object instanceof Double)
+            result = ((Double) object).byteValue();
+        else if (object instanceof Character)
         {
-            // if the string contains a single quote or space, leave the double quotes
-            if (sval.indexOf("'") != -1 || sval.indexOf(" ") != -1)
-                result = sval;
+            try
+            {
+                result = Byte.parseByte(((Character) object).toString());
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+
+        }
+        else if (object instanceof String)
+        {
+            try
+            {
+                result = Byte.parseByte((String) object);
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+
+        }
+        else
+            throw new SQLDataException("Cannot convert " + object.getClass().getSimpleName() + " to a byte");
+        return result;
+    }
+
+    /**
+     * Retrieves the value of the given object as a <code>char</code> in the Java programming
+     * language.
+     * <P>
+     * If the object's value is null, <code>0</code> is returned.
+     * <P>
+     *
+     * @param object
+     *            the object to return as a char
+     * @return the object's value as a char
+     * @exception SQLException
+     *                if the object cannot be returned as a char.
+     */
+    public static char getChar (Object object) throws SQLException
+    {
+        char result;
+        try
+        {
+            if (object == null)
+                result = 0;
+            else if (object instanceof Character)
+            {
+                result = ((Character)object).charValue();
+            }
+            else if (object instanceof String)
+            {
+                result = ((String)object).charAt(0);
+            }
             else
             {
-                if (sval.startsWith("\""))
-                {
-                    result = sval.substring(1, sval.length() - 1);
-                }
+                byte bval = getByte(object);
+                Character cval = new Character((char)bval);
+                result = cval.charValue();
             }
         }
+        catch (Exception e)
+        {
+            throw new SQLDataException("Cannot convert " + object.getClass().getSimpleName() + " to a char");
+        }
         return result;
+    }
+
+    /**
+     * Retrieves the value of the given object as a <code>short</code> in the Java programming
+     * language.
+     * <P>
+     * If the object's value is null, <code>0</code> is returned.
+     * <P>
+     *
+     * @param object
+     *            the object whose value to return as a short
+     * @return the object's value as a short
+     * @exception SQLException
+     *                if the object cannot be returned as a short.
+     */
+    public static short getShort (Object object) throws SQLException
+    {
+        short result;
+        if (object == null)
+            result = 0;
+        else if (object instanceof Short)
+            result = ((Short) object).shortValue();
+        else if (object instanceof Integer)
+            result = ((Integer) object).shortValue();
+        else if (object instanceof Long)
+            result = ((Long) object).shortValue();
+        else if (object instanceof Float)
+            result = ((Float) object).shortValue();
+        else if (object instanceof Double)
+            result = ((Double) object).shortValue();
+        else if (object instanceof Character)
+        {
+            try
+            {
+                result = Short.parseShort(((Character) object).toString());
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+
+        }
+        else if (object instanceof String)
+        {
+            try
+            {
+                result = Short.parseShort((String) object);
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+
+        }
+        else
+            throw new SQLDataException("Cannot convert " + object.getClass().getSimpleName() + " to a short");
+        return result;
+    }
+
+    /**
+     * Retrieves the value of the given object as an <code>int</code> in the
+     * Java programming language.
+     *
+     * If the object's value is null, <code>0</code> is returned.
+     *
+     * @param object
+     *            the object whose value to return as an int
+     * @return the object's value as an int
+     * @exception SQLException
+     *                if the object's value cannot be returned as an int.
+     */
+    public static int getInt (Object object) throws SQLException
+    {
+        int result;
+        if (object == null)
+            result = 0;
+        else if (object instanceof Short)
+            result = ((Short) object).intValue();
+        else if (object instanceof Integer)
+            result = ((Integer) object).intValue();
+        else if (object instanceof Long)
+            result = ((Long) object).intValue();
+        else if (object instanceof Float)
+            result = ((Float) object).intValue();
+        else if (object instanceof Double)
+            result = ((Double) object).intValue();
+        else if (object instanceof Character)
+        {
+            try
+            {
+                result = Integer.parseInt(((Character) object).toString());
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+
+        }
+        else if (object instanceof String)
+        {
+            try
+            {
+                result = Integer.parseInt((String) object);
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+
+        }
+        else
+            throw new SQLDataException("Cannot convert " + object.getClass().getSimpleName() + " to an int");
+        return result;
+    }
+
+    /**
+     * Retrieves the value of the given object as a <code>long</code> in the
+     * Java programming language.
+     *
+     * If the object's value is null, <code>0</code> is returned.
+     *
+     * @param object
+     *            the object whose value should be returned as a long
+     * @return the object's value as a long
+     * @exception SQLException
+     *                if the value of the object cannot be returned as a long.
+     */
+    public static long getLong (Object object) throws SQLException
+    {
+        long result;
+        if (object == null)
+            result = 0;
+        else if (object instanceof Short)
+            result = ((Short) object).longValue();
+        else if (object instanceof Integer)
+            result = ((Integer) object).longValue();
+        else if (object instanceof Long)
+            result = ((Long) object).longValue();
+        else if (object instanceof Float)
+            result = ((Float) object).longValue();
+        else if (object instanceof Double)
+            result = ((Double) object).longValue();
+        else if (object instanceof Character)
+        {
+            try
+            {
+                result = Long.parseLong(((Character) object).toString());
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+        }
+        else if (object instanceof String)
+        {
+            try
+            {
+                result = Long.parseLong((String) object);
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+        }
+        else
+            throw new SQLDataException("Cannot convert " + object.getClass().getSimpleName() + " to a long");
+        return result;
+    }
+
+    /**
+     * Retrieves the value of the given object as a <code>float</code> in the
+     * Java programming language.
+     *
+     * If the object's value is null, <code>0</code> is returned.
+     *
+     * @param object
+     *            the object whose value to return as a float
+     * @return the object's value as a float
+     * @exception SQLException
+     *                if the object's value cannot be returned as a float.
+     */
+    public static float getFloat (Object object) throws SQLException
+    {
+        float result;
+        if (object == null)
+            result = 0;
+        else if (object instanceof Short)
+            result = ((Short) object).floatValue();
+        else if (object instanceof Integer)
+            result = ((Integer) object).floatValue();
+        else if (object instanceof Long)
+            result = ((Long) object).floatValue();
+        else if (object instanceof Float)
+            result = ((Float) object).floatValue();
+        else if (object instanceof Double)
+            result = ((Double) object).floatValue();
+        else if (object instanceof String)
+        {
+            try
+            {
+                result = Float.parseFloat((String) object);
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+        }
+        else
+            throw new SQLSyntaxErrorException("Cannot convert " + object.getClass().getSimpleName() + " to a float");
+        return result;
+    }
+
+
+    /**
+     * Retrieves the value of the given object as a <code>double</code> in the
+     * Java programming language.
+     *
+     * If the object's value is null, <code>0</code> is returned.
+     *
+     * @param object
+     *            the object whose value to return
+     * @return the object's value as a double
+     * @exception SQLException
+     *                if the object cannot be returned as a double.
+     */
+    public static double getDouble (Object object) throws SQLException
+    {
+        double result;
+        if (object == null)
+            result = 0;
+        else if (object instanceof Short)
+            result = ((Short) object).doubleValue();
+        else if (object instanceof Integer)
+            result = ((Integer) object).doubleValue();
+        else if (object instanceof Long)
+            result = ((Long) object).doubleValue();
+        else if (object instanceof Float)
+            result = ((Float) object).doubleValue();
+        else if (object instanceof Double)
+            result = ((Double) object).doubleValue();
+        else if (object instanceof String)
+        {
+            try
+            {
+                result = Double.parseDouble((String) object);
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new SQLDataException(ex);
+            }
+        }
+        else
+            throw new SQLSyntaxErrorException("Cannot convert " + object.getClass().getSimpleName() + " to a double");
+        return result;
+    }
+
+    /**
+     * Retrieves the value of the given object as a <code>byte</code> array in
+     * the Java programming language.
+     *
+     * If the object's value is null, <code>null</code> is returned.
+     *
+     * @param object
+     *            the object whose value to return as a byte array
+     * @return the object's value as a byte array
+     * @exception SQLException
+     *                if the object cannot be returned as a byte array.
+     */
+    public static byte[] getBytes (Object object) throws SQLException
+    {
+        byte[] result;
+        if (object == null)
+            result = null;
+        else if (object instanceof Boolean)
+        {
+            result = ((Boolean)object).toString().getBytes();
+        }
+        else if (object instanceof Short)
+        {
+            ByteBuffer buffer = ByteBuffer.allocate(2);
+            buffer.putShort((Short) object);
+            buffer.flip();
+            result = buffer.array();
+        }
+        else if (object instanceof Integer)
+        {
+            ByteBuffer buffer = ByteBuffer.allocate(4);
+            buffer.putInt((Integer) object);
+            buffer.flip();
+            result = buffer.array();
+        }
+        else if (object instanceof Long)
+        {
+            ByteBuffer buffer = ByteBuffer.allocate(8);
+            buffer.putLong((Long) object);
+            buffer.flip();
+            result = buffer.array();
+        }
+        else if (object instanceof Float)
+        {
+            ByteBuffer buffer = ByteBuffer.allocate(4);
+            buffer.putFloat((Float) object);
+            buffer.flip();
+            result = buffer.array();
+        }
+        else if (object instanceof Double)
+        {
+            ByteBuffer buffer = ByteBuffer.allocate(8);
+            buffer.putDouble((Double) object);
+            buffer.flip();
+            result = buffer.array();
+        }
+        else if (object instanceof Character)
+        {
+            ByteBuffer buffer = ByteBuffer.allocate(2);
+            buffer.putChar(((Character) object).charValue());
+            buffer.flip();
+            result = buffer.array();
+        }
+        else if (object instanceof String)
+        {
+            result = ((String) object).getBytes();
+        }
+        else if (object.getClass().getSimpleName().equals("byte[]"))
+        {
+            result = (byte[])object;
+        }
+        else
+            throw new SQLDataException("Cannot convert " + object.getClass().getSimpleName() + " to byte array");
+
+        return result;
+    }
+
+    /**
+     * Retrieves the value of the given object as a <code>String</code> in
+     * the Java programming language.
+     *
+     * If the object's value is null, <code>null</code> is returned.
+     *
+     * @param object
+     *            the object whose value to return as a String
+     * @return the object's value as a String
+     * @exception SQLException
+     *                if the object cannot be returned as a String.
+     */
+    public static String getString (Object object) throws SQLException
+    {
+        String result;
+        if (object == null)
+            result = null;
+        else if (object instanceof Boolean)
+        {
+            result = ((Boolean)object).toString();
+        }
+        else if (object instanceof Short)
+        {
+            result = ((Short)object).toString();
+        }
+        else if (object instanceof Integer)
+        {
+            result = ((Integer)object).toString();
+        }
+        else if (object instanceof Long)
+        {
+            result = ((Long)object).toString();
+        }
+        else if (object instanceof Float)
+        {
+            result = ((Float)object).toString();
+        }
+        else if (object instanceof Double)
+        {
+            result = ((Double)object).toString();
+        }
+        else if (object instanceof Character)
+        {
+            result = ((Character)object).toString();
+        }
+        else if (object instanceof String)
+        {
+            result = (String) object;
+        }
+        else if (object.getClass().getSimpleName().equals("byte[]"))
+        {
+            byte[] ba =(byte[])object;
+            result = bytesToHexString(ba);
+        }
+        else
+            throw new SQLDataException("Cannot convert " + object.getClass().getSimpleName() + " to String");
+
+        return result;
+    }
+
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHexString(byte[] bytes)
+    {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    public static byte[] hexStringToByteArray(String s)
+    {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2)
+        {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                                 + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
     }
 
 }

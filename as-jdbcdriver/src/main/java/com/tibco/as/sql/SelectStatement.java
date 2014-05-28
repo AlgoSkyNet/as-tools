@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -26,81 +26,218 @@ import com.tibco.as.space.browser.Browser;
 import com.tibco.as.space.browser.BrowserDef;
 import com.tibco.as.space.browser.BrowserDef.BrowserType;
 import com.tibco.as.space.browser.BrowserDef.TimeScope;
+import com.tibco.as.space.impl.data.ASSpaceResult;
+import com.tibco.as.space.impl.data.ASSpaceResultList;
+import com.tibco.as.space.impl.data.ASTuple;
 
 public class SelectStatement implements ASSQLQueryStatement
 {
-    protected List<String>              spaceNames;
-    protected List<Tuple>               columnInfo;
-    protected HashMap<String, FieldDef> columnSpec;
-    protected String                    filter;
-    protected String                    quantifier;
-    protected String                    currentSpaceName;
+    protected List<String>              m_spaceNames;
+    protected List<Tuple>               m_columnInfo;
+    protected HashMap<String, FieldDef> m_columnSpec;
+    protected String                    m_filter;
+    protected String                    m_quantifier;
+    protected List<Tuple>               m_tableInfo;
 
-    public SelectStatement (String quantifier, List<Tuple> columnInfo, List<String> tableNames, String filter)
+    public SelectStatement (String quantifier, List<Tuple> columnInfo, List<Tuple> tableInfo, String filter)
     {
-        this.quantifier = quantifier;
-        this.columnInfo = columnInfo;
-        this.spaceNames = tableNames;
-        this.filter = filter;
+        m_quantifier = quantifier;
+        m_columnInfo = columnInfo;
+        m_tableInfo = tableInfo;
+        m_filter = filter;
+        // remove any table name prefixes from the filter
+        // AS filters only work on a single space
+        // if later we end up supporting queries on multiple spaces, this is the place
+        // to parse the filters
+        checkFilterForTableNames();
         // uncomment the following to help debugging filters
-        //if (filter != null)
-        //    System.out.println("filter: " + filter);
+        //if (m_filter != null)
+        //    System.out.println("filter: " + m_filter);
     }
 
-    public ASSQLResult processQuery (Metaspace metaspace) throws SQLException
+    public ASSQLResult processQuery (java.sql.Statement jdbcStatement, Metaspace metaspace) throws SQLException
     {
         ASSQLResult result = null;
         try
         {
+            populateSpaceNames();
+            checkColumnsForTableCorrelationNames();
+
             // check to make sure we have space info for each column info entry
             checkSpaceInfo();
 
-            // if we have * for the columns, replace with all of the columns in
-            // the space
-            this.columnInfo = checkColumnAsterisk(metaspace);
+            // For count function, set * column name to $Asterisk as we want to
+            // create a FieldDef for the column and * is not a value character
+            // for a field name. Also set the column alias appropriately.
+            // Otherwise, if we have * for the columns, replace with all of the
+            // columns in the space.
+            m_columnInfo = checkColumnAsterisk(metaspace);
 
             // now initialize our map of column aliases and FieldDefs
-            columnSpec = ASSQLUtils.getColumnSpec(metaspace, this.columnInfo);
+            m_columnSpec = ASSQLUtils.getColumnSpec(metaspace, m_columnInfo);
 
-            int ssize = this.spaceNames.size();
-            if (ssize == 1 && filter != null)
+            // handle count function first
+            result = processCount(metaspace);
+
+            int ssize = m_spaceNames.size();
+            if (result == null && ssize == 1 && m_filter != null)
             {
                 // if we have a single space and a filter, check to see if we can do a simple
                 // get of the data in the space versus browsing the space
-                SpaceResultList tuples = getTupleList(metaspace, this.spaceNames.get(0), filter, columnSpec);
+                SpaceResultList tuples = getTupleList(metaspace, m_spaceNames.get(0), m_filter, m_columnSpec);
                 if (tuples != null && !tuples.isEmpty())
-                    result = new ASSQLResult(spaceNames, tuples, columnInfo, columnSpec);
+                    result = new ASSQLResult(m_spaceNames, tuples, m_columnInfo, m_columnSpec);
             }
             if (result == null)
             {
                 // for each space, get a browser for the space which retrieves the
                 // appropriate rows from the space
                 List<Browser> blist = new ArrayList<Browser>();
-
+                // By default, use a current browser
+                // If Statement.getMaxRows returns 0, use a CURRENT browser with no limit for browsing
+                // If Statement.getMaxRows returns -1, use a SNAPSHOT browser with the SpaceDef query limit
+                // If Statement.getMaxRows > 0, use a SNAPSHOT browser with max rows as the query limit
+                TimeScope tscope = TimeScope.CURRENT;
+                if (jdbcStatement.getMaxRows() != 0)
+                {
+                	tscope = TimeScope.SNAPSHOT;
+                }
                 for (int i = 0; i < ssize; i++)
                 {
-                    String spaceName = this.spaceNames.get(i);
+                    String spaceName = m_spaceNames.get(i);
                     Space space = metaspace.getSpace(spaceName);
-                    Browser browser = null;
-                    if (this.filter != null && i == 0)
+                    // if getMaxRows() == 0, we use a current browser with no limit on
+                    // the number of rows to retrieve
+                    long qlimit = -1;    // no limit
+                    long fetchSize = 0;  // no prefetch
+                    if (jdbcStatement.getMaxRows() > 0)
                     {
-                        // if we have a filter, use it on the first space only
-                        // we don't support filters for multiple spaces at this time
-                        browser = space.browse(BrowserType.GET, BrowserDef.create(0, TimeScope.SNAPSHOT), filter);
+                    	qlimit = jdbcStatement.getMaxRows();
                     }
-                    else
-                        browser = space.browse(BrowserType.GET, BrowserDef.create(0, TimeScope.SNAPSHOT));
+                    else if (jdbcStatement.getMaxRows() == -1)
+                    {
+                    	// Use SpaceDef query limit
+                    	// SpaceDef query limit defaults to 10,000 unless specifically set
+                    	// when space is created
+                        qlimit = space.getSpaceDef().getQueryLimit();
+                    }
+                    if (jdbcStatement.getFetchSize() != 0)
+                    {
+                        fetchSize = jdbcStatement.getFetchSize();
+                    }
+                    BrowserDef bdef = BrowserDef.create(0, tscope);
+                    // current browser ignores the query limit but we set it
+                    // regardless of the browser type as it doesn't hurt
+                    bdef.setQueryLimit(qlimit);
+                    bdef.setPrefetch(fetchSize);
+                    
+                    // if we have a filter, use for both spaces
+                    // e.g. select * from table1, table2 where value > 500
+                    // we don't support parsing filters at this time
+                    // user must use separate queries to apply filters to different tables
+                    Browser browser = space.browse(BrowserType.GET, bdef, m_filter);
                     blist.add(browser);
                 }
                 // now store the results
-                result = new ASSQLResult(spaceNames, blist, columnInfo, columnSpec);
+                result = new ASSQLResult(m_spaceNames, blist, m_columnInfo, m_columnSpec);
             }
         }
         catch (ASException ex)
         {
             throw new SQLException(ex);
         }
+
         return result;
+    }
+
+    protected void populateSpaceNames() throws ASException
+    {
+        if (m_tableInfo == null || m_tableInfo.isEmpty())
+        {
+            throw new ASException(ASStatus.NOT_FOUND, "Missing list of tables for SELECT statement.");
+        }
+        m_spaceNames = new ArrayList<String>();
+        int numTables = m_tableInfo.size();
+        for (int i = 0;i < numTables; i++)
+        {
+            // retrieve the table name and store it into the space name list
+            String tname = m_tableInfo.get(i).getString(ASSQLUtils.TABLE_NAME);
+            m_spaceNames.add(tname);
+        }
+
+    }
+
+    protected void checkColumnsForTableCorrelationNames() throws ASException
+    {
+        if (m_tableInfo == null || m_tableInfo.isEmpty())
+        {
+            throw new ASException(ASStatus.NOT_FOUND, "Missing list of tables for SELECT statement.");
+        }
+        if (m_columnInfo == null || m_columnInfo.isEmpty())
+        {
+            throw new ASException(ASStatus.NOT_FOUND, "Missing list of columns for SELECT statement.");
+        }
+        // check the table names for each column and replace any correlation names
+        // with their real table names
+        int tsize = m_tableInfo.size();
+        int csize = m_columnInfo.size();
+        for (int i = 0; i < csize; i++)
+        {
+            Tuple cinfo = m_columnInfo.get(i);
+            String tname = cinfo.getString(ASSQLUtils.TABLE_NAME);
+            if (tname != null && !tname.isEmpty())
+            {
+                for (int j = 0; j < tsize; j++)
+                {
+                    String correlationName = m_tableInfo.get(j).getString(ASSQLUtils.TABLE_CORRELATION_NAME);
+                    if (correlationName != null && !correlationName.isEmpty() && tname.equals(correlationName))
+                    {
+                        String actualTableName = m_tableInfo.get(j).getString(ASSQLUtils.TABLE_NAME);
+                        cinfo.put(ASSQLUtils.TABLE_NAME, actualTableName);
+                        // uncomment the following to help with debugging table correlation names
+                        //if (m_columnInfo.get(i).getString(ASSQLUtils.TABLE_NAME).equals(actualTableName))
+                        //    System.out.println("Table correlation name updated.");
+                    }
+                }
+            }
+        }
+
+    }
+
+    protected void checkFilterForTableNames()
+    {
+        if (m_filter == null || m_filter.isEmpty())
+        {
+            return;
+        }
+        if (m_tableInfo == null || m_tableInfo.isEmpty())
+        {
+            return;  // just return, error will be caught later
+        }
+        // Check the filter for any table names or table correlation names
+        // and remove them from the filter. AS filters only work on a single space.
+        // Could have done this in the grammar but more flexible this way if the driver ends
+        // up applying filters to more than one space in the future.
+        String tfilter = m_filter;
+        int tsize = m_tableInfo.size();
+        for (int i = 0; i < tsize; i++)
+        {
+            String actualTableName = m_tableInfo.get(i).getString(ASSQLUtils.TABLE_NAME);
+            if (actualTableName != null && !actualTableName.isEmpty())
+            {
+                String tablePrefix = actualTableName + ".";
+                if (tfilter.contains(tablePrefix))
+                    tfilter = tfilter.replace(tablePrefix, "");
+            }
+            String correlationName = m_tableInfo.get(i).getString(ASSQLUtils.TABLE_CORRELATION_NAME);
+            if (correlationName != null && !correlationName.isEmpty())
+            {
+                String tablePrefix = correlationName + ".";
+                if (tfilter.contains(tablePrefix))
+                    tfilter = tfilter.replace(tablePrefix, "");
+            }
+        }
+        m_filter = tfilter;
     }
 
     protected void checkSpaceInfo () throws ASException
@@ -110,21 +247,21 @@ public class SelectStatement implements ASSQLQueryStatement
         // column alias (optional), column field def
         // if we don't have a column alias, use the column name for the column
         // alias
-        if (this.columnInfo == null || this.columnInfo.isEmpty())
+        if (m_columnInfo == null || m_columnInfo.isEmpty())
         {
             throw new ASException(ASStatus.NOT_FOUND, "Missing list of columns for SELECT statement.");
         }
 
         // ensure each column already has an associated table name
-        int csize = this.columnInfo.size();
+        int csize = m_columnInfo.size();
         for (int i = 0; i < csize; i++)
         {
-            Tuple cinfo = columnInfo.get(i);
+            Tuple cinfo = m_columnInfo.get(i);
             String cname = cinfo.getString(ASSQLUtils.COLUMN_NAME);
             String tname = cinfo.getString(ASSQLUtils.TABLE_NAME);
             if (tname == null || tname.isEmpty())
             {
-                if (this.spaceNames.isEmpty())
+                if (m_spaceNames.isEmpty())
                     throw new ASException(ASStatus.NOT_FOUND, "Cannot find space name for column: "
                             + cinfo.getString(ASSQLUtils.COLUMN_NAME));
                 else
@@ -139,15 +276,15 @@ public class SelectStatement implements ASSQLQueryStatement
                     // as for * but the result set will not be able to retrieve anything
                     // but the first user and table (we do what the user is asking even though it
                     // is not correct)
-                    int ssize = this.spaceNames.size();
+                    int ssize = m_spaceNames.size();
                     for (int j = 0; j < ssize; j++)
                     {
-                        String sname = this.spaceNames.get(j);
+                        String sname = m_spaceNames.get(j);
                         // the first time thru, replace the existing tuple
                         if (j == 0)
                         {
                             cinfo.put(ASSQLUtils.TABLE_NAME, sname);
-                            columnInfo.set(i, cinfo);
+                            m_columnInfo.set(i, cinfo);
                         }
                         else
                         {
@@ -156,7 +293,7 @@ public class SelectStatement implements ASSQLQueryStatement
                             // we end up with additional * entries for table2, ...
                             Tuple tuple = (Tuple) cinfo.clone();
                             tuple.put(ASSQLUtils.TABLE_NAME, sname);
-                            columnInfo.add(tuple);
+                            m_columnInfo.add(tuple);
                         }
                     }
                 }
@@ -164,7 +301,7 @@ public class SelectStatement implements ASSQLQueryStatement
             else
             {
                 // ensure table name is in the space name list
-                if (!this.spaceNames.contains(tname))
+                if (!m_spaceNames.contains(tname))
                 {
                     throw new ASException(ASStatus.NOT_FOUND, "Cannot find matching FROM table for column: " + tname
                             + "." + cname);
@@ -180,20 +317,22 @@ public class SelectStatement implements ASSQLQueryStatement
         // finish building up our metadata; if an * has been specified for the column name
         // retrieve the column names from the space and add those columns to the list
         // for all columns, add the metaspace name
-        int csize = this.columnInfo.size();
+        int csize = m_columnInfo.size();
         for (int i = 0; i < csize; i++)
         {
-            Tuple cinfo = columnInfo.get(i);
+            Tuple cinfo = m_columnInfo.get(i);
             // add the metaspace name to the column info
             cinfo.put(ASSQLUtils.METASPACE_NAME, mname);
 
             // now check the columns for *
             String cname = cinfo.getString(ASSQLUtils.COLUMN_NAME);
             String calias = cinfo.getString(ASSQLUtils.COLUMN_ALIAS);
-            if (cname.equals("*"))
+            String fname = cinfo.getString(ASSQLUtils.COLUMN_FUNCTION);
+            String tname = cinfo.getString(ASSQLUtils.TABLE_NAME);
+            if (cname.equals("*") && (fname == null || fname.isEmpty()))
             {
                 // we need to get the names of each of the fields from the space
-                String tname = cinfo.getString(ASSQLUtils.TABLE_NAME);
+
                 Space space = metaspace.getSpace(tname);
                 Iterator<FieldDef> iter = space.getSpaceDef().getFieldDefs().iterator();
                 while (iter.hasNext())
@@ -212,13 +351,28 @@ public class SelectStatement implements ASSQLQueryStatement
             }
             else
             {
-                // if there isn't an alias, set the alias to the column name
-                // this allows us to use the alias without always checking for
-                // it to be null
                 if (calias == null || calias.isEmpty())
                 {
-                    calias = cname;
-                    cinfo.put(ASSQLUtils.COLUMN_ALIAS, calias);
+                    // if there isn't an alias and this is a function, set the alias
+                    // based on the function name
+                    // e.g. count(*) should return a field named COUNT_$Asterisk
+                    // The $ tells us that what follows is a translation of a special character
+                    if (fname != null && !fname.isEmpty())
+                    {
+                        String columnName = cname.equals("*") ? "$Asterisk" : cname;
+                        calias = fname.toUpperCase() + "_" + tname + "_" + columnName;
+                        cinfo.put(ASSQLUtils.COLUMN_NAME, columnName);
+                        cinfo.put(ASSQLUtils.COLUMN_ALIAS, calias);
+                    }
+                    else
+                    {
+                        // if there isn't an alias, set the alias to the column name
+                        // this allows us to use the alias without always checking for
+                        // it to be null
+                        calias = cname;
+                        cinfo.put(ASSQLUtils.COLUMN_ALIAS, calias);
+                    }
+
                 }
                 // add the tuple into our result list
                 result.add(cinfo);
@@ -229,11 +383,11 @@ public class SelectStatement implements ASSQLQueryStatement
 
     protected void initColumnSpec (Metaspace metaspace) throws ASException
     {
-        columnSpec = new HashMap<String, FieldDef>();
-        int csize = columnInfo.size();
+        m_columnSpec = new HashMap<String, FieldDef>();
+        int csize = m_columnInfo.size();
         for (int i = 0; i < csize; i++)
         {
-            Tuple cinfo = columnInfo.get(i);
+            Tuple cinfo = m_columnInfo.get(i);
             String cname = cinfo.getString(ASSQLUtils.COLUMN_NAME);
             String calias = cinfo.getString(ASSQLUtils.COLUMN_ALIAS);
             String tname = cinfo.getString(ASSQLUtils.TABLE_NAME);
@@ -241,7 +395,7 @@ public class SelectStatement implements ASSQLQueryStatement
             // store the FieldDef under the alias since columns from two
             // different tables could have the same names, but the alias
             // should uniquely identify them
-            columnSpec.put(calias, spaceDef.getFieldDef(cname));
+            m_columnSpec.put(calias, spaceDef.getFieldDef(cname));
         }
     }
 
@@ -290,7 +444,7 @@ public class SelectStatement implements ASSQLQueryStatement
                         }
                     }
                     Tuple tuple = Tuple.create();
-                    TypeUtil.setTupleField (tuple, fieldDef, fieldName, fieldValue);
+                    TupleUtil.setTupleField (tuple, fieldDef, fieldName, fieldValue);
                     keytuples.add(tuple);
                 }
                 if (keytuples != null && !keytuples.isEmpty())
@@ -320,6 +474,46 @@ public class SelectStatement implements ASSQLQueryStatement
             {
                 result = sval.substring(1, sval.length() - 1);
             }
+        }
+        return result;
+    }
+
+    protected ASSQLResult processCount(Metaspace metaspace) throws ASException
+    {
+        ASSQLResult result = null;
+        ASSpaceResultList spResultList = new ASSpaceResultList();
+
+        int csize = m_columnInfo.size();
+        for (int i = 0; i < csize; i++)
+        {
+            // retrieve the column info
+            Tuple cinfo = m_columnInfo.get(i);
+            String cname = cinfo.getString(ASSQLUtils.COLUMN_NAME);
+            String tname = cinfo.getString(ASSQLUtils.TABLE_NAME);
+            String fname = cinfo.getString(ASSQLUtils.COLUMN_FUNCTION);
+            if (cname.equals("$Asterisk") && fname != null && fname.toLowerCase().equals("count"))
+            {
+                // get the count of the space
+                long count = 0;
+                if (m_filter != null)
+                {
+                    // if there was a filter, apply it to all spaces
+                    // e.g. select count(*) from table1, table2 where salary > 500
+                    count = metaspace.getSpace(tname).size(m_filter);
+                }
+                else
+                {
+                    count = metaspace.getSpace(tname).size();
+                }
+                Tuple tuple = Tuple.create();
+                tuple.put(cname, count);
+                ASSpaceResult spResult = new ASSpaceResult((ASTuple) tuple, null);
+                spResultList.add(spResult);
+            }
+        }
+        if (!spResultList.isEmpty())
+        {
+            result = new ASSQLResult(m_spaceNames, spResultList, m_columnInfo, m_columnSpec);
         }
         return result;
     }

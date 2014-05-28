@@ -1,12 +1,11 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
 // -------------------------------------------------------------------
 package com.tibco.as.jdbc;
 
-import com.tibco.as.space.ASException;
 import com.tibco.as.space.Metaspace;
 
 import java.sql.*;
@@ -82,7 +81,7 @@ public class ASDriver implements java.sql.Driver
                 driverConn = new ASConnection();
             }
         }
-        catch (ASException as)
+        catch (Exception as)
         {
             throw new SQLException(as);
         }

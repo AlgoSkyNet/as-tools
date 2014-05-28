@@ -1,12 +1,12 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
 // -------------------------------------------------------------------
 package com.tibco.as.jdbc;
 
-import java.sql.ResultSet;
+import java.sql.Connection;
 import java.sql.RowIdLifetime;
 import java.sql.SQLException;
 
@@ -53,51 +53,6 @@ public class AbstractDatabaseMetaData
         return false;
     }
 
-    public boolean supportsMixedCaseIdentifiers () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean storesUpperCaseIdentifiers () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean storesLowerCaseIdentifiers () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean storesMixedCaseIdentifiers () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsMixedCaseQuotedIdentifiers () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean storesUpperCaseQuotedIdentifiers () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean storesLowerCaseQuotedIdentifiers () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean storesMixedCaseQuotedIdentifiers () throws SQLException
-    {
-        return false;
-    }
-
-    public String getIdentifierQuoteString () throws SQLException
-    {
-        return null;
-    }
-
     public String getSearchStringEscape () throws SQLException
     {
         return null;
@@ -138,16 +93,6 @@ public class AbstractDatabaseMetaData
         return false;
     }
 
-    public boolean supportsTableCorrelationNames () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsDifferentTableCorrelationNames () throws SQLException
-    {
-        return false;
-    }
-
     public boolean supportsExpressionsInOrderBy () throws SQLException
     {
         return false;
@@ -184,11 +129,6 @@ public class AbstractDatabaseMetaData
     }
 
     public boolean supportsMultipleTransactions () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsNonNullableColumns () throws SQLException
     {
         return false;
     }
@@ -239,81 +179,6 @@ public class AbstractDatabaseMetaData
     }
 
     public boolean supportsLimitedOuterJoins () throws SQLException
-    {
-        return false;
-    }
-
-    public String getSchemaTerm () throws SQLException
-    {
-        return null;
-    }
-
-    public String getProcedureTerm () throws SQLException
-    {
-        return null;
-    }
-
-    public String getCatalogTerm () throws SQLException
-    {
-        return null;
-    }
-
-    public boolean isCatalogAtStart () throws SQLException
-    {
-        return false;
-    }
-
-    public String getCatalogSeparator () throws SQLException
-    {
-        return null;
-    }
-
-    public boolean supportsSchemasInDataManipulation () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsSchemasInProcedureCalls () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsSchemasInTableDefinitions () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsSchemasInIndexDefinitions () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsSchemasInPrivilegeDefinitions () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsCatalogsInDataManipulation () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsCatalogsInProcedureCalls () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsCatalogsInTableDefinitions () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsCatalogsInIndexDefinitions () throws SQLException
-    {
-        return false;
-    }
-
-    public boolean supportsCatalogsInPrivilegeDefinitions () throws SQLException
     {
         return false;
     }
@@ -393,114 +258,10 @@ public class AbstractDatabaseMetaData
         return false;
     }
 
-    public int getMaxBinaryLiteralLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxCharLiteralLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxColumnNameLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxColumnsInGroupBy () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxColumnsInIndex () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxColumnsInOrderBy () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxColumnsInSelect () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxColumnsInTable () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxConnections () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxCursorNameLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxIndexLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxSchemaNameLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxProcedureNameLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxCatalogNameLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxRowSize () throws SQLException
-    {
-        return 0;
-    }
-
-    public boolean doesMaxRowSizeIncludeBlobs () throws SQLException
-    {
-        return false;
-    }
-
-    public int getMaxStatementLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxStatements () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxTableNameLength () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxTablesInSelect () throws SQLException
-    {
-        return 0;
-    }
-
-    public int getMaxUserNameLength () throws SQLException
-    {
-        return 0;
-    }
 
     public int getDefaultTransactionIsolation () throws SQLException
     {
-        return 0;
+        return Connection.TRANSACTION_NONE;
     }
 
     public boolean supportsTransactions () throws SQLException
@@ -531,101 +292,6 @@ public class AbstractDatabaseMetaData
     public boolean dataDefinitionIgnoredInTransactions () throws SQLException
     {
         return false;
-    }
-
-    public ResultSet getProcedures (String catalog, String schemaPattern, String procedureNamePattern)
-            throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getProcedureColumns (String catalog, String schemaPattern, String procedureNamePattern,
-            String columnNamePattern) throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getTables (String catalog, String schemaPattern, String tableNamePattern, String[] types)
-            throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getSchemas () throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getCatalogs () throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getTableTypes () throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet
-            getColumns (String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern)
-                    throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getColumnPrivileges (String catalog, String schema, String table, String columnNamePattern)
-            throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getTablePrivileges (String catalog, String schemaPattern, String tableNamePattern)
-            throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getBestRowIdentifier (String catalog, String schema, String table, int scope, boolean nullable)
-            throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getVersionColumns (String catalog, String schema, String table) throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getPrimaryKeys (String catalog, String schema, String table) throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getImportedKeys (String catalog, String schema, String table) throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getExportedKeys (String catalog, String schema, String table) throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getCrossReference (String parentCatalog, String parentSchema, String parentTable,
-            String foreignCatalog, String foreignSchema, String foreignTable) throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getTypeInfo () throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getIndexInfo (String catalog, String schema, String table, boolean unique, boolean approximate)
-            throws SQLException
-    {
-        return null;
     }
 
     public boolean supportsResultSetType (int type) throws SQLException
@@ -688,12 +354,6 @@ public class AbstractDatabaseMetaData
         return false;
     }
 
-    public ResultSet getUDTs (String catalog, String schemaPattern, String typeNamePattern, int[] types)
-            throws SQLException
-    {
-        return null;
-    }
-
     public boolean supportsSavepoints () throws SQLException
     {
         return false;
@@ -712,22 +372,6 @@ public class AbstractDatabaseMetaData
     public boolean supportsGetGeneratedKeys () throws SQLException
     {
         return false;
-    }
-
-    public ResultSet getSuperTypes (String catalog, String schemaPattern, String typeNamePattern) throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getSuperTables (String catalog, String schemaPattern, String tableNamePattern) throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getAttributes (String catalog, String schemaPattern, String typeNamePattern,
-            String attributeNamePattern) throws SQLException
-    {
-        return null;
     }
 
     public boolean supportsResultSetHoldability (int holdability) throws SQLException
@@ -755,11 +399,6 @@ public class AbstractDatabaseMetaData
         return null;
     }
 
-    public ResultSet getSchemas (String catalog, String schemaPattern) throws SQLException
-    {
-        return null;
-    }
-
     public boolean supportsStoredFunctionsUsingCallSyntax () throws SQLException
     {
         return false;
@@ -768,29 +407,6 @@ public class AbstractDatabaseMetaData
     public boolean autoCommitFailureClosesAllResultSets () throws SQLException
     {
         return false;
-    }
-
-    public ResultSet getClientInfoProperties () throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getFunctions (String catalog, String schemaPattern, String functionNamePattern)
-            throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getFunctionColumns (String catalog, String schemaPattern, String functionNamePattern,
-            String columnNamePattern) throws SQLException
-    {
-        return null;
-    }
-
-    public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern,
-            String columnNamePattern) throws SQLException
-    {
-        return null;
     }
 
     public boolean generatedKeyAlwaysReturned() throws SQLException

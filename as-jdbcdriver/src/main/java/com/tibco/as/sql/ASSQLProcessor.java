@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------
-//  Copyright (c) 2012-2013 TIBCO Software, Inc.
+//  Copyright (c) 2012-2014 TIBCO Software, Inc.
 //  All rights reserved.
 //  For more information, please contact:
 //  TIBCO Software Inc., Palo Alto, California, USA
@@ -22,7 +22,7 @@ import com.tibco.as.sql.grammar.ASSQLParser;
 public class ASSQLProcessor
 {
 
-    public static ASSQLResult executeQuery (Metaspace metaspace, String queryString) throws SQLException
+    public static ASSQLResult executeQuery (java.sql.Statement jdbcStatement, Metaspace metaspace, String queryString) throws SQLException
     {
         ASSQLResult result = null;
         ASSQLStatement statement = getStatement(queryString);
@@ -31,7 +31,7 @@ public class ASSQLProcessor
         // Queries return data in a ResultSet, whereas updates return the number of rows affected.
         if (statement instanceof ASSQLQueryStatement)
         {
-            result = ((ASSQLQueryStatement) statement).processQuery(metaspace);
+            result = ((ASSQLQueryStatement) statement).processQuery(jdbcStatement, metaspace);
         }
         else
         {
