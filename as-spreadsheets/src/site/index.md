@@ -10,24 +10,24 @@ Unzip the distribution and make sure the executable, located under the bin folde
 
 ### Get help
 
-	as-spreadsheet -help
+	as-spreadsheets -help
 
 ### Import a file
 
-	as-spreadsheet import ../examples/jazzfunk.xlsx -header -distribution_role seeder
+	as-spreadsheets import ../examples/jazzfunk.xlsx -header -distribution_role seeder
 
 ### Import a spreadsheet
 
-	as-spreadsheet import ../examples/jazzfunk.xlsx -sheet album -header -distribution_role seeder
+	as-spreadsheets import ../examples/jazzfunk.xlsx -sheet album -header -distribution_role seeder
 
 ### Import a headerless spreadsheet
 
-	as-spreadsheet import ../examples/jazzfunk-noheader.xls -sheet artist -distribution_role seeder -fields "id[LONG key]" "name[STRING]" "birthdate[DATETIME nullable]"
+	as-spreadsheets import ../examples/jazzfunk-noheader.xls -sheet artist -distribution_role seeder -fields "id[LONG key]" "name[STRING]" "birthdate[DATETIME nullable]"
 
 ### Export a metaspace
 
-	as-spreadsheet export
+	as-spreadsheets export
 
 ### Export spaces
 
-	as-spreadsheet export artist album
+	as-spreadsheets export artist album
