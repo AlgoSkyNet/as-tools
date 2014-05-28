@@ -1,6 +1,6 @@
 # Usage
 
-```
+~~~
 Usage: as-files [options] [command] [command options]
   Options:
     -data_store
@@ -96,4 +96,4 @@ Usage: as-files [options] [command] [command options]
              Browser timeout
           -writer_thread_count
              Number of writer threads
-```
+~~~
