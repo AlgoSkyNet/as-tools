@@ -2,7 +2,7 @@
 
 ### Download
 
-Download the latest release <a href="{{site.TDT.site_url}}/nexus/service/local/artifact/maven/redirect?r=snapshots&amp;g=com.tibco.as.io&amp;a=as-files&amp;v=1.0.0-SNAPSHOT&amp;e=zip&amp;c=distribution" target="_blank" class="btn btn-primary">Delimited Files-1.0.0</a>
+Download the latest release <a href="http://activespaces.tibco.com/nexus/service/local/artifact/maven/redirect?r=snapshots&amp;g=com.tibco.as.io&amp;a=as-files&amp;v=1.0.0-SNAPSHOT&amp;e=zip&amp;c=distribution" target="_blank" class="btn btn-primary">as-files-1.0.0</a>
 <a href="https://github.com/TIBCOSoftware/as-tools/tree/master/as-files" target="_blank" class="btn btn-primary">source code</a>
 
 <a href="https://raw.githubusercontent.com/TIBCOSoftware/as-tools/master/as-files/LICENSE.txt" target="_blank">Licenses</a>
