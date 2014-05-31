@@ -2,7 +2,6 @@ package com.tibco.as.io.cli.simulator;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,12 +12,10 @@ import javax.xml.bind.Unmarshaller;
 
 import com.beust.jcommander.Parameter;
 import com.tibco.as.io.IMetaspaceTransfer;
-import com.tibco.as.io.ITransfer;
 import com.tibco.as.io.cli.CommandImport;
 import com.tibco.as.io.simulation.Simulation;
 import com.tibco.as.io.simulation.SimulationImport;
 import com.tibco.as.io.simulation.SimulationImporter;
-import com.tibco.as.io.simulation.SimulationInputStream;
 import com.tibco.as.space.Metaspace;
 
 public class CommandSimulate extends CommandImport {
@@ -63,26 +60,4 @@ public class CommandSimulate extends CommandImport {
 		}
 	}
 
-	@Override
-	protected String getExecutingMessage(Collection<ITransfer> transfers) {
-		return MessageFormat
-				.format("Simulating {0} space(s)", transfers.size());
-	}
-
-	@Override
-	protected String getOpenedMessage(ITransfer transfer) {
-		SimulationInputStream sis = (SimulationInputStream) transfer
-				.getInputStream();
-		return MessageFormat.format("Simulating space ''{0}''", sis.getConfig()
-				.getSpaceName());
-	}
-
-	@Override
-	protected String getClosedMessage(ITransfer transfer) {
-		SimulationInputStream sis = (SimulationInputStream) transfer
-				.getInputStream();
-		return MessageFormat.format("Simulated space ''{0}''", sis.getConfig()
-				.getSpaceName());
-	}
-	
 }

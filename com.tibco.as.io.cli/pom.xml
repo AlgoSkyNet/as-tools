@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>com.tibco.as.io</groupId>
 	<artifactId>com.tibco.as.io.cli</artifactId>
-	<name>ActiveSpaces I/O CLI</name>
+	<name>ActiveSpaces I/O Command-Line Application Framework</name>
 
 	<dependencies>
 		<dependency>

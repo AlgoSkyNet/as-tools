@@ -8,7 +8,6 @@ import com.beust.jcommander.Parameter;
 import com.tibco.as.io.Export;
 import com.tibco.as.io.IMetaspaceTransfer;
 import com.tibco.as.io.ITransfer;
-import com.tibco.as.io.SpaceInputStream;
 import com.tibco.as.space.Metaspace;
 import com.tibco.as.space.browser.BrowserDef.DistributionScope;
 import com.tibco.as.space.browser.BrowserDef.TimeScope;
@@ -59,16 +58,14 @@ public abstract class CommandExport extends Command {
 
 	@Override
 	protected String getOpenedMessage(ITransfer transfer) {
-		SpaceInputStream sis = (SpaceInputStream) transfer.getInputStream();
-		return MessageFormat.format("Exporting space ''{0}''",
-				sis.getSpaceName());
+		return MessageFormat.format("Exporting {0}", transfer.getInputStream()
+				.getName());
 	}
 
 	@Override
 	protected String getClosedMessage(ITransfer transfer) {
-		SpaceInputStream sis = (SpaceInputStream) transfer.getInputStream();
-		return MessageFormat.format("Exported space ''{0}''",
-				sis.getSpaceName());
+		return MessageFormat.format("Exported {0}", transfer.getInputStream()
+				.getName());
 	}
 
 	protected abstract Collection<IMetaspaceTransfer> getMetaspaceTransfers(

@@ -9,7 +9,7 @@
 
 	<groupId>com.tibco.as.io</groupId>
 	<artifactId>com.tibco.as.io.excel</artifactId>
-	<name>ActiveSpaces I/O Excel</name>
+	<name>ActiveSpaces Excel Framework</name>
 	<description>Excel import/export bundle</description>
 	<packaging>bundle</packaging>
 

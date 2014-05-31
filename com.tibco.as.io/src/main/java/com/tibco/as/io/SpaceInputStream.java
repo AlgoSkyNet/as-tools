@@ -1,5 +1,7 @@
 package com.tibco.as.io;
 
+import java.text.MessageFormat;
+
 import com.tibco.as.space.ASException;
 import com.tibco.as.space.ASStatus;
 import com.tibco.as.space.Metaspace;
@@ -33,15 +35,8 @@ public class SpaceInputStream implements IInputStream<Tuple> {
 		this.export = export;
 	}
 
-	public String getSpaceName() {
-		return spaceName;
-	}
-
-	public Export getExport() {
-		return export;
-	}
-
-	public long getBrowseTime() {
+	@Override
+	public long getOpenTime() {
 		return browseTime;
 	}
 
@@ -73,8 +68,7 @@ public class SpaceInputStream implements IInputStream<Tuple> {
 			browser = metaspace.browse(spaceName, BrowserType.GET, browserDef,
 					filter);
 		}
-		long end = System.nanoTime();
-		browseTime = end - start;
+		browseTime = System.nanoTime() - start;
 		size = getSize();
 		position = 0;
 	}
@@ -147,6 +141,11 @@ public class SpaceInputStream implements IInputStream<Tuple> {
 	@Override
 	public boolean isClosed() {
 		return browser == null;
+	}
+
+	@Override
+	public String getName() {
+		return MessageFormat.format("space ''{0}''", spaceName);
 	}
 
 }

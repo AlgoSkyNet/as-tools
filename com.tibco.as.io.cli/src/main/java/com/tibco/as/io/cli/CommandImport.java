@@ -1,6 +1,10 @@
 package com.tibco.as.io.cli;
 
+import java.text.MessageFormat;
+import java.util.Collection;
+
 import com.beust.jcommander.Parameter;
+import com.tibco.as.io.ITransfer;
 import com.tibco.as.io.Import;
 import com.tibco.as.io.Operation;
 import com.tibco.as.space.Member.DistributionRole;
@@ -22,4 +26,22 @@ public abstract class CommandImport extends Command {
 		transfer.setOperation(operation);
 		transfer.setWaitForReadyTimeout(waitForReadyTimeout);
 	}
+
+	@Override
+	protected String getOpenedMessage(ITransfer transfer) {
+		return MessageFormat.format("Importing {0}", transfer.getInputStream()
+				.getName());
+	}
+
+	@Override
+	protected String getClosedMessage(ITransfer transfer) {
+		return MessageFormat.format("Imported {0}", transfer.getInputStream()
+				.getName());
+	}
+
+	@Override
+	protected String getExecutingMessage(Collection<ITransfer> transfers) {
+		return MessageFormat.format("Importing {0} space(s)", transfers.size());
+	}
+
 }

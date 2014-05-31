@@ -9,7 +9,7 @@
 
 	<groupId>com.tibco.as.io</groupId>
 	<artifactId>com.tibco.as.io.file</artifactId>
-	<name>ActiveSpaces I/O File</name>
+	<name>ActiveSpaces File Framework</name>
 	<description>Text file import/export bundle</description>
 	<packaging>bundle</packaging>
 

@@ -59,4 +59,14 @@ public class ListInputStream<T> implements IInputStream<T> {
 		this.sleep = sleep;
 	}
 
+	@Override
+	public String getName() {
+		return "list";
+	}
+	
+	@Override
+	public long getOpenTime() {
+		return 0;
+	}
+
 }

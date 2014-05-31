@@ -17,4 +17,12 @@ public interface IInputStream<T> extends ICloseable {
 
 	long getPosition();
 
+	String getName();
+
+	/**
+	 * 
+	 * @return time it took for input stream to open, in nanos
+	 */
+	long getOpenTime();
+
 }

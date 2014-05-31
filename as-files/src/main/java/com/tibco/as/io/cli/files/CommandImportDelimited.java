@@ -1,7 +1,6 @@
 package com.tibco.as.io.cli.files;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,11 +14,9 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import com.tibco.as.io.FieldUtils;
 import com.tibco.as.io.IMetaspaceTransfer;
-import com.tibco.as.io.ITransfer;
 import com.tibco.as.io.cli.CommandImport;
 import com.tibco.as.io.file.text.delimited.DelimitedImport;
 import com.tibco.as.io.file.text.delimited.DelimitedImporter;
-import com.tibco.as.io.file.text.delimited.DelimitedInputStream;
 import com.tibco.as.space.Metaspace;
 
 @Parameters(commandNames = "import", commandDescription = "Import CSV file(s)")
@@ -101,25 +98,6 @@ public class CommandImportDelimited extends CommandImport {
 			transfers.add(importer);
 		}
 		return transfers;
-	}
-
-	@Override
-	protected String getExecutingMessage(Collection<ITransfer> transfers) {
-		return MessageFormat.format("Importing {0} file(s)", transfers.size());
-	}
-
-	@Override
-	protected String getOpenedMessage(ITransfer transfer) {
-		DelimitedInputStream dis = (DelimitedInputStream) transfer
-				.getInputStream();
-		return MessageFormat.format("Importing file ''{0}''", dis.getFile());
-	}
-
-	@Override
-	protected String getClosedMessage(ITransfer transfer) {
-		DelimitedInputStream dis = (DelimitedInputStream) transfer
-				.getInputStream();
-		return MessageFormat.format("Imported file ''{0}''", dis.getFile());
 	}
 
 }

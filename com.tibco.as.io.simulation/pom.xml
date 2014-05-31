@@ -9,7 +9,7 @@
 
 	<groupId>com.tibco.as.io</groupId>
 	<artifactId>com.tibco.as.io.simulation</artifactId>
-	<name>ActiveSpaces I/O Simulation</name>
+	<name>ActiveSpaces Simulation Framework</name>
 	<description>ActiveSpaces I/O module for data simulations</description>
 	<packaging>bundle</packaging>
 

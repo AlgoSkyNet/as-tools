@@ -1,5 +1,7 @@
 package com.tibco.as.io.simulation;
 
+import java.text.MessageFormat;
+
 import com.tibco.as.io.IInputStream;
 
 public class SimulationInputStream implements IInputStream<Object[]> {
@@ -19,10 +21,6 @@ public class SimulationInputStream implements IInputStream<Object[]> {
 		this.config = config;
 		this.space = config.getSpace();
 		this.providers = providers;
-	}
-
-	public SimulationImport getConfig() {
-		return config;
 	}
 
 	@Override
@@ -76,6 +74,16 @@ public class SimulationInputStream implements IInputStream<Object[]> {
 	@Override
 	public long getPosition() {
 		return position;
+	}
+
+	@Override
+	public String getName() {
+		return MessageFormat.format("space ''{0}''", config.getSpaceName());
+	}
+	
+	@Override
+	public long getOpenTime() {
+		return 0;
 	}
 
 }

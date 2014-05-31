@@ -1,5 +1,6 @@
 package com.tibco.as.io.file.excel;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -32,6 +33,11 @@ public class ExcelInputStream implements IInputStream<Row> {
 			read();
 		}
 	}
+	
+	@Override
+	public long getOpenTime() {
+		return 0;
+	}
 
 	public void openSheet() {
 		sheet = getSheet();
@@ -42,7 +48,7 @@ public class ExcelInputStream implements IInputStream<Row> {
 		this.rownum = 0;
 	}
 
-	public Sheet getSheet() {
+	private Sheet getSheet() {
 		String sheetName = config.getSheetName();
 		if (sheetName == null) {
 			String spaceName = config.getSpaceName();
@@ -56,6 +62,11 @@ public class ExcelInputStream implements IInputStream<Row> {
 			return sheet;
 		}
 		return workbook.getSheet(sheetName);
+	}
+
+	@Override
+	public String getName() {
+		return MessageFormat.format("sheet ''{0}''", getSheet().getSheetName());
 	}
 
 	@Override

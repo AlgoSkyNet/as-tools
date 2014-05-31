@@ -8,8 +8,8 @@
 	</parent>
 	<groupId>com.tibco.as.io</groupId>
 	<artifactId>com.tibco.as.io</artifactId>
-	<name>ActiveSpaces I/O</name>
-	<description>ActiveSpaces I/O bundle</description>
+	<name>ActiveSpaces I/O Framework</name>
+	<description>Common framework for ActiveSpaces I/O applications</description>
 	<packaging>bundle</packaging>
 
 	<dependencies>

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.text.MessageFormat;
 
 import org.apache.commons.io.input.CountingInputStream;
 
@@ -31,8 +32,13 @@ public abstract class TextFileInputStream implements IInputStream<String[]> {
 			read();
 		}
 	}
+	
+	@Override
+	public long getOpenTime() {
+		return 0;
+	}
 
-	public File getFile() {
+	private File getFile() {
 		return new File(directory, config.getFilename());
 	}
 
@@ -108,6 +114,11 @@ public abstract class TextFileInputStream implements IInputStream<String[]> {
 	@Override
 	public long getPosition() {
 		return inputStream.getByteCount();
+	}
+
+	@Override
+	public String getName() {
+		return MessageFormat.format("file ''{0}''", getFile());
 	}
 
 }

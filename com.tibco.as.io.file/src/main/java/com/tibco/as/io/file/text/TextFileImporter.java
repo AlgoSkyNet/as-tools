@@ -3,7 +3,6 @@ package com.tibco.as.io.file.text;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,8 +64,7 @@ public abstract class TextFileImporter extends Importer<String[]> {
 							.asList(header));
 					textFileImport.getFields().addAll(fields);
 				} catch (FileNotFoundException e) {
-					System.err.println(MessageFormat.format(
-							"File not found: {0}", in.getFile()));
+					System.err.println(e.getMessage());
 				} catch (IOException e) {
 					logger.log(Level.SEVERE, "Could not read header", e);
 				} finally {

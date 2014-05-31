@@ -1,7 +1,6 @@
 package com.tibco.as.io.cli.spreadsheets;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -11,11 +10,9 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import com.tibco.as.io.FieldUtils;
 import com.tibco.as.io.IMetaspaceTransfer;
-import com.tibco.as.io.ITransfer;
 import com.tibco.as.io.cli.CommandImport;
 import com.tibco.as.io.file.excel.ExcelImport;
 import com.tibco.as.io.file.excel.ExcelImporter;
-import com.tibco.as.io.file.excel.ExcelInputStream;
 import com.tibco.as.space.Metaspace;
 
 @Parameters(commandNames = "import", commandDescription = "Import Excel file(s)")
@@ -75,25 +72,6 @@ public class CommandImportExcel extends CommandImport {
 			transfers.add(importer);
 		}
 		return transfers;
-	}
-
-	@Override
-	protected String getExecutingMessage(Collection<ITransfer> transfers) {
-		return MessageFormat.format("Importing {0} file(s)", transfers.size());
-	}
-
-	@Override
-	protected String getOpenedMessage(ITransfer transfer) {
-		ExcelInputStream eis = (ExcelInputStream) transfer.getInputStream();
-		return MessageFormat.format("Importing sheet ''{0}''", eis.getSheet()
-				.getSheetName());
-	}
-
-	@Override
-	protected String getClosedMessage(ITransfer transfer) {
-		ExcelInputStream eis = (ExcelInputStream) transfer.getInputStream();
-		return MessageFormat.format("Imported sheet ''{0}''", eis.getSheet()
-				.getSheetName());
 	}
 
 }
