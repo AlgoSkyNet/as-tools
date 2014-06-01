@@ -12,6 +12,16 @@ public class Transfer implements Cloneable {
 
 	private String spaceName;
 
+	private Long limit;
+
+	public Long getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Long limit) {
+		this.limit = limit;
+	}
+
 	private Attributes attributes = new Attributes();
 
 	public String getSpaceName() {
@@ -63,6 +73,7 @@ public class Transfer implements Cloneable {
 		target.queueCapacity = queueCapacity;
 		target.spaceName = spaceName;
 		target.workerCount = workerCount;
+		target.limit = limit;
 	}
 
 }

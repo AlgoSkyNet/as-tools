@@ -38,6 +38,7 @@ public class Executor<T, U> implements ITransfer {
 		return queue;
 	}
 
+	@Override
 	public IInputStream<T> getInputStream() {
 		return in;
 	}

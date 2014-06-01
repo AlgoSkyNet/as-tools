@@ -27,7 +27,7 @@ public class SpaceInputStream implements IInputStream<Tuple> {
 
 	private long browseTime;
 
-	private long size;
+	private long size = IInputStream.UNKNOWN_SIZE;
 
 	public SpaceInputStream(Metaspace metaspace, String spaceName, Export export) {
 		this.metaspace = metaspace;
@@ -69,54 +69,36 @@ public class SpaceInputStream implements IInputStream<Tuple> {
 					filter);
 		}
 		browseTime = System.nanoTime() - start;
-		size = getSize();
-		position = 0;
-	}
-
-	private long getSize() {
-		if (export.isAllOrNew()) {
-			return IInputStream.UNKNOWN_SIZE;
-		}
 		if (browser instanceof ASBrowser) {
-			long size = ((ASBrowser) browser).size();
-			if (export.getMax() == null) {
-				return size;
-			}
-			return Math.min(size, export.getMax());
+			size = ((ASBrowser) browser).size();
 		}
-		if (export.getMax() == null) {
-			return IInputStream.UNKNOWN_SIZE;
-		}
-		return export.getMax();
+		position = 0;
 	}
 
 	@Override
 	public Tuple read() throws ASException {
-		if (export.getMax() == null || position < export.getMax()) {
-			try {
-				Tuple tuple = browser.next();
-				position++;
-				return tuple;
-			} catch (RuntimeASException e) {
-				if (e.getCause() instanceof ASException) {
-					ASException ase = (ASException) e.getCause();
-					if (ase.getStatus() == ASStatus.INVALID_OBJECT) {
-						return null;
-					}
-					throw ase;
-				}
-				if (e.getStatus() == ASStatus.INVALID_OBJECT) {
+		try {
+			Tuple tuple = browser.next();
+			position++;
+			return tuple;
+		} catch (RuntimeASException e) {
+			if (e.getCause() instanceof ASException) {
+				ASException ase = (ASException) e.getCause();
+				if (ase.getStatus() == ASStatus.INVALID_OBJECT) {
 					return null;
 				}
-				throw e;
-			} catch (ASException e) {
-				if (e.getStatus() == ASStatus.INVALID_OBJECT) {
-					return null;
-				}
-				throw e;
+				throw ase;
 			}
+			if (e.getStatus() == ASStatus.INVALID_OBJECT) {
+				return null;
+			}
+			throw e;
+		} catch (ASException e) {
+			if (e.getStatus() == ASStatus.INVALID_OBJECT) {
+				return null;
+			}
+			throw e;
 		}
-		return null;
 	}
 
 	@Override

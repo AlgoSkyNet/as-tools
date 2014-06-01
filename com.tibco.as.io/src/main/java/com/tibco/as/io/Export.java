@@ -17,8 +17,6 @@ public class Export extends Transfer implements Cloneable {
 
 	private String filter;
 
-	private Long max;
-
 	@Override
 	public Export clone() {
 		Export export = new Export();
@@ -50,14 +48,6 @@ public class Export extends Transfer implements Cloneable {
 		this.filter = filter;
 	}
 
-	public Long getMax() {
-		return max;
-	}
-
-	public void setMax(Long max) {
-		this.max = max;
-	}
-
 	public Long getTimeout() {
 		return timeout;
 	}
@@ -85,7 +75,6 @@ public class Export extends Transfer implements Cloneable {
 	public void copyTo(Export export) {
 		export.distributionScope = distributionScope;
 		export.filter = filter;
-		export.max = max;
 		export.prefetch = prefetch;
 		export.queryLimit = queryLimit;
 		export.timeout = timeout;

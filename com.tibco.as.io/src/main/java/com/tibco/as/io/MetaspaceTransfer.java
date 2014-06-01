@@ -79,6 +79,9 @@ public abstract class MetaspaceTransfer<T, U> implements IMetaspaceTransfer {
 				throw new TransferException("Could not get space def", e);
 			}
 			IInputStream<T> in = getInputStream(transfer, spaceDef);
+			if (transfer.getLimit() != null) {
+				in = new LimitedInputStream<T>(in, transfer.getLimit());
+			}
 			IOutputStream<U> out = getOutputStream(transfer, spaceDef);
 			int batchSize = getBatchSize(transfer);
 			int workerCount = getWorkerCount(transfer);
