@@ -1,3 +1,5 @@
+# FAQ
+
 ## Installation & Configuration
 
 1. **Permission denied**

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Files for TIBCO ActiveSpaces" xmlns="http://maven.apache.org/DECORATION/1.3.0"
+<project name="Simulator for TIBCO ActiveSpaces" xmlns="http://maven.apache.org/DECORATION/1.3.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd">
 
 	<bannerLeft>
-		<name>Files for TIBCO ActiveSpaces</name>
+		<name>Simulator for TIBCO ActiveSpaces</name>
 		<href>index.html</href>
 	</bannerLeft>
 
@@ -26,10 +26,10 @@
 			<highlightJsTheme>github</highlightJsTheme>
 			<absoluteResourceURL>${project.url}</absoluteResourceURL>
 			<brand>
-				<name>Files</name>
+				<name>Simulator for TIBCO ActiveSpaces</name>
 				<href>index.html</href>
 			</brand>
-			<slogan>CSV import/export utility for ActiveSpaces</slogan>
+			<slogan>Data simulator for TIBCO ActiveSpaces</slogan>
 			<topNav></topNav>
 			<bottomNav maxSpan="9">
 				<column>Documentation</column>
@@ -37,7 +37,7 @@
 			</bottomNav>
 			<pages>
 				<index>
-					<titleTemplate>Files for TIBCO ActiveSpaces</titleTemplate>
+					<titleTemplate>Simulator for TIBCO ActiveSpaces</titleTemplate>
 					<breadcrumbs>false</breadcrumbs>
 					<toc>false</toc>
 					<markPageHeader>false</markPageHeader>
@@ -46,7 +46,7 @@
 					</sections>
 				</index>
 				<faq>
-					<titleTemplate>Files for TIBCO ActiveSpaces - FAQ</titleTemplate>
+					<titleTemplate>Simulator for TIBCO ActiveSpaces - FAQ</titleTemplate>
 				</faq>
 			</pages>
 		</reflowSkin>
@@ -54,17 +54,15 @@
 
 	<body>
 		<breadcrumbs>
-			<item name="Files" href="index.html" />
+			<item name="Simulator" href="index.html" />
 		</breadcrumbs>
 		<links>
-			<item name="Introduction" href="introduction.html" />
-			<item name="Architecture" href="architecture.html" />
+			<item name="Configuration" href="configuration.html" />
 			<item name="Usage" href="usage.html" />
 			<item name="FAQ" href="faq.html" />
 		</links>
 		<menu name="Documentation" inherit="bottom">
-			<item name="Introduction" href="introduction.html" />
-			<item name="Architecture" href="architecture.html" />
+			<item name="Configuration" href="configuration.html" />
 			<item name="Usage" href="usage.html" />
 			<item name="FAQ" href="faq.html" />
 		</menu>
