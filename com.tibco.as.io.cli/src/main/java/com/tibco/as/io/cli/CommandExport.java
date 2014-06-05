@@ -100,7 +100,7 @@ public abstract class CommandExport extends Command implements MemberInvocable {
 	public Tuple invoke(Space space, Tuple context) {
 		Tuple result = Tuple.create();
 		spaceNames.add(space.getName());
-		initialize(context);
+		initialize(space, context);
 		try {
 			execute(space.getMetaspace());
 		} catch (ASException e) {
@@ -132,8 +132,8 @@ public abstract class CommandExport extends Command implements MemberInvocable {
 	}
 
 	@Override
-	protected void initialize(Tuple context) {
-		super.initialize(context);
+	protected void initialize(Space space, Tuple context) {
+		super.initialize(space, context);
 		String timeScopeName = context.getString(FIELD_TIME_SCOPE);
 		if (timeScopeName != null) {
 			timeScope = TimeScope.valueOf(timeScopeName);

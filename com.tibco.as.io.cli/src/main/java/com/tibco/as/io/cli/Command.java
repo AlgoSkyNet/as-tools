@@ -9,6 +9,7 @@ import com.tibco.as.io.ITransfer;
 import com.tibco.as.io.Transfer;
 import com.tibco.as.io.TransferException;
 import com.tibco.as.space.Metaspace;
+import com.tibco.as.space.Space;
 import com.tibco.as.space.Tuple;
 
 public abstract class Command implements IMetaspaceTransferListener {
@@ -87,7 +88,7 @@ public abstract class Command implements IMetaspaceTransferListener {
 		}
 	}
 
-	protected void initialize(Tuple context) {
+	protected void initialize(Space space, Tuple context) {
 		batchSize = context.getInt(FIELD_BATCH_SIZE);
 		workerCount = context.getInt(FIELD_WORKER_COUNT);
 	}

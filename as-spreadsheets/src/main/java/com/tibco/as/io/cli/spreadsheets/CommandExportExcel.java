@@ -17,6 +17,7 @@ import com.tibco.as.io.cli.CommandExport;
 import com.tibco.as.io.file.excel.ExcelExport;
 import com.tibco.as.io.file.excel.ExcelExporter;
 import com.tibco.as.space.Metaspace;
+import com.tibco.as.space.Space;
 import com.tibco.as.space.Tuple;
 
 @Parameters(commandNames = "export", commandDescription = "Export space(s) to Excel")
@@ -73,8 +74,8 @@ public class CommandExportExcel extends CommandExport {
 	}
 
 	@Override
-	protected void initialize(Tuple context) {
-		super.initialize(context);
+	protected void initialize(Space space, Tuple context) {
+		super.initialize(space, context);
 		if (context.containsKey(FIELD_FILE)) {
 			filepath = context.getString(FIELD_FILE);
 		}

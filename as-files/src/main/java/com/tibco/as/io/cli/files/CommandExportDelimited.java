@@ -12,28 +12,23 @@ import com.tibco.as.io.IMetaspaceTransfer;
 import com.tibco.as.io.cli.CommandExport;
 import com.tibco.as.io.file.text.delimited.DelimitedExport;
 import com.tibco.as.io.file.text.delimited.DelimitedExporter;
+import com.tibco.as.space.ASException;
 import com.tibco.as.space.Metaspace;
+import com.tibco.as.space.Space;
 import com.tibco.as.space.Tuple;
 
 @Parameters(commandNames = "export", commandDescription = "Export space(s) to CSV")
 public class CommandExportDelimited extends CommandExport {
 
 	private static final String FIELD_DIRECTORY = "directory";
-
+	private static final String FIELD_FILENAME = "filename";
 	private static final String FIELD_NO_HEADER = "noHeader";
-
 	private static final String FIELD_DELIMITER = "delimiter";
-
 	private static final String FIELD_QUOTE = "quote";
-
 	private static final String FIELD_ESCAPE = "escape";
-
 	private static final String FIELD_BLOB_FORMAT = "blobFormat";
-
 	private static final String FIELD_BOOLEAN_FORMAT = "booleanFormat";
-
 	private static final String FIELD_DATE_FORMAT = "dateFormat";
-
 	private static final String FIELD_NUMBER_FORMAT = "numberFormat";
 
 	@Parameter(names = { "-directory" }, description = "Export directory")
@@ -51,11 +46,15 @@ public class CommandExportDelimited extends CommandExport {
 	@Parameter(names = { "-escape" }, description = "Character to use for escaping a separator or quote")
 	private String escape;
 
+	@Parameter(names = { "-filename" }, description = "Export filename")
+	private String filename;
+
 	@ParametersDelegate
 	private DelimitedFormats formats = new DelimitedFormats();
 
 	private void configure(DelimitedExport transfer) {
 		super.configure(transfer);
+		transfer.setFilename(filename);
 		transfer.setEscapeChar(getChar(escape));
 		transfer.setHeader(!Boolean.TRUE.equals(noHeader));
 		transfer.setQuoteChar(getChar(quote));
@@ -67,6 +66,9 @@ public class CommandExportDelimited extends CommandExport {
 	protected void configure(Tuple context) {
 		super.configure(context);
 		context.putString(FIELD_DIRECTORY, directoryPath);
+		if (filename != null) {
+			context.putString(FIELD_FILENAME, filename);
+		}
 		if (noHeader != null) {
 			context.putBoolean(FIELD_NO_HEADER, noHeader);
 		}
@@ -83,10 +85,23 @@ public class CommandExportDelimited extends CommandExport {
 	}
 
 	@Override
-	protected void initialize(Tuple context) {
-		super.initialize(context);
+	protected void initialize(Space space, Tuple context) {
+		super.initialize(space, context);
 		if (context.containsKey(FIELD_DIRECTORY)) {
 			directoryPath = context.getString(FIELD_DIRECTORY);
+		}
+		File directory = new File(directoryPath, space.getName());
+		directory.mkdirs();
+		directoryPath = directory.getPath();
+		if (context.containsKey(filename)) {
+			filename = context.getString(filename);
+		} else {
+			try {
+				filename = space.getMetaspace().getSelfMember().getName()
+						+ "-export.csv";
+			} catch (ASException e) {
+				e.printStackTrace();
+			}
 		}
 		noHeader = context.getBoolean(FIELD_NO_HEADER);
 		delimiter = context.getString(FIELD_DELIMITER);
