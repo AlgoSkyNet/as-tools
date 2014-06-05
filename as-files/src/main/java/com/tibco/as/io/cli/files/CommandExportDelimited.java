@@ -49,6 +49,9 @@ public class CommandExportDelimited extends CommandExport {
 	@Parameter(names = { "-filename" }, description = "Export filename")
 	private String filename;
 
+	@Parameter(names = { "-remote" }, description = "Execute the export on seeders")
+	private Boolean remote;
+
 	@ParametersDelegate
 	private DelimitedFormats formats = new DelimitedFormats();
 
@@ -60,6 +63,11 @@ public class CommandExportDelimited extends CommandExport {
 		transfer.setQuoteChar(getChar(quote));
 		transfer.setSeparator(getChar(delimiter));
 		transfer.getAttributes().putAll(formats.getAttributes());
+	}
+
+	@Override
+	protected boolean isRemote() {
+		return Boolean.TRUE.equals(remote);
 	}
 
 	@Override

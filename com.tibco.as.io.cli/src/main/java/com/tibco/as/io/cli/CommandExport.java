@@ -54,12 +54,9 @@ public abstract class CommandExport extends Command implements MemberInvocable {
 	@Parameter(description = "Browser filter", names = { "-filter" })
 	private String filter;
 
-	@Parameter(names = { "-remote" }, description = "Execute the export on seeders")
-	private Boolean remote;
-
 	@Override
 	public void execute(Metaspace metaspace) {
-		if (Boolean.TRUE.equals(remote)) {
+		if (isRemote()) {
 			Collection<String> spaceNames = new ArrayList<String>(
 					this.spaceNames);
 			if (spaceNames.isEmpty()) {
@@ -96,17 +93,8 @@ public abstract class CommandExport extends Command implements MemberInvocable {
 		}
 	}
 
-	@Override
-	public Tuple invoke(Space space, Tuple context) {
-		Tuple result = Tuple.create();
-		spaceNames.add(space.getName());
-		initialize(space, context);
-		try {
-			execute(space.getMetaspace());
-		} catch (ASException e) {
-			e.printStackTrace();
-		}
-		return result;
+	protected boolean isRemote() {
+		return false;
 	}
 
 	@Override
@@ -187,5 +175,18 @@ public abstract class CommandExport extends Command implements MemberInvocable {
 
 	protected abstract Collection<IMetaspaceTransfer> getMetaspaceTransfers(
 			Metaspace metaspace, Collection<String> spaceNames);
+
+	@Override
+	public Tuple invoke(Space space, Tuple context) {
+		Tuple result = Tuple.create();
+		spaceNames.add(space.getName());
+		initialize(space, context);
+		try {
+			execute(space.getMetaspace());
+		} catch (ASException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 
 }
