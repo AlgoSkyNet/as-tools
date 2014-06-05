@@ -88,6 +88,8 @@ Usage: as-files [options] [command] [command options]
              Browser query limit
           -quote
              Character to use for quoted elements
+          -remote
+             Execute the export on seeders
           -separator
              The delimiter to use for separating entries
           -time_scope

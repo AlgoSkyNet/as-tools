@@ -64,12 +64,70 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-site-xml</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-site</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/site</directory>
+									<includes>
+										<include>site.xml</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-markdown</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-site/markdown</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/site</directory>
+									<includes>
+										<include>*.md</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-images</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-site/resources/images</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/site/images</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.3</version>
 				<configuration>
 					<generateProjectInfo>false</generateProjectInfo>
 					<generateReports>false</generateReports>
+					<siteDirectory>${project.build.directory}/generated-site</siteDirectory>
 				</configuration>
 				<dependencies>
 					<dependency>

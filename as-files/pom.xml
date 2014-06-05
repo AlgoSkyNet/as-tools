@@ -53,6 +53,10 @@
 							<mainClass>com.tibco.as.io.cli.files.Application</mainClass>
 							<id>${project.artifactId}</id>
 						</program>
+						<program>
+							<mainClass>com.tibco.as.space.agent.AgentConsole</mainClass>
+							<id>as-agent</id>
+						</program>
 					</programs>
 					<unixScriptTemplate>src/assemble/unixBinTemplate</unixScriptTemplate>
 					<windowsScriptTemplate>src/assemble/windowsBinTemplate</windowsScriptTemplate>
