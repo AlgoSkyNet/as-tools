@@ -29,4 +29,36 @@ public class DelimitedFormats {
 		return attributes;
 	}
 
+	public Blob getBlobFormat() {
+		return blobFormat;
+	}
+
+	public void setBlobFormat(Blob blobFormat) {
+		this.blobFormat = blobFormat;
+	}
+
+	public String getBooleanFormat() {
+		return booleanFormat;
+	}
+
+	public void setBooleanFormat(String booleanFormat) {
+		this.booleanFormat = booleanFormat;
+	}
+
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
+	public String getNumberFormat() {
+		return numberFormat;
+	}
+
+	public void setNumberFormat(String numberFormat) {
+		this.numberFormat = numberFormat;
+	}
+
 }

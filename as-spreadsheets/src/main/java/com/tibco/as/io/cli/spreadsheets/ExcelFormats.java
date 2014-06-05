@@ -17,4 +17,12 @@ public class ExcelFormats {
 		return conversion;
 	}
 
+	public Blob getBlobFormat() {
+		return blobFormat;
+	}
+
+	public void setBlobFormat(Blob blobFormat) {
+		this.blobFormat = blobFormat;
+	}
+
 }

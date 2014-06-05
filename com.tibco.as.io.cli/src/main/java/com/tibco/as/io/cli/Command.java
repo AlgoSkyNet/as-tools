@@ -9,8 +9,13 @@ import com.tibco.as.io.ITransfer;
 import com.tibco.as.io.Transfer;
 import com.tibco.as.io.TransferException;
 import com.tibco.as.space.Metaspace;
+import com.tibco.as.space.Tuple;
 
 public abstract class Command implements IMetaspaceTransferListener {
+
+	private static final String FIELD_BATCH_SIZE = "batchSize";
+
+	private static final String FIELD_WORKER_COUNT = "workerCount";
 
 	@Parameter(description = "Transfer output batch size", names = { "-batch_size" })
 	private Integer batchSize;
@@ -71,6 +76,20 @@ public abstract class Command implements IMetaspaceTransferListener {
 	protected abstract String getClosedMessage(ITransfer transfer);
 
 	public void prepare() throws Exception {
+	}
+
+	protected void configure(Tuple context) {
+		if (batchSize != null) {
+			context.putInt(FIELD_BATCH_SIZE, batchSize);
+		}
+		if (workerCount != null) {
+			context.putInt(FIELD_WORKER_COUNT, workerCount);
+		}
+	}
+
+	protected void initialize(Tuple context) {
+		batchSize = context.getInt(FIELD_BATCH_SIZE);
+		workerCount = context.getInt(FIELD_WORKER_COUNT);
 	}
 
 }
