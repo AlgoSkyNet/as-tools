@@ -15,14 +15,25 @@
 	<xsd:complexType name="space">
 		<xsd:sequence>
 			<xsd:element name="fields" type="fields" />
-			<xsd:element name="updates" type="updates" minOccurs="0" />
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="sleep" type="xsd:long" />
 		<xsd:attribute name="size" type="xsd:long" />
 		<xsd:attribute name="batchSize" type="xsd:int" />
 		<xsd:attribute name="distributionRole" type="distributionRole" />
+		<xsd:attribute name="operation" type="operation"
+			default="put" />
 	</xsd:complexType>
+
+	<xsd:simpleType name="operation">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="get" />
+			<xsd:enumeration value="load" />
+			<xsd:enumeration value="partial" />
+			<xsd:enumeration value="put" />
+			<xsd:enumeration value="take" />
+		</xsd:restriction>
+	</xsd:simpleType>
 
 	<xsd:simpleType name="distributionRole">
 		<xsd:restriction base="xsd:string">
@@ -64,16 +75,6 @@
 			<xsd:element name="streetSuffix" type="streetSuffix" />
 			<xsd:element name="suffix" type="suffix" />
 			<xsd:element name="regex" type="regex" />
-		</xsd:choice>
-	</xsd:complexType>
-
-	<xsd:complexType name="updates">
-		<xsd:choice maxOccurs="unbounded">
-			<xsd:element name="integer" type="integerUpdate" />
-			<xsd:element name="long" type="longUpdate" />
-			<xsd:element name="double" type="doubleUpdate" />
-			<xsd:element name="short" type="shortUpdate" />
-			<xsd:element name="dateTime" type="dateTimeUpdate" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -463,57 +464,6 @@
 		<xsd:complexContent>
 			<xsd:extension base="simField">
 				<xsd:attribute name="regex" type="xsd:string" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="updateField">
-		<xsd:complexContent>
-			<xsd:extension base="simField" />
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="integerUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:int" />
-				<xsd:attribute name="minus" type="xsd:int" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="longUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:long" />
-				<xsd:attribute name="minus" type="xsd:long" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="shortUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:short" />
-				<xsd:attribute name="minus" type="xsd:short" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="doubleUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:double" />
-				<xsd:attribute name="minus" type="xsd:double" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="dateTimeUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:int" />
-				<xsd:attribute name="minus" type="xsd:int" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>

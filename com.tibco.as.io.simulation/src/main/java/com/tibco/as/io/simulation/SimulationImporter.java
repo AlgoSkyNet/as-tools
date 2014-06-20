@@ -71,6 +71,9 @@ public class SimulationImporter extends Importer<Object[]> {
 				simulationImport.setDistributionRole(space
 						.getDistributionRole());
 			}
+			if (space.getOperation() != null) {
+				simulationImport.setOperation(space.getOperation());
+			}
 			imports.add(simulationImport);
 		}
 		return imports;

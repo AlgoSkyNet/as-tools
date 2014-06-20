@@ -10,8 +10,7 @@ public class IntegerProvider implements IValueProvider {
 	private RandomInteger field;
 	private Random random;
 
-	public IntegerProvider(Random random,
-			RandomInteger field) {
+	public IntegerProvider(Random random, RandomInteger field) {
 		this.random = random;
 		this.field = field;
 	}
@@ -24,7 +23,8 @@ public class IntegerProvider implements IValueProvider {
 			else
 				return random.nextInt(field.getMax());
 		else
-			return random.nextInt(field.getMax() - field.getMin());
+			return field.getMin()
+					+ random.nextInt(field.getMax() - field.getMin());
 	}
 
 }
