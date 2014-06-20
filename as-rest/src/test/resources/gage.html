@@ -1,0 +1,62 @@
+<html>
+<script src="js/raphael.2.1.0.min.js"></script>
+<script src="js/justgage.1.0.1.min.js"></script>
+<style>
+  body {text-align: center;}
+  
+  #gauge {
+    width:800px; height:600px;
+    display: inline-block;
+    margin: 1em;
+  }
+</style>
+
+<div id="output" style="font-family: arial; font-size: 12px; color: blue"></div>
+<div id="gauge"></div>
+
+<script type="text/javascript">
+    var connection = new WebSocket("ws://localhost:8080/rest/metaspaces/ms/spaces/quote/browse");
+    var countMsg   = 0;
+    
+    if (window.WebSocket) {
+        //alert("ok!");
+     } else {
+        alert("NOT ok!");
+     }
+
+    var tps = 0;
+    var g = new JustGage({
+        id: "gauge", 
+        value: tps, 
+        min: 0,
+        max: 1000,
+        title: "Transacoes",
+        shadowOpacity: 1,
+        shadowSize: 0,
+        shadowVerticalOffset: 10
+    }); 
+    
+    connection.onopen = function () {
+        // Envia mensagens para o servidor via conex�o WebSocket
+        //connection.send('Hello, WebSocket Server!!');
+    };
+    
+    connection.onerror = function (error) {
+        // Registra o erro ocorrido
+        writeOut("Error: " + error.data);
+    };
+    
+    connection.onmessage = function (e) {
+        var quote = JSON.parse(e.data);
+        tps = quote.bid;
+        g.refresh(tps);
+    };
+    
+    function writeOut(info) {
+        var date = new Date();
+        var tmp  = date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds(); 
+        var obj  = document.getElementById("output");
+        obj.innerHTML = obj.innerHTML + "<br>" + (++countMsg) + ' - Received [' + tmp + ']: ' + info;
+    }
+</script>
+</html>
