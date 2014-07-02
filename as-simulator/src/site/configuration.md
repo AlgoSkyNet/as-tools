@@ -58,56 +58,31 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="space">
 		<xsd:sequence>
-			<xsd:choice minOccurs="1">
-				<xsd:element name="fields" type="fields" />
-				<xsd:element name="browse" type="browse" />
-			</xsd:choice>
-			<xsd:element name="updates" type="updates" minOccurs="0" />
+			<xsd:element name="fields" type="fields" />
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="sleep" type="xsd:long" />
 		<xsd:attribute name="size" type="xsd:long" />
 		<xsd:attribute name="batchSize" type="xsd:int" />
 		<xsd:attribute name="distributionRole" type="distributionRole" />
+		<xsd:attribute name="operation" type="operation"
+			default="put" />
 	</xsd:complexType>
+
+	<xsd:simpleType name="operation">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="get" />
+			<xsd:enumeration value="load" />
+			<xsd:enumeration value="partial" />
+			<xsd:enumeration value="put" />
+			<xsd:enumeration value="take" />
+		</xsd:restriction>
+	</xsd:simpleType>
 
 	<xsd:simpleType name="distributionRole">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="leech" />
 			<xsd:enumeration value="seeder" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:complexType name="browse">
-		<xsd:attribute name="filter" type="xsd:string" />
-		<xsd:attribute name="type" type="browserType" />
-		<xsd:attribute name="distributionScope" type="distributionScope" />
-		<xsd:attribute name="prefetch" type="xsd:long" />
-		<xsd:attribute name="timeout" type="xsd:long" />
-		<xsd:attribute name="timeScope" type="timeScope" />
-	</xsd:complexType>
-
-	<xsd:simpleType name="browserType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="get" />
-			<xsd:enumeration value="lock" />
-			<xsd:enumeration value="take" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:simpleType name="distributionScope">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="all" />
-			<xsd:enumeration value="seeded" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:simpleType name="timeScope">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="all" />
-			<xsd:enumeration value="new" />
-			<xsd:enumeration value="snapshot" />
-			<xsd:enumeration value="current" />
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -144,17 +119,6 @@ Here is the schema that configuration files adhere to:
 			<xsd:element name="streetSuffix" type="streetSuffix" />
 			<xsd:element name="suffix" type="suffix" />
 			<xsd:element name="regex" type="regex" />
-			<xsd:element name="browse" type="browseField" />
-		</xsd:choice>
-	</xsd:complexType>
-
-	<xsd:complexType name="updates">
-		<xsd:choice maxOccurs="unbounded">
-			<xsd:element name="integer" type="integerUpdate" />
-			<xsd:element name="long" type="longUpdate" />
-			<xsd:element name="double" type="doubleUpdate" />
-			<xsd:element name="short" type="shortUpdate" />
-			<xsd:element name="dateTime" type="dateTimeUpdate" />
 		</xsd:choice>
 	</xsd:complexType>
 
@@ -267,7 +231,7 @@ Here is the schema that configuration files adhere to:
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="field">
+	<xsd:complexType name="simField">
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="nullable" type="xsd:boolean"
 			default="true" />
@@ -276,7 +240,7 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="constant">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:sequence>
 					<xsd:element name="value" type="xsd:anySimpleType" />
 				</xsd:sequence>
@@ -286,13 +250,13 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="address">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="addressLine2">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="probability" type="xsd:int" />
 				<xsd:attribute name="default" type="xsd:string" />
 			</xsd:extension>
@@ -301,25 +265,25 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="birthDate">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="businessName">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="city">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="randomDateTime">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="dateOnly" type="xsd:boolean" />
 				<xsd:attribute name="year" type="xsd:int" />
 				<xsd:attribute name="month" type="xsd:int" default="1" />
@@ -337,19 +301,19 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="emailAddress">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="firstName">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="item">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:sequence>
 					<xsd:element name="default" type="xsd:anySimpleType"
 						minOccurs="0" />
@@ -363,25 +327,25 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="lastName">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="name">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="now">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="sequence">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="start" type="xsd:long" default="0" />
 				<xsd:attribute name="end" type="xsd:long" />
 			</xsd:extension>
@@ -390,7 +354,7 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="randomBlob">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="size" type="xsd:int" />
 				<xsd:attribute name="minSize" type="xsd:int" default="0" />
 				<xsd:attribute name="maxSize" type="xsd:int" default="100" />
@@ -400,13 +364,13 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="randomBoolean">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="randomDouble">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="min" type="xsd:double" />
 				<xsd:attribute name="max" type="xsd:double" />
 				<xsd:attribute name="decimals" type="xsd:int" />
@@ -416,19 +380,19 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="randomChar">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="randomFloat">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="randomInteger">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="min" type="xsd:int" />
 				<xsd:attribute name="max" type="xsd:int" />
 			</xsd:extension>
@@ -437,13 +401,13 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="randomLong">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="randomShort">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="min" type="xsd:short" />
 				<xsd:attribute name="max" type="xsd:short" />
 			</xsd:extension>
@@ -452,24 +416,15 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="numberText">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="digits" type="xsd:int" default="10" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="browseField">
-		<xsd:complexContent>
-			<xsd:extension base="field">
-				<xsd:attribute name="space" type="xsd:string" />
-				<xsd:attribute name="field" type="xsd:string" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="prefix">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="chance" type="xsd:int" default="50" />
 			</xsd:extension>
 		</xsd:complexContent>
@@ -477,7 +432,7 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="randomChars">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="length" type="xsd:int" />
 				<xsd:attribute name="minLength" type="xsd:int"
 					default="0" />
@@ -498,7 +453,7 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="randomText">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="length" type="xsd:int" />
 				<xsd:attribute name="minLength" type="xsd:int"
 					default="0" />
@@ -510,7 +465,7 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="randomWord">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="length" type="xsd:int" />
 				<xsd:attribute name="minLength" type="xsd:int" />
 				<xsd:attribute name="maxLength" type="xsd:int"
@@ -531,19 +486,19 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="streetName">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="streetSuffix">
 		<xsd:complexContent>
-			<xsd:extension base="field" />
+			<xsd:extension base="simField" />
 		</xsd:complexContent>
 	</xsd:complexType>
 
 	<xsd:complexType name="suffix">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="chance" type="xsd:int" default="50" />
 			</xsd:extension>
 		</xsd:complexContent>
@@ -551,59 +506,8 @@ Here is the schema that configuration files adhere to:
 
 	<xsd:complexType name="regex">
 		<xsd:complexContent>
-			<xsd:extension base="field">
+			<xsd:extension base="simField">
 				<xsd:attribute name="regex" type="xsd:string" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="updateField">
-		<xsd:complexContent>
-			<xsd:extension base="field" />
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="integerUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:int" />
-				<xsd:attribute name="minus" type="xsd:int" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="longUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:long" />
-				<xsd:attribute name="minus" type="xsd:long" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="shortUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:short" />
-				<xsd:attribute name="minus" type="xsd:short" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="doubleUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:double" />
-				<xsd:attribute name="minus" type="xsd:double" />
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
-
-	<xsd:complexType name="dateTimeUpdate">
-		<xsd:complexContent>
-			<xsd:extension base="updateField">
-				<xsd:attribute name="plus" type="xsd:int" />
-				<xsd:attribute name="minus" type="xsd:int" />
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
