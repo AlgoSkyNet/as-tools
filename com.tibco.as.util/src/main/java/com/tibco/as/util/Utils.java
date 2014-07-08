@@ -1,4 +1,4 @@
-package com.tibco.as.utils;
+package com.tibco.as.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,20 +9,12 @@ import java.util.List;
 import com.tibco.as.space.ASCommon;
 import com.tibco.as.space.ASException;
 import com.tibco.as.space.FieldDef;
-import com.tibco.as.space.Member.DistributionRole;
 import com.tibco.as.space.Metaspace;
 import com.tibco.as.space.Space;
 import com.tibco.as.space.SpaceDef;
+import com.tibco.as.space.Member.DistributionRole;
 
-public class ASUtils {
-
-	public static Metaspace getMetaspace(String metaspaceName) {
-		return ASCommon.getMetaspace(getMetaspaceName(metaspaceName));
-	}
-
-	public static String getMetaspaceName(String metaspaceName) {
-		return metaspaceName == null ? "ms" : metaspaceName;
-	}
+public class Utils {
 
 	public static List<FieldDef> getFieldDefs(SpaceDef spaceDef,
 			String... fieldNames) {
@@ -78,15 +70,6 @@ public class ASUtils {
 		return fieldNames;
 	}
 
-	public static Space getSpace(String metaspaceName, String spaceName,
-			DistributionRole distributionRole) throws ASException {
-		Metaspace metaspace = getMetaspace(metaspaceName);
-		if (distributionRole == null) {
-			return metaspace.getSpace(spaceName);
-		}
-		return metaspace.getSpace(spaceName, distributionRole);
-	}
-
 	public static boolean hasMethod(Class<?> clazz, String name) {
 		for (Method method : clazz.getMethods()) {
 			if (method.getName().equals(name)) {
@@ -96,12 +79,29 @@ public class ASUtils {
 		return false;
 	}
 
+	public static String getMetaspaceName(String metaspaceName) {
+		return metaspaceName == null ? "ms" : metaspaceName;
+	}
+
+	public static Metaspace getMetaspace(String name) {
+		return ASCommon.getMetaspace(getMetaspaceName(name));
+	}
+
 	public static String getSpaceURI(String metaspaceName, String spaceName) {
 		return getMetaspaceName(metaspaceName) + "." + spaceName;
 	}
 
 	public static String getSpaceURI(Metaspace metaspace, String spaceName) {
 		return getSpaceURI(metaspace.getName(), spaceName);
+	}
+
+	public static Space getSpace(String metaspaceName, String spaceName,
+			DistributionRole distributionRole) throws ASException {
+		Metaspace metaspace = getMetaspace(metaspaceName);
+		if (distributionRole == null) {
+			return metaspace.getSpace(spaceName);
+		}
+		return metaspace.getSpace(spaceName, distributionRole);
 	}
 
 }
