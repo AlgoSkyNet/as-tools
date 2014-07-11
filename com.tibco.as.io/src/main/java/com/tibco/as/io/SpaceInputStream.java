@@ -11,7 +11,7 @@ import com.tibco.as.space.browser.Browser;
 import com.tibco.as.space.browser.BrowserDef;
 import com.tibco.as.space.browser.BrowserDef.BrowserType;
 import com.tibco.as.space.impl.ASBrowser;
-import com.tibco.as.utils.ASUtils;
+import com.tibco.as.util.Utils;
 
 public class SpaceInputStream implements IInputStream<Tuple> {
 
@@ -56,7 +56,7 @@ public class SpaceInputStream implements IInputStream<Tuple> {
 			browserDef.setPrefetch(export.getPrefetch());
 		}
 		if (export.getQueryLimit() != null) {
-			if (ASUtils.hasMethod(BrowserDef.class, "setQueryLimit")) {
+			if (Utils.hasMethod(BrowserDef.class, "setQueryLimit")) {
 				browserDef.setQueryLimit(export.getQueryLimit());
 			}
 		}

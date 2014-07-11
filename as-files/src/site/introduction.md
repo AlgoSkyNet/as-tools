@@ -22,6 +22,8 @@ A browse is then performed on the space and each returned tuple is converted int
 
 The first line in the file describes the space fields and keys.
 
+### Header Format
+
 Each field is encoded in the form
 
 	name[type encrypted nullable key]
@@ -30,8 +32,24 @@ e.g.
 
 <table>
     <tr>
-        <td><code>id[LONG key]</code></td>
-        <td><code>name[STRING nullable]</code></td>
-        <td><code>account[LONG encrypted nullable]</code></td>
+        <td><code>"id[LONG key]"</code></td>
+        <td><code>"name[STRING nullable]"</code></td>
+        <td><code>"account[LONG encrypted nullable]"</code></td>
     </tr>
 </table>
+
+### Ignoring Fields
+
+If a field descriptor is left empty, it is ignored by the import/export process.
+
+e.g.
+
+<table>
+	<tr>
+	    <td><code>"id[LONG key]"</code></td>
+        <td><code>""</code></td>
+        <td><code>"account[LONG encrypted nullable]"</code></td>
+    </tr>
+</table>
+	
+	

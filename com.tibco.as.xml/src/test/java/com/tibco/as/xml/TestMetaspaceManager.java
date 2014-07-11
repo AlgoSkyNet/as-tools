@@ -19,8 +19,7 @@ public class TestMetaspaceManager {
 	public void testGetMetaspaceByDisplayName() throws JAXBException,
 			IOException, ASException {
 		MetaspaceManager manager = MetaspaceManager.getInstance();
-		com.tibco.as.xml.Metaspace metaspace = manager
-				.getMetaspaceByDisplayName("ms1");
+		com.tibco.as.space.Metaspace metaspace = manager.getMetaspace("ms1");
 		Assert.assertEquals("ms1", metaspace.getName());
 	}
 

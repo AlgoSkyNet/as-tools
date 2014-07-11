@@ -12,7 +12,7 @@ import com.tibco.as.io.IEventListener;
 import com.tibco.as.space.ASException;
 import com.tibco.as.space.MemberDef;
 import com.tibco.as.space.Metaspace;
-import com.tibco.as.utils.ASUtils;
+import com.tibco.as.util.Utils;
 
 public abstract class AbstractCLIApplication implements IEventListener {
 
@@ -94,27 +94,27 @@ public abstract class AbstractCLIApplication implements IEventListener {
 				return;
 			}
 		}
-		MemberDef memberDef = MemberDef.create();
-		if (memberName != null) {
-			memberDef.setMemberName(memberName);
-		}
-		if (discovery != null) {
-			memberDef.setDiscovery(discovery);
-		}
-		if (listen != null) {
-			memberDef.setListen(listen);
-		}
-		if (dataStore != null) {
-			memberDef.setDataStore(dataStore);
-		}
-		if (rxBufferSize != null) {
-			memberDef.setRxBufferSize(rxBufferSize);
-		}
-		if (workerThreadCount != null) {
-			memberDef.setWorkerThreadCount(workerThreadCount);
-		}
-		Metaspace metaspace = ASUtils.getMetaspace(metaspaceName);
+		Metaspace metaspace = Utils.getMetaspace(metaspaceName);
 		if (metaspace == null) {
+			MemberDef memberDef = MemberDef.create();
+			if (memberName != null) {
+				memberDef.setMemberName(memberName);
+			}
+			if (discovery != null) {
+				memberDef.setDiscovery(discovery);
+			}
+			if (listen != null) {
+				memberDef.setListen(listen);
+			}
+			if (dataStore != null) {
+				memberDef.setDataStore(dataStore);
+			}
+			if (rxBufferSize != null) {
+				memberDef.setRxBufferSize(rxBufferSize);
+			}
+			if (workerThreadCount != null) {
+				memberDef.setWorkerThreadCount(workerThreadCount);
+			}
 			try {
 				metaspace = Metaspace.connect(metaspaceName, memberDef);
 			} catch (ASException e) {

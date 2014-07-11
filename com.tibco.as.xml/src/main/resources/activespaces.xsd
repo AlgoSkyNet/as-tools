@@ -39,15 +39,32 @@
 	</xsd:simpleType>
 
 	<xsd:complexType name="metaspace">
-		<xsd:attribute name="displayName" type="xsd:string" use="required" />
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="member" type="xsd:string" />
 		<xsd:attribute name="discovery" type="xsd:string" />
 		<xsd:attribute name="remote" type="xsd:boolean" />
 		<xsd:attribute name="listen" type="xsd:string" />
 		<xsd:attribute name="connectTimeout" type="xsd:long" />
-		<xsd:attribute name="autoconnect" type="xsd:boolean" />
 	</xsd:complexType>
+
+	<xsd:element name="metaspaces2">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="metaspace" type="metaspace2" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="metaspace2">
+		<xsd:attribute name="displayName" type="xsd:string" />
+		<xsd:attribute name="name" type="xsd:string" />
+		<xsd:attribute name="member" type="xsd:string" />
+		<xsd:attribute name="discovery" type="xsd:string" />
+		<xsd:attribute name="remote" type="xsd:boolean" />
+		<xsd:attribute name="listen" type="xsd:string" />
+		<xsd:attribute name="connectTimeout" type="xsd:long" />
+	</xsd:complexType>
+
 
 	<xsd:element name="spaces" type="spaces" />
 

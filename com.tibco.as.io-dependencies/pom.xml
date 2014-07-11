@@ -11,7 +11,7 @@
 	<groupId>com.tibco.as.io</groupId>
 	<artifactId>com.tibco.as.io-dependencies</artifactId>
 	<packaging>bundle</packaging>
-	
+
 	<name>ActiveSpaces I/O Dependencies</name>
 
 	<dependencies>

@@ -26,7 +26,7 @@ import com.tibco.as.space.Space;
 import com.tibco.as.space.SpaceDef;
 import com.tibco.as.space.Tuple;
 import com.tibco.as.space.browser.BrowserDef.TimeScope;
-import com.tibco.as.utils.ASUtils;
+import com.tibco.as.util.Utils;
 
 public class TestBatch extends TestBase {
 
@@ -72,7 +72,7 @@ public class TestBatch extends TestBase {
 			protected IConverter<Tuple, String[]> getConverter(
 					Transfer transfer, SpaceDef spaceDef)
 					throws UnsupportedConversionException {
-				Collection<FieldDef> fieldDefs = ASUtils.getFieldDefs(spaceDef);
+				Collection<FieldDef> fieldDefs = Utils.getFieldDefs(spaceDef);
 				Collection<ITupleAccessor> accessors = AccessorFactory
 						.create(fieldDefs);
 				Collection<IConverter> converters;
@@ -118,7 +118,7 @@ public class TestBatch extends TestBase {
 			protected IConverter<Tuple, String[]> getConverter(
 					Transfer transfer, SpaceDef spaceDef)
 					throws UnsupportedConversionException {
-				Collection<FieldDef> fieldDefs = ASUtils.getFieldDefs(spaceDef);
+				Collection<FieldDef> fieldDefs = Utils.getFieldDefs(spaceDef);
 				Collection<ITupleAccessor> accessors = AccessorFactory
 						.create(fieldDefs);
 				Collection<IConverter> converters = factory.getFieldConverters(

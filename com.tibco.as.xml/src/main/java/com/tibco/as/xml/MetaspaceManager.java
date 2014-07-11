@@ -70,9 +70,6 @@ public class MetaspaceManager {
 
 	public void add(com.tibco.as.xml.Metaspace metaspace) throws ASException {
 		metaspaces.getMetaspace().add(metaspace);
-		if (Boolean.TRUE.equals(metaspace.isAutoconnect())) {
-			connect(metaspace);
-		}
 	}
 
 	public Metaspace connect(com.tibco.as.xml.Metaspace metaspace)
@@ -100,27 +97,6 @@ public class MetaspaceManager {
 			memberDef.setConnectTimeout(metaspace.getConnectTimeout());
 		}
 		return memberDef;
-	}
-
-	public com.tibco.as.xml.Metaspace getMetaspaceByDisplayName(
-			String displayName) throws ASException {
-		for (com.tibco.as.xml.Metaspace metaspace : metaspaces.getMetaspace()) {
-			if (displayName.equals(metaspace.getDisplayName())) {
-				return metaspace;
-			}
-		}
-		return null;
-	}
-
-	public com.tibco.as.xml.Metaspace getMetaspaceByName(String name)
-			throws ASException {
-		for (com.tibco.as.xml.Metaspace metaspace : metaspaces.getMetaspace()) {
-			if (Utils.getMetaspaceName(name).equals(
-					Utils.getMetaspaceName(metaspace.getName()))) {
-				return metaspace;
-			}
-		}
-		return null;
 	}
 
 	public List<Metaspace> getConnectedMetaspaces() {
@@ -288,13 +264,23 @@ public class MetaspaceManager {
 			JAXBException, IOException {
 		Metaspace ms = Utils.getMetaspace(name);
 		if (ms == null) {
-			com.tibco.as.xml.Metaspace metaspace = getMetaspaceByName(name);
+			com.tibco.as.xml.Metaspace metaspace = getXMLMetaspace(name);
 			if (metaspace == null) {
 				return null;
 			}
 			ms = connect(metaspace);
 		}
 		return ms;
+	}
+
+	private com.tibco.as.xml.Metaspace getXMLMetaspace(String name) {
+		for (com.tibco.as.xml.Metaspace metaspace : metaspaces.getMetaspace()) {
+			if (Utils.getMetaspaceName(name).equals(
+					Utils.getMetaspaceName(metaspace.getName()))) {
+				return metaspace;
+			}
+		}
+		return null;
 	}
 
 	public static com.tibco.as.xml.Member getXMLMember(Member member)

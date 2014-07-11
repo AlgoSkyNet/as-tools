@@ -39,7 +39,7 @@ public class CommandImportDelimited extends CommandImport {
 	private String escape;
 	@ParametersDelegate
 	private DelimitedFormats formats = new DelimitedFormats();
-	@Parameter(description = "Comma separated fields", names = { "-fields" }, variableArity = true)
+	@Parameter(description = "Field descriptors in double-quotes. Use \"\" to ignore", names = { "-fields" }, variableArity = true)
 	private List<String> fieldDefs;
 
 	private void configure(DelimitedImport transfer) {

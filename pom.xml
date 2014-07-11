@@ -36,6 +36,8 @@
 	<modules>
 		<module>as-jdbcdriver</module>
 		<module>com.tibco.as.common</module>
+		<module>com.tibco.as.util</module>
+		<module>com.tibco.as.xml</module>
 		<module>com.tibco.as.convert</module>
 		<module>com.tibco.as.io</module>
 		<module>com.tibco.as.io-dependencies</module>

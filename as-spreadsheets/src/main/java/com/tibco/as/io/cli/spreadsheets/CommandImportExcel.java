@@ -42,7 +42,7 @@ public class CommandImportExcel extends CommandImport {
 	@Parameter(names = { "-sheet" }, description = "Name of sheet to import")
 	private String sheetName;
 
-	@Parameter(description = "Comma separated fields", names = { "-fields" }, variableArity = true)
+	@Parameter(description = "Field descriptors in double-quotes. Use \"\" to ignore", names = { "-fields" }, variableArity = true)
 	private List<String> fieldDefs;
 
 	@ParametersDelegate

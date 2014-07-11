@@ -24,7 +24,7 @@ import com.tibco.as.space.Metaspace;
 import com.tibco.as.space.Space;
 import com.tibco.as.space.SpaceDef;
 import com.tibco.as.space.Tuple;
-import com.tibco.as.utils.ASUtils;
+import com.tibco.as.util.Utils;
 
 public class TestImporter extends TestBase {
 
@@ -83,7 +83,7 @@ public class TestImporter extends TestBase {
 			protected IConverter<String[], Tuple> getConverter(
 					Transfer transfer, SpaceDef spaceDef)
 					throws UnsupportedConversionException {
-				Collection<FieldDef> fieldDefs = ASUtils.getFieldDefs(spaceDef);
+				Collection<FieldDef> fieldDefs = Utils.getFieldDefs(spaceDef);
 				Collection<ITupleAccessor> accessors = AccessorFactory
 						.create(fieldDefs);
 				Collection<IConverter> converters;
