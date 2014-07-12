@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <as:AS xmlns="http://www.tibco.com/2012/QL/AS" xmlns:as="http://www.tibco.com/2012/QL/AS"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="AS.model.xsd">
+	xsi:schemaLocation="http://www.tibco.com/2012/QL/AS as-meta-model.xsd">
 
 	<as:MemberDefMeta>
 

@@ -28,7 +28,7 @@ public class TestMetaspaceManager {
 		SpaceDef spaceDef = SpaceDef.create("space1", 0,
 				Arrays.asList(FieldDef.create("field1", FieldType.LONG)));
 		spaceDef.getKeyDef().setFieldNames("field1");
-		Space space = MetaspaceManager.getXMLSpace(spaceDef);
+		Space space = MetaspaceManager.getSpace(spaceDef);
 		Assert.assertEquals(spaceDef.getName(), space.getName());
 		FieldDef fieldDef = spaceDef.getFieldDefs().iterator().next();
 		Field field = space.getField().get(0);

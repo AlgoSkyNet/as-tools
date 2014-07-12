@@ -42,7 +42,7 @@
 		<xsd:attribute name="name" type="xsd:string" />
 		<xsd:attribute name="member" type="xsd:string" />
 		<xsd:attribute name="discovery" type="xsd:string" />
-		<xsd:attribute name="remote" type="xsd:boolean" />
+		<xsd:attribute name="remote" type="xsd:boolean" default="false" />
 		<xsd:attribute name="listen" type="xsd:string" />
 		<xsd:attribute name="connectTimeout" type="xsd:long" />
 	</xsd:complexType>
@@ -69,6 +69,7 @@
 		<xsd:attribute name="cachePolicy" type="cachePolicy" />
 		<xsd:attribute name="distributionPolicy" type="distributionPolicy" />
 		<xsd:attribute name="evictionPolicy" type="evictionPolicy" />
+		<xsd:attribute name="fileSyncInterval" type="xsd:long" />
 		<xsd:attribute name="forgetOldValue" type="xsd:boolean" />
 		<xsd:attribute name="hostAwareReplication" type="xsd:boolean" />
 		<xsd:attribute name="keyIndexType" type="indexType" />
@@ -82,9 +83,12 @@
 			type="distributionPolicy" />
 		<xsd:attribute name="phaseCount" type="xsd:int" />
 		<xsd:attribute name="phaseRatio" type="xsd:int" />
+		<xsd:attribute name="queryLimit" type="xsd:long" />
+		<xsd:attribute name="queryTimeout" type="xsd:long" />
 		<xsd:attribute name="readTimeout" type="xsd:long" />
 		<xsd:attribute name="replicationCount" type="xsd:int" />
 		<xsd:attribute name="replicationPolicy" type="replicationPolicy" />
+		<xsd:attribute name="routed" type="xsd:boolean" />
 		<xsd:attribute name="spaceWait" type="xsd:long" />
 		<xsd:attribute name="ttl" type="xsd:long" />
 		<xsd:attribute name="updateTransport" type="updateTransport" />

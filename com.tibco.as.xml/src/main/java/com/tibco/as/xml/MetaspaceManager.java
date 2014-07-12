@@ -15,6 +15,7 @@ import javax.xml.datatype.DatatypeFactory;
 import com.tibco.as.space.ASException;
 import com.tibco.as.space.FieldDef;
 import com.tibco.as.space.IndexDef;
+import com.tibco.as.space.KeyDef;
 import com.tibco.as.space.Member;
 import com.tibco.as.space.MemberDef;
 import com.tibco.as.space.Metaspace;
@@ -86,7 +87,7 @@ public class MetaspaceManager {
 	private MemberDef getMemberDef(com.tibco.as.xml.Metaspace metaspace) {
 		MemberDef memberDef = MemberDef.create();
 		memberDef.setMemberName(metaspace.getMember());
-		if (Boolean.TRUE.equals(metaspace.isRemote())) {
+		if (metaspace.isRemote()) {
 			memberDef.setRemoteDiscovery(metaspace.getDiscovery());
 			memberDef.setRemoteListen(metaspace.getListen());
 		} else {
@@ -103,7 +104,7 @@ public class MetaspaceManager {
 		return new ArrayList<Metaspace>(connectedMetaspaces);
 	}
 
-	public static com.tibco.as.xml.Metaspace getXMLMetaspace(Metaspace metaspace) {
+	public static com.tibco.as.xml.Metaspace getMetaspace(Metaspace metaspace) {
 		com.tibco.as.xml.Metaspace xmlMetaspace = new com.tibco.as.xml.Metaspace();
 		MemberDef memberDef = metaspace.getMemberDef();
 		if (memberDef.getRemoteDiscovery() == null
@@ -120,15 +121,53 @@ public class MetaspaceManager {
 		return xmlMetaspace;
 	}
 
-	public static com.tibco.as.xml.Space getXMLSpace(SpaceDef spaceDef) {
+	public static com.tibco.as.xml.Space getSpace(SpaceDef spaceDef) {
 		com.tibco.as.xml.Space space = new com.tibco.as.xml.Space();
 		space.setCachePolicy(spaceDef.getCachePolicy());
 		space.setCapacity(spaceDef.getCapacity());
 		space.setDistributionPolicy(spaceDef.getDistributionPolicy());
 		space.setEvictionPolicy(spaceDef.getEvictionPolicy());
-		Collection<String> distribution = spaceDef.getDistributionFields();
-		if (distribution == null) {
-			distribution = new ArrayList<String>();
+		if (Utils.hasSpaceDefMethod("getFileSyncInterval")) {
+			space.setFileSyncInterval(spaceDef.getFileSyncInterval());
+		}
+		space.setForgetOldValue(spaceDef.isForgetOldValue());
+		space.setHostAwareReplication(spaceDef.isHostAwareReplication());
+		space.setKeyIndexType(spaceDef.getKeyDef().getIndexType());
+		space.setLockScope(spaceDef.getLockScope());
+		space.setLockTTL(spaceDef.getLockTTL());
+		space.setLockWait(spaceDef.getLockWait());
+		space.setMinSeederCount(spaceDef.getMinSeederCount());
+		space.setName(spaceDef.getName());
+		space.setPersistenceDistributionPolicy(spaceDef
+				.getPersistenceDistributionPolicy());
+		space.setPersistencePolicy(spaceDef.getPersistencePolicy());
+		space.setPersistenceType(spaceDef.getPersistenceType());
+		space.setPhaseCount(spaceDef.getPhaseCount());
+		if (Utils.hasSpaceDefMethod("getPhaseRatio")) {
+			space.setPhaseRatio(spaceDef.getPhaseRatio());
+		}
+		if (Utils.hasSpaceDefMethod("getQueryLimit")) {
+			space.setQueryLimit(spaceDef.getQueryLimit());
+		}
+		if (Utils.hasSpaceDefMethod("getQueryTimeout")) {
+			space.setQueryTimeout(spaceDef.getQueryTimeout());
+		}
+		space.setReadTimeout(spaceDef.getReadTimeout());
+		space.setReplicationCount(spaceDef.getReplicationCount());
+		space.setReplicationPolicy(spaceDef.getReplicationPolicy());
+		if (Utils.hasSpaceDefMethod("isRouted")) {
+			space.setRouted(spaceDef.isRouted());
+		}
+		space.setSpaceWait(spaceDef.getSpaceWait());
+		space.setTtl(spaceDef.getTTL());
+		space.setUpdateTransport(spaceDef.getUpdateTransport());
+		space.setVirtualNodeCount(spaceDef.getVirtualNodeCount());
+		space.setWriteTimeout(spaceDef.getWriteTimeout());
+		Collection<String> distribution = new ArrayList<String>();
+		if (Utils.hasSpaceDefMethod("getDistributionFields")) {
+			if (spaceDef.getDistributionFields() != null) {
+				distribution = spaceDef.getDistributionFields();
+			}
 		}
 		Collection<String> keys = spaceDef.getKeyDef().getFieldNames();
 		if (keys == null) {
@@ -142,7 +181,9 @@ public class MetaspaceManager {
 			field.setNullable(fieldDef.isNullable());
 			field.setKey(keys.contains(fieldName));
 			field.setDistribution(distribution.contains(fieldName));
-			field.setEncrypted(fieldDef.isEncrypted());
+			if (Utils.hasFieldDefMethod("isEncrypted")) {
+				field.setEncrypted(fieldDef.isEncrypted());
+			}
 			space.getField().add(field);
 		}
 		for (IndexDef indexDef : spaceDef.getIndexDefList()) {
@@ -151,55 +192,36 @@ public class MetaspaceManager {
 			index.setType(indexDef.getIndexType());
 			space.getIndex().add(index);
 		}
-		space.setKeyIndexType(spaceDef.getKeyDef().getIndexType());
-		space.setLockScope(spaceDef.getLockScope());
-		space.setLockTTL(spaceDef.getLockTTL());
-		space.setLockWait(spaceDef.getLockWait());
-		space.setMinSeederCount(spaceDef.getMinSeederCount());
-		space.setName(spaceDef.getName());
-		space.setPersistenceDistributionPolicy(spaceDef
-				.getPersistenceDistributionPolicy());
-		space.setPersistencePolicy(spaceDef.getPersistencePolicy());
-		space.setPersistenceType(spaceDef.getPersistenceType());
-		space.setPhaseCount(spaceDef.getPhaseCount());
-		space.setPhaseRatio(spaceDef.getPhaseRatio());
-		space.setReadTimeout(spaceDef.getReadTimeout());
-		space.setReplicationCount(spaceDef.getReplicationCount());
-		space.setReplicationPolicy(spaceDef.getReplicationPolicy());
-		space.setSpaceWait(spaceDef.getSpaceWait());
-		space.setTtl(spaceDef.getTTL());
-		space.setUpdateTransport(spaceDef.getUpdateTransport());
-		space.setVirtualNodeCount(spaceDef.getVirtualNodeCount());
-		space.setWriteTimeout(spaceDef.getWriteTimeout());
-		space.setForgetOldValue(spaceDef.isForgetOldValue());
-		space.setHostAwareReplication(spaceDef.isHostAwareReplication());
 		return space;
 	}
 
 	public static SpaceDef getSpaceDef(com.tibco.as.xml.Space space) {
 		SpaceDef spaceDef = SpaceDef.create();
-		spaceDef.setName(space.getName());
-		spaceDef.setCachePolicy(space.getCachePolicy());
-		spaceDef.setEvictionPolicy(space.getEvictionPolicy());
-		spaceDef.setReplicationPolicy(space.getReplicationPolicy());
-		spaceDef.setPersistenceType(space.getPersistenceType());
-		spaceDef.setPersistencePolicy(space.getPersistencePolicy());
-		spaceDef.setPersistenceDistributionPolicy(space
-				.getPersistenceDistributionPolicy());
-		spaceDef.setDistributionPolicy(space.getDistributionPolicy());
-		spaceDef.setUpdateTransport(space.getUpdateTransport());
-		spaceDef.setLockScope(space.getLockScope());
+		if (space.getCachePolicy() != null) {
+			spaceDef.setCachePolicy(space.getCachePolicy());
+		}
 		if (space.getCapacity() != null) {
 			spaceDef.setCapacity(space.getCapacity());
 		}
-		if (space.getTtl() != null) {
-			spaceDef.setTTL(space.getTtl());
+		if (space.getDistributionPolicy() != null) {
+			spaceDef.setDistributionPolicy(space.getDistributionPolicy());
 		}
-		if (space.getReplicationCount() == null) {
-			spaceDef.setReplicationCount(space.getReplicationCount());
+		if (space.getEvictionPolicy() != null) {
+			spaceDef.setEvictionPolicy(space.getEvictionPolicy());
 		}
-		if (space.getMinSeederCount() != null) {
-			spaceDef.setMinSeederCount(space.getMinSeederCount());
+		if (space.getFileSyncInterval() != null) {
+			if (Utils.hasSpaceDefMethod("setFileSyncInterval")) {
+				spaceDef.setFileSyncInterval(space.getFileSyncInterval());
+			}
+		}
+		if (space.isForgetOldValue() != null) {
+			spaceDef.setForgetOldValue(space.isForgetOldValue());
+		}
+		if (space.isHostAwareReplication() != null) {
+			spaceDef.setHostAwareReplication(space.isHostAwareReplication());
+		}
+		if (space.getLockScope() != null) {
+			spaceDef.setLockScope(space.getLockScope());
 		}
 		if (space.getLockTTL() != null) {
 			spaceDef.setLockTTL(space.getLockTTL());
@@ -207,37 +229,82 @@ public class MetaspaceManager {
 		if (space.getLockWait() != null) {
 			spaceDef.setLockWait(space.getLockWait());
 		}
+		if (space.getMinSeederCount() != null) {
+			spaceDef.setMinSeederCount(space.getMinSeederCount());
+		}
+		if (space.getName() != null) {
+			spaceDef.setName(space.getName());
+		}
+		if (space.getPersistenceDistributionPolicy() != null) {
+			spaceDef.setPersistenceDistributionPolicy(space
+					.getPersistenceDistributionPolicy());
+		}
+		if (space.getPersistencePolicy() != null) {
+			spaceDef.setPersistencePolicy(space.getPersistencePolicy());
+		}
+		if (space.getPersistenceType() != null) {
+			spaceDef.setPersistenceType(space.getPersistenceType());
+		}
 		if (space.getPhaseCount() != null) {
 			spaceDef.setPhaseCount(space.getPhaseCount());
 		}
 		if (space.getPhaseRatio() != null) {
-			spaceDef.setPhaseRatio(space.getPhaseRatio());
+			if (Utils.hasSpaceDefMethod("setPhaseRatio")) {
+				spaceDef.setPhaseRatio(space.getPhaseRatio());
+			}
 		}
-		if (space.getVirtualNodeCount() != null) {
-			spaceDef.setVirtualNodeCount(space.getVirtualNodeCount());
+		if (space.getQueryLimit() != null) {
+			if (Utils.hasSpaceDefMethod("setQueryLimit")) {
+				spaceDef.setQueryLimit(space.getQueryLimit());
+			}
 		}
-		if (space.getSpaceWait() != null) {
-			spaceDef.setSpaceWait(space.getSpaceWait());
+		if (space.getQueryTimeout() != null) {
+			if (Utils.hasSpaceDefMethod("setQueryTimeout")) {
+				spaceDef.setQueryTimeout(space.getQueryTimeout());
+			}
 		}
 		if (space.getReadTimeout() != null) {
 			spaceDef.setReadTimeout(space.getReadTimeout());
 		}
+		if (space.getReplicationCount() == null) {
+			spaceDef.setReplicationCount(space.getReplicationCount());
+		}
+		if (space.getReplicationPolicy() != null) {
+			spaceDef.setReplicationPolicy(space.getReplicationPolicy());
+		}
+		if (space.isRouted() != null) {
+			if (Utils.hasSpaceDefMethod("setRouted")) {
+				spaceDef.setRouted(space.isRouted());
+			}
+		}
+		if (space.getSpaceWait() != null) {
+			spaceDef.setSpaceWait(space.getSpaceWait());
+		}
+		if (space.getTtl() != null) {
+			spaceDef.setTTL(space.getTtl());
+		}
+		if (space.getUpdateTransport() != null) {
+			spaceDef.setUpdateTransport(space.getUpdateTransport());
+		}
+		if (space.getVirtualNodeCount() != null) {
+			spaceDef.setVirtualNodeCount(space.getVirtualNodeCount());
+		}
 		if (space.getWriteTimeout() != null) {
 			spaceDef.setWriteTimeout(space.getWriteTimeout());
-		}
-		if (space.isForgetOldValue() != null) {
-			spaceDef.setForgetOldValue(space.isForgetOldValue());
-		}
-		if (space.isHostAwareReplication() != null) {
-			spaceDef.setForgetOldValue(space.isHostAwareReplication());
 		}
 		Collection<String> keys = new ArrayList<String>();
 		Collection<String> distribution = new ArrayList<String>();
 		for (Field field : space.getField()) {
 			FieldDef fieldDef = FieldDef.create(field.getName(),
 					field.getType());
-			fieldDef.setNullable(Boolean.TRUE.equals(field.isNullable()));
-			fieldDef.setEncrypted(Boolean.TRUE.equals(field.isEncrypted()));
+			if (field.isEncrypted() != null) {
+				if (Utils.hasFieldDefMethod("setEncrypted")) {
+					fieldDef.setEncrypted(field.isEncrypted());
+				}
+			}
+			if (field.isNullable() != null) {
+				fieldDef.setNullable(field.isNullable());
+			}
 			spaceDef.putFieldDef(fieldDef);
 			if (Boolean.TRUE.equals(field.isKey())) {
 				keys.add(field.getName());
@@ -246,10 +313,19 @@ public class MetaspaceManager {
 				distribution.add(field.getName());
 			}
 		}
-		spaceDef.getKeyDef().setIndexType(space.getKeyIndexType());
-		spaceDef.setKey(keys.toArray(new String[keys.size()]));
-		spaceDef.setDistributionFields(distribution
-				.toArray(new String[distribution.size()]));
+		KeyDef keyDef = spaceDef.getKeyDef();
+		if (space.getKeyIndexType() != null) {
+			keyDef.setIndexType(space.getKeyIndexType());
+		}
+		if (!keys.isEmpty()) {
+			keyDef.setFieldNames(keys.toArray(new String[keys.size()]));
+		}
+		if (!distribution.isEmpty()) {
+			if (Utils.hasSpaceDefMethod("setDistributionFields")) {
+				spaceDef.setDistributionFields(distribution
+						.toArray(new String[distribution.size()]));
+			}
+		}
 		for (Index index : space.getIndex()) {
 			IndexDef indexDef = IndexDef.create(index.getName());
 			indexDef.setIndexType(index.getType());
@@ -283,7 +359,7 @@ public class MetaspaceManager {
 		return null;
 	}
 
-	public static com.tibco.as.xml.Member getXMLMember(Member member)
+	public static com.tibco.as.xml.Member getMember(Member member)
 			throws DatatypeConfigurationException {
 		com.tibco.as.xml.Member m = new com.tibco.as.xml.Member();
 		m.setId(member.getId());
@@ -296,5 +372,26 @@ public class MetaspaceManager {
 				calendar));
 		m.setPort(member.getPort());
 		return m;
+	}
+
+	public void closeMetaspace(String name) throws ASException {
+		for (Metaspace metaspace : new ArrayList<Metaspace>(connectedMetaspaces)) {
+			if (metaspace.getName().equals(Utils.getMetaspaceName(name))) {
+				metaspace.closeAll();
+				connectedMetaspaces.remove(metaspace);
+			}
+		}
+		Metaspace ms = Utils.getMetaspace(name);
+		if (ms == null) {
+			return;
+		}
+		ms.closeAll();
+	}
+
+	public void closeAll() throws ASException {
+		for (Metaspace metaspace : connectedMetaspaces) {
+			metaspace.closeAll();
+		}
+		connectedMetaspaces.clear();
 	}
 }

@@ -9,10 +9,10 @@ import java.util.List;
 import com.tibco.as.space.ASCommon;
 import com.tibco.as.space.ASException;
 import com.tibco.as.space.FieldDef;
+import com.tibco.as.space.Member.DistributionRole;
 import com.tibco.as.space.Metaspace;
 import com.tibco.as.space.Space;
 import com.tibco.as.space.SpaceDef;
-import com.tibco.as.space.Member.DistributionRole;
 
 public class Utils {
 
@@ -77,6 +77,14 @@ public class Utils {
 			}
 		}
 		return false;
+	}
+
+	public static boolean hasSpaceDefMethod(String name) {
+		return hasMethod(SpaceDef.class, name);
+	}
+
+	public static boolean hasFieldDefMethod(String name) {
+		return hasMethod(FieldDef.class, name);
 	}
 
 	public static String getMetaspaceName(String metaspaceName) {
