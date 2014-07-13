@@ -2,8 +2,8 @@
 <tuple>
 	<field1 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:type="xsd:long">12345</field1>
-	<field3 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:dateTime">2001-07-04T12:08:56.235-07:00</field3>
 	<field2 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:type="xsd:string">12345</field2>
+	<field3 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:type="xsd:boolean">true</field3>
 </tuple>

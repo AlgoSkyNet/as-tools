@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
@@ -19,7 +17,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.tibco.as.space.DateTime;
 import com.tibco.as.space.FieldDef.FieldType;
 
 public class TestXML {
@@ -58,9 +55,7 @@ public class TestXML {
 		com.tibco.as.space.Tuple tuple = com.tibco.as.space.Tuple.create();
 		tuple.putLong("field1", 12345);
 		tuple.putString("field2", "12345");
-		Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-				.parse("2001-07-04T12:08:56.235-0700");
-		tuple.putDateTime("field3", DateTime.create(date.getTime()));
+		tuple.putBoolean("field3", true);
 		return tuple;
 	}
 
