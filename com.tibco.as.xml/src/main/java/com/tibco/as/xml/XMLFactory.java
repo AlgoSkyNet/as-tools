@@ -13,59 +13,44 @@ import javax.xml.bind.Unmarshaller;
 
 public class XMLFactory {
 
-	private static JAXBContext getContext(Class<?> clazz) throws JAXBException {
-		return JAXBContext.newInstance(clazz.getPackage().getName(),
-				ClassLoader.getSystemClassLoader());
+	private static JAXBContext getContext() throws JAXBException {
+		return JAXBContext.newInstance(ObjectFactory.class, Tuple.class,
+				Tuples.class);
 	}
 
-	private static Marshaller getMarshaller(Class<?> clazz)
-			throws JAXBException {
-		Marshaller marshaller = getContext(clazz).createMarshaller();
+	private static Marshaller getMarshaller() throws JAXBException {
+		Marshaller marshaller = getContext().createMarshaller();
 		marshaller.setEventHandler(new JAXBValidator());
 		return marshaller;
 	}
 
-	private static Unmarshaller getUnmarshaller(Class<?> clazz)
-			throws JAXBException {
-		Unmarshaller unmarshaller = getContext(clazz).createUnmarshaller();
+	private static Unmarshaller getUnmarshaller() throws JAXBException {
+		Unmarshaller unmarshaller = getContext().createUnmarshaller();
 		unmarshaller.setEventHandler(new JAXBValidator());
 		return unmarshaller;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> T unmarshall(File file, Class<T> clazz)
-			throws JAXBException {
-		JAXBElement<T> element = (JAXBElement<T>) getUnmarshaller(clazz)
-				.unmarshal(file);
-		return element.getValue();
+	public static Object unmarshall(File file) throws JAXBException {
+		return getUnmarshaller().unmarshal(file);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> T unmarshall(String string, Class<T> clazz)
-			throws JAXBException {
-		JAXBElement<T> element = (JAXBElement<T>) getUnmarshaller(clazz)
-				.unmarshal(new StringReader(string));
-		return element.getValue();
+	public static Object unmarshall(String string) throws JAXBException {
+		return getUnmarshaller().unmarshal(new StringReader(string));
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> T unmarshall(InputStream in, Class<T> clazz)
-			throws JAXBException {
-		JAXBElement<T> element = (JAXBElement<T>) getUnmarshaller(clazz)
-				.unmarshal(in);
-		return element.getValue();
+	public static Object unmarshall(InputStream in) throws JAXBException {
+		return getUnmarshaller().unmarshal(in);
 	}
 
-	public static <T> String marshallToString(JAXBElement<T> element)
-			throws JAXBException {
+	public static String marshallToString(Object element) throws JAXBException {
 		StringWriter writer = new StringWriter();
-		getMarshaller(element.getDeclaredType()).marshal(element, writer);
+		getMarshaller().marshal(element, writer);
 		return writer.toString();
 	}
 
-	public static <T> void marshal(JAXBElement<T> element, File file)
+	public static <T> void marshal(JAXBElement<?> element, File file)
 			throws JAXBException {
-		getMarshaller(element.getDeclaredType()).marshal(element, file);
+		getMarshaller().marshal(element, file);
 	}
 
 }

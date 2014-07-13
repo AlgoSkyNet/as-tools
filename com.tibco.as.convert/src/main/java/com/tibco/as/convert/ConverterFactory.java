@@ -39,6 +39,8 @@ public class ConverterFactory {
 
 	public final static String DEFAULT_PATTERN_BOOLEAN = "true|false";
 
+	private Attributes defaultAttributes = new Attributes();
+
 	public static BlobFormat getBlobFormat(Attributes attributes) {
 		Blob attribute = attributes.get(Attribute.FORMAT_BLOB);
 		if (attribute == Blob.BASE64) {
@@ -231,6 +233,12 @@ public class ConverterFactory {
 		return new DecimalFormat(pattern);
 	}
 
+	public Collection<IConverter> getTypeConverters(Collection<Class> types,
+			Collection<FieldDef> fieldDefs)
+			throws UnsupportedConversionException {
+		return getTypeConverters(defaultAttributes, types, fieldDefs);
+	}
+
 	public Collection<IConverter> getTypeConverters(Attributes attributes,
 			Collection<Class> types, Collection<FieldDef> fieldDefs)
 			throws UnsupportedConversionException {
@@ -243,6 +251,11 @@ public class ConverterFactory {
 			converters.add(getConverter(attributes, type, fieldDef));
 		}
 		return converters;
+	}
+
+	public Collection<IConverter> getTypeConverters(Class type,
+			Collection<FieldDef> fieldDefs) throws UnsupportedConversionException {
+		return getTypeConverters(defaultAttributes, type, fieldDefs);
 	}
 
 	public Collection<IConverter> getTypeConverters(Attributes attributes,

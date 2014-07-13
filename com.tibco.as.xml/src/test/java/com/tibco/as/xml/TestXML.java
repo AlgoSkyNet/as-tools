@@ -3,25 +3,41 @@ package com.tibco.as.xml;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import com.tibco.as.space.DateTime;
 import com.tibco.as.space.FieldDef.FieldType;
 
 public class TestXML {
 
+	@BeforeClass
+	public static void setup() {
+		XMLUnit.setIgnoreAttributeOrder(true);
+		XMLUnit.setIgnoreComments(true);
+		XMLUnit.setIgnoreWhitespace(true);
+		XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
+	}
+
 	@Test
-	public void testUnmarshall() throws JAXBException {
-		Space space1 = XMLFactory.unmarshall(
-				ClassLoader.getSystemResourceAsStream("space1.xml"),
-				Space.class);
+	public void testUnmarshallSpace() throws JAXBException {
+		@SuppressWarnings("unchecked")
+		JAXBElement<Space> element = (JAXBElement<Space>) XMLFactory
+				.unmarshall(ClassLoader.getSystemResourceAsStream("space1.xml"));
+		Space space1 = element.getValue();
 		assertEquals("space1", space1.getName());
 		List<Field> fields = space1.getField();
 		assertEquals(2, fields.size());
@@ -30,7 +46,36 @@ public class TestXML {
 	}
 
 	@Test
-	public void testMarshall() throws JAXBException, IOException, SAXException {
+	public void testMarshallTuple() throws JAXBException, IOException,
+			SAXException, ParseException {
+		Tuple tuple = new Tuple(createTuple());
+		String testXML = XMLFactory.marshallToString(tuple);
+		String controlXML = getXML("tuple.xml");
+		XMLAssert.assertXMLEqual(controlXML, testXML);
+	}
+
+	private com.tibco.as.space.Tuple createTuple() throws ParseException {
+		com.tibco.as.space.Tuple tuple = com.tibco.as.space.Tuple.create();
+		tuple.putLong("field1", 12345);
+		tuple.putString("field2", "12345");
+		Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+				.parse("2001-07-04T12:08:56.235-0700");
+		tuple.putDateTime("field3", DateTime.create(date.getTime()));
+		return tuple;
+	}
+
+	@Test
+	public void testUnmarshallTuple() throws JAXBException, IOException,
+			SAXException, ParseException {
+		String xml = getXML("tuple.xml");
+		Tuple tuple = (Tuple) XMLFactory.unmarshall(xml);
+		com.tibco.as.space.Tuple controlTuple = createTuple();
+		Assert.assertEquals(controlTuple, tuple.getTuple());
+	}
+
+	@Test
+	public void testMarshallSpace() throws JAXBException, IOException,
+			SAXException {
 		Space space1 = new Space();
 		space1.setName("space1");
 		Field field1 = new Field();
@@ -53,14 +98,11 @@ public class TestXML {
 		space1.getIndex().add(index2);
 		String testXML = XMLFactory.marshallToString(new ObjectFactory()
 				.createSpace(space1));
-		String controlXML = IOUtils.toString(ClassLoader
-				.getSystemResourceAsStream("space1.xml"));
-		XMLUnit.setIgnoreAttributeOrder(true);
-		XMLUnit.setIgnoreComments(true);
-		XMLUnit.setIgnoreWhitespace(true);
-		XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
-		XMLAssert.assertXMLEqual("Comparing test xml to control xml",
-				controlXML, testXML);
+		String controlXML = getXML("space1.xml");
+		XMLAssert.assertXMLEqual(controlXML, testXML);
 	}
 
+	private String getXML(String name) throws IOException {
+		return IOUtils.toString(ClassLoader.getSystemResourceAsStream(name));
+	}
 }

@@ -6,13 +6,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
 import com.tibco.as.space.ASException;
+import com.tibco.as.space.DateTime;
 import com.tibco.as.space.FieldDef;
 import com.tibco.as.space.IndexDef;
 import com.tibco.as.space.KeyDef;
@@ -20,6 +25,7 @@ import com.tibco.as.space.Member;
 import com.tibco.as.space.MemberDef;
 import com.tibco.as.space.Metaspace;
 import com.tibco.as.space.SpaceDef;
+import com.tibco.as.space.Tuple;
 import com.tibco.as.util.Utils;
 
 public class MetaspaceManager {
@@ -49,11 +55,14 @@ public class MetaspaceManager {
 			instance = new MetaspaceManager();
 			File file = new File(FILENAME);
 			if (file.exists()) {
-				add(XMLFactory.unmarshall(file, Metaspaces.class));
+				add((Metaspaces) XMLFactory.unmarshall(file));
 			}
 			InputStream in = ClassLoader.getSystemResourceAsStream(FILENAME);
 			if (in != null) {
-				add(XMLFactory.unmarshall(in, Metaspaces.class));
+				@SuppressWarnings("unchecked")
+				JAXBElement<Metaspaces> element = (JAXBElement<Metaspaces>) XMLFactory
+						.unmarshall(in);
+				add(element.getValue());
 			}
 		}
 		return instance;
@@ -394,4 +403,44 @@ public class MetaspaceManager {
 		}
 		connectedMetaspaces.clear();
 	}
+
+	public static Map<String, Object> getMap(Tuple tuple) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		for (String fieldName : tuple.getFieldNames()) {
+			map.put(fieldName, getValue(tuple, fieldName));
+		}
+		return map;
+	}
+
+	private static Object getValue(Tuple tuple, String fieldName) {
+		Object value = tuple.get(fieldName);
+		if (value == null) {
+			return null;
+		}
+		if (value instanceof DateTime) {
+			return ((DateTime) value).getTime().getTime();
+		}
+		return value;
+	}
+
+	private static void putValue(Tuple tuple, String fieldName, Object value) {
+		if (value == null) {
+			return;
+		}
+		if (value instanceof GregorianCalendar) {
+			DateTime dateTime = DateTime.create((GregorianCalendar) value);
+			tuple.putDateTime(fieldName, dateTime);
+		} else {
+			tuple.put(fieldName, value);
+		}
+	}
+
+	public static Tuple getTuple(Map<String, Object> map) {
+		Tuple tuple = Tuple.create();
+		for (Entry<String, Object> entry : map.entrySet()) {
+			putValue(tuple, entry.getKey(), entry.getValue());
+		}
+		return tuple;
+	}
+
 }
