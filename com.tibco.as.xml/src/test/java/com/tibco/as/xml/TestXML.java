@@ -4,30 +4,27 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.tibco.as.space.DateTime;
 import com.tibco.as.space.FieldDef.FieldType;
 
 public class TestXML {
-
-	@BeforeClass
-	public static void setup() {
-		XMLUnit.setIgnoreAttributeOrder(true);
-		XMLUnit.setIgnoreComments(true);
-		XMLUnit.setIgnoreWhitespace(true);
-		XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
-	}
 
 	@Test
 	public void testUnmarshallSpace() throws JAXBException {
@@ -44,19 +41,37 @@ public class TestXML {
 
 	@Test
 	public void testMarshallTuple() throws JAXBException, IOException,
-			SAXException, ParseException {
+			SAXException, ParseException, ParserConfigurationException {
 		Tuple tuple = new Tuple(createTuple());
-		String testXML = XMLFactory.marshallToString(tuple);
-		String controlXML = getXML("tuple.xml");
-		XMLAssert.assertXMLEqual(controlXML, testXML);
+		Document doc = XMLFactory.marshallToDocument(tuple);
+		Element element = doc.getDocumentElement();
+		element.normalize();
+		Assert.assertEquals("tuple", element.getTagName());
+		NodeList children = element.getChildNodes();
+		for (int index = 0; index < children.getLength(); index++) {
+			Node child = children.item(index);
+			String value = child.getFirstChild().getNodeValue();
+			if ("field1".equals(child.getNodeName())
+					|| "field2".equals(child.getNodeName())) {
+				Assert.assertEquals("12345", value);
+			} else {
+				Assert.assertEquals(createDate(), DatatypeConverter
+						.parseDateTime(value).getTime());
+			}
+		}
 	}
 
 	private com.tibco.as.space.Tuple createTuple() throws ParseException {
 		com.tibco.as.space.Tuple tuple = com.tibco.as.space.Tuple.create();
 		tuple.putLong("field1", 12345);
 		tuple.putString("field2", "12345");
-		tuple.putBoolean("field3", true);
+		tuple.putDateTime("field3", DateTime.create(createDate().getTime()));
 		return tuple;
+	}
+
+	private Date createDate() {
+		return DatatypeConverter.parseDateTime("2001-07-04T12:08:56.235-07:00")
+				.getTime();
 	}
 
 	@Test
@@ -93,8 +108,6 @@ public class TestXML {
 		space1.getIndex().add(index2);
 		String testXML = XMLFactory.marshallToString(new ObjectFactory()
 				.createSpace(space1));
-		String controlXML = getXML("space1.xml");
-		XMLAssert.assertXMLEqual(controlXML, testXML);
 	}
 
 	private String getXML(String name) throws IOException {

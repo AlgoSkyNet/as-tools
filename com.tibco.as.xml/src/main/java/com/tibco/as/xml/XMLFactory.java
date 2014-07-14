@@ -10,6 +10,11 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
 
 public class XMLFactory {
 
@@ -46,6 +51,15 @@ public class XMLFactory {
 		StringWriter writer = new StringWriter();
 		getMarshaller().marshal(element, writer);
 		return writer.toString();
+	}
+
+	public static Document marshallToDocument(Object element)
+			throws JAXBException, ParserConfigurationException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document document = db.newDocument();
+		getMarshaller().marshal(element, document);
+		return document;
 	}
 
 	public static <T> void marshal(JAXBElement<?> element, File file)
