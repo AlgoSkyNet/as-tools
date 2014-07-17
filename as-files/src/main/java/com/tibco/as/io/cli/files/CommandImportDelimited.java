@@ -51,7 +51,10 @@ public class CommandImportDelimited extends CommandImport {
 		transfer.setSeparator(getChar(delimiter));
 		transfer.setStrictQuotes(strictQuotes);
 		transfer.getAttributes().putAll(formats.getAttributes());
-		transfer.setFields(FieldUtils.getFields(fieldDefs));
+		if (fieldDefs != null) {
+			transfer.setFields(FieldUtils.getFields(fieldDefs
+					.toArray(new String[fieldDefs.size()])));
+		}
 	}
 
 	private Character getChar(String string) {

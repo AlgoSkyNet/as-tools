@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -144,24 +141,17 @@ public class ExcelExporter extends Exporter<Object[]> {
 		if (sheet == null) {
 			sheet = workbook.createSheet(sheetName);
 		}
-		Collection<Field> fields = export.getFields();
-		FieldUtils.setFields(fields, spaceDef);
-		Collection<IRowAccessor> accessors = new ArrayList<IRowAccessor>();
 		Attributes conversion = transfer.getAttributes();
-		Iterator<Field> fieldIterator = fields.iterator();
-		while (fieldIterator.hasNext()) {
-			Field field = (Field) fieldIterator.next();
-			IRowAccessor accessor;
-			if (field.getName() == null) {
-				accessor = null;
-			} else {
-				accessor = createCellAccessor(accessors.size(),
-						spaceDef.getFieldDef(field.getName()), conversion);
+		Field[] fields = FieldUtils.getFields(export.getFields(), spaceDef);
+		IRowAccessor[] accessors = new IRowAccessor[fields.length];
+		for (int index = 0; index < fields.length; index++) {
+			if (fields[index].getName() != null) {
+				accessors[index] = createCellAccessor(index,
+						spaceDef.getFieldDef(fields[index].getName()),
+						conversion);
 			}
-			accessors.add(accessor);
 		}
-		return new ExcelOutputStream(sheet, export,
-				accessors.toArray(new IRowAccessor[accessors.size()]), fields);
+		return new ExcelOutputStream(sheet, export, accessors, fields);
 	}
 
 	private Sheet getSheet(String sheetName) {
@@ -179,19 +169,17 @@ public class ExcelExporter extends Exporter<Object[]> {
 	protected IConverter<Tuple, Object[]> getConverter(Transfer transfer,
 			SpaceDef spaceDef) throws UnsupportedConversionException {
 		ExcelExport export = (ExcelExport) transfer;
-		Collection<FieldDef> fieldDefs = FieldUtils.getFieldDefs(spaceDef,
+		FieldDef[] fieldDefs = FieldUtils.getFieldDefs(spaceDef,
 				export.getFields());
-		Class<?>[] types = getTypes(fieldDefs.toArray(new FieldDef[fieldDefs
-				.size()]));
-		return FieldUtils
-				.getTupleToArrayConverter(converterFactory, spaceDef,
-						export.getFields(), Object.class,
-						export.getAttributes(), types);
+		return FieldUtils.getTupleToArrayConverter(converterFactory, spaceDef,
+				export.getFields(), Object.class, export.getAttributes(),
+				getTypes(fieldDefs));
 	}
 
-	private Class<?>[] getTypes(FieldDef[] fieldDefs) {
-		Class<?>[] types = new Class<?>[fieldDefs.length];
-		for (int index = 0; index < types.length; index++) {
+	@SuppressWarnings("rawtypes")
+	private Class[] getTypes(FieldDef[] fieldDefs) {
+		Class[] types = new Class[fieldDefs.length];
+		for (int index = 0; index < fieldDefs.length; index++) {
 			types[index] = getType(fieldDefs[index]);
 		}
 		return types;

@@ -8,11 +8,8 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -27,6 +24,7 @@ import com.tibco.as.convert.format.BooleanFormat;
 import com.tibco.as.convert.format.HexFormat;
 import com.tibco.as.space.FieldDef;
 import com.tibco.as.space.FieldDef.FieldType;
+import com.tibco.as.space.SpaceDef;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ConverterFactory {
@@ -40,6 +38,14 @@ public class ConverterFactory {
 	public final static String DEFAULT_PATTERN_BOOLEAN = "true|false";
 
 	private Attributes defaultAttributes = new Attributes();
+
+	public void setBlobFormat(Blob blobFormat) {
+		defaultAttributes.put(Attribute.FORMAT_BLOB, blobFormat);
+	}
+
+	public void setDateFormat(String dateFormat) {
+		defaultAttributes.put(Attribute.FORMAT_DATE, dateFormat);
+	}
 
 	public static BlobFormat getBlobFormat(Attributes attributes) {
 		Blob attribute = attributes.get(Attribute.FORMAT_BLOB);
@@ -137,13 +143,10 @@ public class ConverterFactory {
 
 	public static Config getConfig(String resourceName) {
 		try {
-			ClassLoader cl = com.tibco.as.convert.ObjectFactory.class
-					.getClassLoader();
-			JAXBContext jc = JAXBContext.newInstance(
-					com.tibco.as.convert.ObjectFactory.class.getPackage()
-							.getName(), cl);
+			JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
-			InputStream in = cl.getResourceAsStream(resourceName);
+			InputStream in = ClassLoader
+					.getSystemResourceAsStream(resourceName);
 			JAXBElement<Config> element = (JAXBElement<Config>) unmarshaller
 					.unmarshal(in);
 			return element.getValue();
@@ -173,17 +176,27 @@ public class ConverterFactory {
 			return null;
 		}
 		Attributes nameAttributes = attributes.getAttributes(to.getName());
-		return getConverter(nameAttributes, from, getType(to.getType()));
+		return getConverter(nameAttributes, from, getType(to));
 	}
 
 	public IConverter getConverter(Attributes attributes, FieldDef from,
 			Class to) throws UnsupportedConversionException {
 		Attributes nameAttributes = attributes.getAttributes(from.getName());
-		return getConverter(nameAttributes, getType(from.getType()), to);
+		return getConverter(nameAttributes, getType(from), to);
 	}
 
-	public Class getType(FieldType type) {
-		return classes.get(type);
+	public Class getType(FieldDef fieldDef) {
+		return classes.get(fieldDef.getType());
+	}
+
+	public IConverter getConverter(Class from, FieldDef to)
+			throws UnsupportedConversionException {
+		return getConverter(defaultAttributes, from, to);
+	}
+
+	public IConverter getConverter(FieldDef from, Class to)
+			throws UnsupportedConversionException {
+		return getConverter(defaultAttributes, from, to);
 	}
 
 	public IConverter getConverter(Attributes attributes, Class from, Class to)
@@ -233,57 +246,72 @@ public class ConverterFactory {
 		return new DecimalFormat(pattern);
 	}
 
-	public Collection<IConverter> getTypeConverters(Collection<Class> types,
-			Collection<FieldDef> fieldDefs)
+	public IConverter[] getConverters(Class[] types, FieldDef[] fieldDefs)
 			throws UnsupportedConversionException {
-		return getTypeConverters(defaultAttributes, types, fieldDefs);
+		return getConverters(defaultAttributes, types, fieldDefs);
 	}
 
-	public Collection<IConverter> getTypeConverters(Attributes attributes,
-			Collection<Class> types, Collection<FieldDef> fieldDefs)
-			throws UnsupportedConversionException {
-		Collection<IConverter> converters = new ArrayList<IConverter>();
-		Iterator<Class> typeIterator = types.iterator();
-		Iterator<FieldDef> fieldDefIterator = fieldDefs.iterator();
-		while (fieldDefIterator.hasNext()) {
-			FieldDef fieldDef = fieldDefIterator.next();
-			Class type = typeIterator.next();
-			converters.add(getConverter(attributes, type, fieldDef));
+	public IConverter[] getConverters(Attributes attributes, Class[] types,
+			FieldDef[] fieldDefs) throws UnsupportedConversionException {
+		IConverter[] converters = new IConverter[fieldDefs.length];
+		for (int index = 0; index < fieldDefs.length; index++) {
+			FieldDef fieldDef = fieldDefs[index];
+			Class type = index < types.length ? types[index] : types[0];
+			converters[index] = getConverter(attributes, type, fieldDef);
 		}
 		return converters;
 	}
 
-	public Collection<IConverter> getTypeConverters(Class type,
-			Collection<FieldDef> fieldDefs) throws UnsupportedConversionException {
-		return getTypeConverters(defaultAttributes, type, fieldDefs);
+	public IConverter[] getConverters(Attributes attributes,
+			FieldDef[] fieldDefs, Class type)
+			throws UnsupportedConversionException {
+		return getConverters(attributes, fieldDefs, new Class[] { type });
 	}
 
-	public Collection<IConverter> getTypeConverters(Attributes attributes,
-			Class type, Collection<FieldDef> fieldDefs)
+	public IConverter[] getConverters(Attributes attributes,
+			FieldDef[] fieldDefs, Class[] types)
 			throws UnsupportedConversionException {
-		Collection<Class> types = Collections.nCopies(fieldDefs.size(), type);
-		return getTypeConverters(attributes, types, fieldDefs);
-	}
-
-	public Collection<IConverter> getFieldConverters(Attributes attributes,
-			Collection<FieldDef> fieldDefs, Class... types)
-			throws UnsupportedConversionException {
-		Collection<IConverter> converters = new ArrayList<IConverter>();
-		Iterator<FieldDef> fieldDefIterator = fieldDefs.iterator();
-		Iterator<Class> typeIterator = Arrays.asList(types).iterator();
-		Class type = null;
-		while (fieldDefIterator.hasNext()) {
-			if (typeIterator.hasNext()) {
-				type = typeIterator.next();
-			}
-			FieldDef fieldDef = fieldDefIterator.next();
-			converters.add(getConverter(attributes, fieldDef, type));
+		IConverter[] converters = new IConverter[fieldDefs.length];
+		for (int index = 0; index < fieldDefs.length; index++) {
+			FieldDef fieldDef = fieldDefs[index];
+			Class type = index < types.length ? types[index] : types[0];
+			converters[index] = getConverter(attributes, fieldDef, type);
 		}
 		return converters;
+	}
+
+	public IConverter[] getConverters(Class type, FieldDef[] fieldDefs)
+			throws UnsupportedConversionException {
+		return getConverters(defaultAttributes, type, fieldDefs);
+	}
+
+	public IConverter[] getConverters(Attributes attributes, Class type,
+			FieldDef[] fieldDefs) throws UnsupportedConversionException {
+		return getConverters(attributes, new Class[] { type }, fieldDefs);
 	}
 
 	public FieldType getFieldType(Class clazz) {
 		return types.get(clazz);
+	}
+
+	public IConverter[] getConverters(Attributes attributes, Class type,
+			SpaceDef spaceDef) throws UnsupportedConversionException {
+		return getConverters(attributes, type, getFieldDefs(spaceDef));
+	}
+
+	private FieldDef[] getFieldDefs(SpaceDef spaceDef) {
+		return spaceDef.getFieldDefs().toArray(
+				new FieldDef[spaceDef.getFieldDefs().size()]);
+	}
+
+	public IConverter[] getConverters(Attributes attributes, SpaceDef spaceDef,
+			Class type) throws UnsupportedConversionException {
+		return getConverters(attributes, getFieldDefs(spaceDef), type);
+	}
+
+	public IConverter getConverter(FieldDef fieldDef)
+			throws UnsupportedConversionException {
+		return getConverter(fieldDef, getType(fieldDef));
 	}
 
 }

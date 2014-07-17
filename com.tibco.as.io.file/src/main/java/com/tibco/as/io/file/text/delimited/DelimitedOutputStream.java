@@ -3,7 +3,6 @@ package com.tibco.as.io.file.text.delimited;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
 import java.util.List;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -16,7 +15,8 @@ public class DelimitedOutputStream extends TextFileOutputStream {
 
 	private CSVWriter writer;
 
-	public DelimitedOutputStream(File file, DelimitedExport config, Collection<Field> fields) {
+	public DelimitedOutputStream(File file, DelimitedExport config,
+			Field[] fields) {
 		super(file, config, fields);
 	}
 

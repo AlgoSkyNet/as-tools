@@ -1,9 +1,5 @@
 package com.tibco.as.io.file.excel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
 import com.tibco.as.io.Export;
 import com.tibco.as.io.Field;
 
@@ -13,14 +9,14 @@ public class ExcelExport extends Export implements Cloneable {
 
 	private String sheetName;
 
-	private Collection<Field> fields = new ArrayList<Field>();
+	private Field[] fields;
 
-	public Collection<Field> getFields() {
+	public Field[] getFields() {
 		return fields;
 	}
 
 	public void setFields(Field... fields) {
-		this.fields.addAll(Arrays.asList(fields));
+		this.fields = fields;
 	}
 
 	public Boolean getHeader() {

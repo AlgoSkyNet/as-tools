@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Collection;
 
 import com.tibco.as.io.Field;
 import com.tibco.as.io.FieldUtils;
@@ -16,10 +15,9 @@ public abstract class TextFileOutputStream implements IOutputStream<String[]> {
 
 	private File file;
 	private TextFileExport export;
-	private Collection<Field> fields;
+	private Field[] fields;
 
-	public TextFileOutputStream(File file, TextFileExport export,
-			Collection<Field> fields) {
+	public TextFileOutputStream(File file, TextFileExport export, Field[] fields) {
 		this.file = file;
 		this.export = export;
 		this.fields = fields;
@@ -31,8 +29,7 @@ public abstract class TextFileOutputStream implements IOutputStream<String[]> {
 		PrintWriter writer = getPrintWriter(fos);
 		openWriter(writer, export);
 		if (Boolean.TRUE.equals(export.getHeader())) {
-			Collection<String> header = FieldUtils.format(fields);
-			write(header.toArray(new String[header.size()]));
+			write(FieldUtils.format(fields));
 		}
 	}
 

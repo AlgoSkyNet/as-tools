@@ -12,12 +12,15 @@ import com.tibco.as.space.ASException;
 import com.tibco.as.space.FieldDef;
 import com.tibco.as.space.FieldDef.FieldType;
 import com.tibco.as.space.SpaceDef;
+import com.tibco.as.xml.Field;
+import com.tibco.as.xml.MetaspaceManager;
+import com.tibco.as.xml.Space;
 
 public class TestMetaspaceManager {
 
 	@Test
-	public void testGetMetaspaceByDisplayName() throws JAXBException,
-			IOException, ASException {
+	public void testGetMetaspaceName() throws JAXBException, IOException,
+			ASException {
 		MetaspaceManager manager = MetaspaceManager.getInstance();
 		com.tibco.as.space.Metaspace metaspace = manager.getMetaspace("ms1");
 		Assert.assertEquals("ms1", metaspace.getName());
@@ -28,7 +31,7 @@ public class TestMetaspaceManager {
 		SpaceDef spaceDef = SpaceDef.create("space1", 0,
 				Arrays.asList(FieldDef.create("field1", FieldType.LONG)));
 		spaceDef.getKeyDef().setFieldNames("field1");
-		Space space = MetaspaceManager.getSpace(spaceDef);
+		Space space = XMLFactory.getSpace(spaceDef);
 		Assert.assertEquals(spaceDef.getName(), space.getName());
 		FieldDef fieldDef = spaceDef.getFieldDefs().iterator().next();
 		Field field = space.getField().get(0);

@@ -2,7 +2,6 @@ package com.tibco.as.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,48 +15,52 @@ import com.tibco.as.space.SpaceDef;
 
 public class Utils {
 
-	public static List<FieldDef> getFieldDefs(SpaceDef spaceDef,
+	public static FieldDef[] getFieldDefs(SpaceDef spaceDef,
 			String... fieldNames) {
-		List<FieldDef> result = new ArrayList<FieldDef>();
-		for (String fieldName : getFieldNames(spaceDef.getFieldDefs(),
-				fieldNames)) {
-			result.add(spaceDef.getFieldDef(fieldName));
+		String[] names = getFieldNames(spaceDef.getFieldDefs(), fieldNames);
+		FieldDef[] result = new FieldDef[names.length];
+		for (int index = 0; index < names.length; index++) {
+			result[index] = spaceDef.getFieldDef(names[index]);
 		}
 		return result;
 	}
 
 	public static List<String> getFieldNames(FieldDef... fieldDefs) {
-		return getFieldNames(Arrays.asList(fieldDefs));
+		return getFieldNames(fieldDefs);
 	}
 
-	public static List<String> getFieldNames(Collection<FieldDef> fieldDefs,
+	public static String[] getFieldNames(Collection<FieldDef> fieldDefs,
 			String... fieldNames) {
-		List<String> result = new ArrayList<String>();
 		if (fieldNames == null || fieldNames.length == 0) {
-			for (FieldDef fieldDef : fieldDefs) {
-				result.add(fieldDef.getName());
+			FieldDef[] fields = fieldDefs
+					.toArray(new FieldDef[fieldDefs.size()]);
+			String[] result = new String[fields.length];
+			for (int index = 0; index < fields.length; index++) {
+				result[index] = fields[index].getName();
 			}
-		} else {
-			result.addAll(Arrays.asList(fieldNames));
+			return result;
 		}
-		return result;
+		return fieldNames;
 
 	}
 
-	public static List<String> getFieldNames(SpaceDef spaceDef,
+	public static String[] getFieldNames(SpaceDef spaceDef,
 			String... fieldNames) {
 		return getFieldNames(spaceDef.getFieldDefs(), fieldNames);
 	}
 
-	public static List<FieldDef> getKeyFieldDefs(SpaceDef spaceDef) {
-		List<FieldDef> fieldDefs = new ArrayList<FieldDef>();
-		for (String key : spaceDef.getKeyDef().getFieldNames()) {
-			fieldDefs.add(spaceDef.getFieldDef(key));
+	public static FieldDef[] getKeyFieldDefs(SpaceDef spaceDef) {
+		Collection<String> fieldNames = spaceDef.getKeyDef().getFieldNames();
+		String[] keyFieldNames = fieldNames.toArray(new String[fieldNames
+				.size()]);
+		FieldDef[] fieldDefs = new FieldDef[keyFieldNames.length];
+		for (int index = 0; index < keyFieldNames.length; index++) {
+			fieldDefs[index] = spaceDef.getFieldDef(keyFieldNames[index]);
 		}
 		return fieldDefs;
 	}
 
-	public static List<String> getNonKeyFieldNames(SpaceDef spaceDef) {
+	public static String[] getNonKeyFieldNames(SpaceDef spaceDef) {
 		Collection<FieldDef> fieldDefs = spaceDef.getFieldDefs();
 		Collection<String> keys = spaceDef.getKeyDef().getFieldNames();
 		List<String> fieldNames = new ArrayList<String>();
@@ -67,7 +70,7 @@ public class Utils {
 				fieldNames.add(fieldName);
 			}
 		}
-		return fieldNames;
+		return fieldNames.toArray(new String[fieldNames.size()]);
 	}
 
 	public static boolean hasMethod(Class<?> clazz, String name) {

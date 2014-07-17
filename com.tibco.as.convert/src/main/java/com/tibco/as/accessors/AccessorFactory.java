@@ -1,9 +1,7 @@
 package com.tibco.as.accessors;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.tibco.as.space.FieldDef;
+import com.tibco.as.space.SpaceDef;
 
 /**
  * A factory for building/retrieving FieldAccessor instances.
@@ -49,13 +47,17 @@ public class AccessorFactory {
 		}
 	}
 
-	public static Collection<ITupleAccessor> create(
-			Collection<FieldDef> fieldDefs) {
-		Collection<ITupleAccessor> accessors = new ArrayList<ITupleAccessor>();
-		for (FieldDef fieldDef : fieldDefs) {
-			accessors.add(create(fieldDef));
+	public static ITupleAccessor[] create(FieldDef[] fieldDefs) {
+		ITupleAccessor[] accessors = new ITupleAccessor[fieldDefs.length];
+		for (int index = 0; index < fieldDefs.length; index++) {
+			accessors[index] = create(fieldDefs[index]);
 		}
 		return accessors;
+	}
+
+	public static ITupleAccessor[] create(SpaceDef spaceDef) {
+		return create(spaceDef.getFieldDefs().toArray(
+				new FieldDef[spaceDef.getFieldDefs().size()]));
 	}
 
 }

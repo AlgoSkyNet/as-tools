@@ -1,7 +1,5 @@
 package com.tibco.as.convert.array;
 
-import java.util.Collection;
-
 import com.tibco.as.accessors.ITupleAccessor;
 import com.tibco.as.convert.ConvertException;
 import com.tibco.as.convert.ObjectToTupleConverter;
@@ -9,7 +7,7 @@ import com.tibco.as.convert.ObjectToTupleConverter;
 public abstract class AbstractArrayToTupleConverter<T> extends
 		ObjectToTupleConverter<T[]> {
 
-	public AbstractArrayToTupleConverter(Collection<ITupleAccessor> accessors) {
+	public AbstractArrayToTupleConverter(ITupleAccessor[] accessors) {
 		super(accessors);
 	}
 

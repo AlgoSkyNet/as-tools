@@ -1,7 +1,6 @@
 package com.tibco.as.convert.array;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
 
 import com.tibco.as.accessors.ITupleAccessor;
 import com.tibco.as.convert.ConvertException;
@@ -13,10 +12,10 @@ public class TupleToArrayConverter<T> extends AbstractTupleToArrayConverter<T> {
 	private IConverter[] converters;
 	private Class<T> arrayComponentType;
 
-	public TupleToArrayConverter(Collection<ITupleAccessor> accessors,
-			Collection<IConverter> converters, Class<T> arrayComponentType) {
+	public TupleToArrayConverter(ITupleAccessor[] accessors,
+			IConverter[] converters, Class<T> arrayComponentType) {
 		super(accessors);
-		this.converters = converters.toArray(new IConverter[converters.size()]);
+		this.converters = converters;
 		this.arrayComponentType = arrayComponentType;
 	}
 

@@ -3,7 +3,6 @@ package com.tibco.as.io.file;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -52,11 +51,10 @@ public class TestImport extends TestBase {
 	}
 
 	private void configure(TextFileImport config) {
-		config.setFields(Arrays.asList(
-				new Field("Field1", FieldType.LONG, true), new Field("Field2",
-						FieldType.DATETIME, false, true), new Field("Field3",
-						FieldType.CHAR, false, true), new Field("Field4",
-						FieldType.BOOLEAN, false, true)));
+		config.setFields(new Field("Field1", FieldType.LONG, true), new Field(
+				"Field2", FieldType.DATETIME, false, true), new Field("Field3",
+				FieldType.CHAR, false, true), new Field("Field4",
+				FieldType.BOOLEAN, false, true));
 	}
 
 	@Test
@@ -99,10 +97,9 @@ public class TestImport extends TestBase {
 		DelimitedImport import1 = createDelimitedImport("space1.csv");
 		import1.setSpaceName("space1");
 		import1.setHeader(true);
-		import1.setFields(Arrays.asList(new Field("Field1", FieldType.LONG,
-				true), new Field("Field2", FieldType.DATETIME, false, true),
-				new Field(),
-				new Field("Field4", FieldType.BOOLEAN, false, true)));
+		import1.setFields(new Field("Field1", FieldType.LONG, true), new Field(
+				"Field2", FieldType.DATETIME, false, true), new Field(),
+				new Field("Field4", FieldType.BOOLEAN, false, true));
 		File dir = getDir();
 		copy(import1.getFilename(), dir);
 		Metaspace metaspace = getMetaspace();
@@ -130,10 +127,9 @@ public class TestImport extends TestBase {
 	public void testCSVNoHeaderSkip() throws Exception {
 		DelimitedImport import1 = createDelimitedImport("space1-noheader.csv");
 		import1.setSpaceName("space2");
-		import1.setFields(Arrays.asList(new Field("Field1", FieldType.LONG,
-				true), new Field("Field2", FieldType.DATETIME, false, true),
-				new Field(),
-				new Field("Field4", FieldType.BOOLEAN, false, true)));
+		import1.setFields(new Field("Field1", FieldType.LONG, true), new Field(
+				"Field2", FieldType.DATETIME, false, true), new Field(),
+				new Field("Field4", FieldType.BOOLEAN, false, true));
 		File dir = getDir();
 		copy(import1.getFilename(), dir);
 		Metaspace metaspace = getMetaspace();

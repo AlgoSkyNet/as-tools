@@ -84,22 +84,22 @@ public class ExcelImporter extends Importer<Row> {
 	@Override
 	protected SpaceDef createSpaceDef(String spaceName, Import config) {
 		ExcelImport excelImport = (ExcelImport) config;
-		if (excelImport.getFields().isEmpty()) {
+		if (excelImport.getFields() == null) {
 			if (Boolean.TRUE.equals(excelImport.getHeader())) {
 				Cell[] cells = getHeader(getInputStream(excelImport));
-				List<String> header = new ArrayList<String>();
-				for (Cell cell : cells) {
-					header.add(cell.getStringCellValue());
+				String[] header = new String[cells.length];
+				for (int index = 0; index < cells.length; index++) {
+					header[index] = cells[index].getStringCellValue();
 				}
-				List<Field> fields = FieldUtils.getFields(header);
+				Field[] fields = FieldUtils.getFields(header);
 				for (int index = 0; index < cells.length; index++) {
 					Cell cell = cells[index];
 					Font font = getFont(cell);
 					if (isBold(font)) {
-						fields.get(index).setKey(true);
+						fields[index].setKey(true);
 					}
 				}
-				excelImport.getFields().addAll(fields);
+				excelImport.setFields(fields);
 			}
 		}
 		return FieldUtils.createSpaceDef(spaceName, excelImport.getFields());
@@ -196,10 +196,9 @@ public class ExcelImporter extends Importer<Row> {
 	protected IConverter<Row, Tuple> getConverter(Transfer transfer,
 			SpaceDef spaceDef) throws UnsupportedConversionException {
 		ExcelImport excelImport = (ExcelImport) transfer;
-		List<FieldDef> fieldDefs = FieldUtils.getFieldDefs(spaceDef,
+		FieldDef[] fieldDefs = FieldUtils.getFieldDefs(spaceDef,
 				excelImport.getFields());
-		Collection<ITupleAccessor> accessors = AccessorFactory
-				.create(fieldDefs);
+		ITupleAccessor[] accessors = AccessorFactory.create(fieldDefs);
 		FormulaEvaluator evaluator = workbook.getCreationHelper()
 				.createFormulaEvaluator();
 		return new RowToTupleConverter(accessors, transfer.getAttributes(),

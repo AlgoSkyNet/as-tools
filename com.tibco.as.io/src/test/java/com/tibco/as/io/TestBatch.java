@@ -72,12 +72,11 @@ public class TestBatch extends TestBase {
 			protected IConverter<Tuple, String[]> getConverter(
 					Transfer transfer, SpaceDef spaceDef)
 					throws UnsupportedConversionException {
-				Collection<FieldDef> fieldDefs = Utils.getFieldDefs(spaceDef);
-				Collection<ITupleAccessor> accessors = AccessorFactory
-						.create(fieldDefs);
-				Collection<IConverter> converters;
+				FieldDef[] fieldDefs = Utils.getFieldDefs(spaceDef);
+				ITupleAccessor[] accessors = AccessorFactory.create(fieldDefs);
+				IConverter[] converters;
 				try {
-					converters = factory.getFieldConverters(
+					converters = factory.getConverters(
 							transfer.getAttributes(), fieldDefs, String.class);
 				} catch (Exception e) {
 					throw new UnsupportedConversionException(Tuple.class,
@@ -118,10 +117,9 @@ public class TestBatch extends TestBase {
 			protected IConverter<Tuple, String[]> getConverter(
 					Transfer transfer, SpaceDef spaceDef)
 					throws UnsupportedConversionException {
-				Collection<FieldDef> fieldDefs = Utils.getFieldDefs(spaceDef);
-				Collection<ITupleAccessor> accessors = AccessorFactory
-						.create(fieldDefs);
-				Collection<IConverter> converters = factory.getFieldConverters(
+				FieldDef[] fieldDefs = Utils.getFieldDefs(spaceDef);
+				ITupleAccessor[] accessors = AccessorFactory.create(fieldDefs);
+				IConverter[] converters = factory.getConverters(
 						transfer.getAttributes(), fieldDefs, String.class);
 				return new TupleToArrayConverter<String>(accessors, converters,
 						String.class);

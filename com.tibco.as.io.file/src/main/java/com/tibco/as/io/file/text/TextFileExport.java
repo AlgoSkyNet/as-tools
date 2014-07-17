@@ -1,9 +1,5 @@
 package com.tibco.as.io.file.text;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
 import com.tibco.as.io.Export;
 import com.tibco.as.io.Field;
 
@@ -15,14 +11,14 @@ public class TextFileExport extends Export {
 
 	private String filename;
 
-	private Collection<Field> fields = new ArrayList<Field>();
+	private Field[] fields;
 
-	public Collection<Field> getFields() {
+	public Field[] getFields() {
 		return fields;
 	}
 
 	public void setFields(Field... fields) {
-		this.fields.addAll(Arrays.asList(fields));
+		this.fields = fields;
 	}
 
 	public String getFilename() {
@@ -53,9 +49,11 @@ public class TextFileExport extends Export {
 		target.autoflush = autoflush;
 		target.filename = filename;
 		target.header = header;
-		target.fields = new ArrayList<Field>();
-		for (Field field : fields) {
-			target.fields.add(field.clone());
+		if (fields != null) {
+			target.fields = new Field[fields.length];
+			for (int index = 0; index < fields.length; index++) {
+				target.fields[index] = fields[index].clone();
+			}
 		}
 		super.copyTo(target);
 	}

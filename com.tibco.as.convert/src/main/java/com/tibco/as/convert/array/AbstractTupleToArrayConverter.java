@@ -1,14 +1,12 @@
 package com.tibco.as.convert.array;
 
-import java.util.Collection;
-
 import com.tibco.as.accessors.ITupleAccessor;
 import com.tibco.as.convert.TupleToObjectConverter;
 
 public abstract class AbstractTupleToArrayConverter<T> extends
 		TupleToObjectConverter<T[]> {
 
-	public AbstractTupleToArrayConverter(Collection<ITupleAccessor> accessors) {
+	public AbstractTupleToArrayConverter(ITupleAccessor[] accessors) {
 		super(accessors);
 	}
 

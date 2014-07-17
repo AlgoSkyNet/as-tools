@@ -1,14 +1,11 @@
 package com.tibco.as.io.file.text;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.tibco.as.io.Field;
 import com.tibco.as.io.Import;
 
 public class TextFileImport extends Import implements Cloneable {
 
-	private Collection<Field> fields = new ArrayList<Field>();
+	private Field[] fields;
 
 	private String filename;
 
@@ -37,20 +34,22 @@ public class TextFileImport extends Import implements Cloneable {
 		return header;
 	}
 
-	public Collection<Field> getFields() {
+	public Field[] getFields() {
 		return fields;
 	}
 
-	public void setFields(Collection<Field> fields) {
+	public void setFields(Field... fields) {
 		this.fields = fields;
 	}
 
 	public void copyTo(TextFileImport target) {
 		target.filename = filename;
 		target.header = header;
-		target.fields = new ArrayList<Field>();
-		for (Field field : fields) {
-			target.fields.add(field.clone());
+		if (fields != null) {
+			target.fields = new Field[fields.length];
+			for (int index = 0; index < fields.length; index++) {
+				target.fields[index] = fields[index].clone();
+			}
 		}
 		super.copyTo(target);
 	}

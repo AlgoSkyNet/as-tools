@@ -4,7 +4,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -83,12 +82,11 @@ public class TestImporter extends TestBase {
 			protected IConverter<String[], Tuple> getConverter(
 					Transfer transfer, SpaceDef spaceDef)
 					throws UnsupportedConversionException {
-				Collection<FieldDef> fieldDefs = Utils.getFieldDefs(spaceDef);
-				Collection<ITupleAccessor> accessors = AccessorFactory
-						.create(fieldDefs);
-				Collection<IConverter> converters;
+				FieldDef[] fieldDefs = Utils.getFieldDefs(spaceDef);
+				ITupleAccessor[] accessors = AccessorFactory.create(fieldDefs);
+				IConverter[] converters;
 				try {
-					converters = factory.getTypeConverters(
+					converters = factory.getConverters(
 							transfer.getAttributes(), String.class, fieldDefs);
 				} catch (Exception e) {
 					throw new UnsupportedConversionException(String[].class,

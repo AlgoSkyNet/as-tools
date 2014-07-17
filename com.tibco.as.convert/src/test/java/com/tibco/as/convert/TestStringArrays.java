@@ -33,10 +33,9 @@ public class TestStringArrays {
 		Attributes attributes = new Attributes();
 		attributes.put(Attribute.FORMAT_NUMBER, "#,###");
 		attributes.put(Attribute.FORMAT_NUMBER, "'P'#,###", "field1");
-		Collection<ITupleAccessor> accessors = AccessorFactory
-				.create(fieldDefs);
-		Collection<IConverter> converters = factory.getTypeConverters(
-				attributes, String.class, fieldDefs);
+		ITupleAccessor[] accessors = AccessorFactory.create(spaceDef);
+		IConverter[] converters = factory.getConverters(attributes,
+				String.class, spaceDef);
 		ArrayToTupleConverter<String> converter = new ArrayToTupleConverter<String>(
 				accessors, converters);
 		String[] array = { "P1,000", "2,000", "3,000", "4,000" };
@@ -62,10 +61,9 @@ public class TestStringArrays {
 		tuple.putInt("field2", 2000);
 		tuple.putInt("field3", 3000);
 		tuple.putInt("field4", 4000);
-		Collection<ITupleAccessor> accessors = AccessorFactory
-				.create(fieldDefs);
-		Collection<IConverter> converters = factory.getFieldConverters(
-				attributes, fieldDefs, String.class);
+		ITupleAccessor[] accessors = AccessorFactory.create(spaceDef);
+		IConverter[] converters = factory.getConverters(attributes, spaceDef,
+				String.class);
 		TupleToArrayConverter<String> converter = new TupleToArrayConverter<String>(
 				accessors, converters, String.class);
 		String[] array = converter.convert(tuple);

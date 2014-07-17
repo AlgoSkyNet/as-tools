@@ -1,8 +1,5 @@
 package com.tibco.as.io.file.excel;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -26,12 +23,12 @@ public class RowToTupleConverter extends ObjectToTupleConverter<Row> {
 	private ConverterFactory factory = new ConverterFactory();
 
 	private Attributes conversion;
-	private List<FieldDef> fieldDefs;
+	private FieldDef[] fieldDefs;
 
 	private FormulaEvaluator evaluator;
 
-	public RowToTupleConverter(Collection<ITupleAccessor> accessors,
-			Attributes conversion, List<FieldDef> fieldDefs,
+	public RowToTupleConverter(ITupleAccessor[] accessors,
+			Attributes conversion, FieldDef[] fieldDefs,
 			FormulaEvaluator evaluator) {
 		super(accessors);
 		this.conversion = conversion;
@@ -93,7 +90,7 @@ public class RowToTupleConverter extends ObjectToTupleConverter<Row> {
 		if (cell == null) {
 			return null;
 		}
-		FieldDef fieldDef = fieldDefs.get(index);
+		FieldDef fieldDef = fieldDefs[index];
 		Object value = getValue(cell, fieldDef.getType());
 		if (value == null) {
 			return null;

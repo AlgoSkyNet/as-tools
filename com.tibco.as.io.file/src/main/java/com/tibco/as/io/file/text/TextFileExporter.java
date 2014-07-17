@@ -1,7 +1,6 @@
 package com.tibco.as.io.file.text;
 
 import java.io.File;
-import java.util.Collection;
 
 import com.tibco.as.convert.ConverterFactory;
 import com.tibco.as.convert.IConverter;
@@ -34,12 +33,12 @@ public abstract class TextFileExporter<T extends TextFileExport> extends
 		TextFileExport export = (TextFileExport) transfer;
 		String filename = getFilename(export);
 		File file = new File(directory, filename);
-		FieldUtils.setFields(export.getFields(), spaceDef);
-		return getOutputStream(file, export, export.getFields());
+		Field[] fields = FieldUtils.getFields(export.getFields(), spaceDef);
+		return getOutputStream(file, export, fields);
 	}
 
 	protected abstract TextFileOutputStream getOutputStream(File directory,
-			TextFileExport export, Collection<Field> fields);
+			TextFileExport export, Field[] fields);
 
 	private String getFilename(TextFileExport export) {
 		String filename = export.getFilename();
@@ -57,6 +56,7 @@ public abstract class TextFileExporter<T extends TextFileExport> extends
 			SpaceDef spaceDef) throws UnsupportedConversionException {
 		TextFileExport export = (TextFileExport) transfer;
 		return FieldUtils.getTupleToArrayConverter(converterFactory, spaceDef,
-				export.getFields(), String.class, export.getAttributes(), String.class);
+				export.getFields(), String.class, export.getAttributes(),
+				new Class[] { String.class });
 	}
 }

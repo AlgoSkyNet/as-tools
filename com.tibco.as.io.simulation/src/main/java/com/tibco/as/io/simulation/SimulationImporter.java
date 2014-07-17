@@ -22,6 +22,7 @@ import com.tibco.as.space.FieldDef;
 import com.tibco.as.space.Metaspace;
 import com.tibco.as.space.SpaceDef;
 import com.tibco.as.space.Tuple;
+import com.tibco.as.util.Utils;
 
 public class SimulationImporter extends Importer<Object[]> {
 
@@ -114,7 +115,8 @@ public class SimulationImporter extends Importer<Object[]> {
 				fields.add(f);
 			}
 		}
-		return FieldUtils.createSpaceDef(spaceName, fields);
+		Field[] fieldArray = fields.toArray(new Field[fields.size()]);
+		return FieldUtils.createSpaceDef(spaceName, fieldArray);
 	}
 
 	@Override
@@ -160,20 +162,19 @@ public class SimulationImporter extends Importer<Object[]> {
 			SpaceDef spaceDef) throws UnsupportedConversionException {
 		SimulationImport simulation = (SimulationImport) transfer;
 		Space space = simulation.getSpace();
-		Collection<FieldDef> fieldDefs = spaceDef.getFieldDefs();
-		Collection<ITupleAccessor> accessors = AccessorFactory
-				.create(fieldDefs);
-		Collection<Class> types = getTypes(getFields(space));
-		Collection<IConverter> converters = factory.getTypeConverters(
-				new Attributes(), types, fieldDefs);
+		FieldDef[] fieldDefs = Utils.getFieldDefs(spaceDef);
+		ITupleAccessor[] accessors = AccessorFactory.create(fieldDefs);
+		Class[] types = getTypes(getFields(space));
+		IConverter[] converters = factory.getConverters(new Attributes(),
+				types, fieldDefs);
 		return new ArrayToTupleConverter<Object>(accessors, converters);
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Collection<Class> getTypes(Collection<SimField> simFields) {
-		Collection<Class> types = new ArrayList<Class>();
-		for (SimField simField : simFields) {
-			types.add(getType(simField));
+	private Class[] getTypes(List<SimField> simFields) {
+		Class[] types = new Class[simFields.size()];
+		for (int index = 0; index < simFields.size(); index++) {
+			types[index] = getType(simFields.get(index));
 		}
 		return types;
 	}

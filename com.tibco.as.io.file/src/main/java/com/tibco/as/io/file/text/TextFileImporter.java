@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,16 +52,17 @@ public abstract class TextFileImporter extends Importer<String[]> {
 	@Override
 	protected SpaceDef createSpaceDef(String spaceName, Import config) {
 		TextFileImport textFileImport = (TextFileImport) config;
-		if (textFileImport.getFields().isEmpty()) {
+		if (textFileImport.getFields() == null) {
 			if (Boolean.TRUE.equals(textFileImport.getHeader())) {
 				TextFileInputStream in = getInputStream(directory,
 						textFileImport);
 				try {
 					in.openFile();
 					String[] header = in.read();
-					Collection<Field> fields = FieldUtils.getFields(Arrays
-							.asList(header));
-					textFileImport.getFields().addAll(fields);
+					if (header != null) {
+						Field[] fields = FieldUtils.getFields(header);
+						textFileImport.setFields(fields);
+					}
 				} catch (FileNotFoundException e) {
 					System.err.println(e.getMessage());
 				} catch (IOException e) {

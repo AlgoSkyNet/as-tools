@@ -1,7 +1,6 @@
 package com.tibco.as.io.file.excel;
 
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -26,13 +25,13 @@ public class ExcelOutputStream implements IOutputStream<Object[]> {
 	private Sheet sheet;
 	private int sheetIndex = 0;
 	private IRowAccessor[] accessors;
-	private Collection<Field> fields;
+	private Field[] fields;
 	private int rownum = 0;
 	private boolean excel97;
 	private String sheetName;
 
 	public ExcelOutputStream(Sheet sheet, ExcelExport export,
-			IRowAccessor[] accessors, Collection<Field> fields) {
+			IRowAccessor[] accessors, Field[] fields) {
 		this.sheet = sheet;
 		this.export = export;
 		this.accessors = accessors;
@@ -49,8 +48,8 @@ public class ExcelOutputStream implements IOutputStream<Object[]> {
 			// CreationHelper factory = workbook.getCreationHelper();
 			// Drawing drawing = sheet.createDrawingPatriarch();
 			FieldFormat format = new FieldFormat();
-			int columnIndex = 0;
-			for (Field field : fields) {
+			for (int columnIndex = 0; columnIndex < fields.length; columnIndex++) {
+				Field field = fields[columnIndex];
 				Cell cell = header.createCell(columnIndex);
 				Font font = workbook.createFont();
 				font.setBoldweight(getFontWeight(field.isKey()));
@@ -71,7 +70,6 @@ public class ExcelOutputStream implements IOutputStream<Object[]> {
 				// comment.setString(commentString);
 				// comment.setAuthor("TIBCO ActiveSpaces®");
 				// cell.setCellComment(comment);
-				columnIndex++;
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 package com.tibco.as.io.file.text.delimited;
 
 import java.io.File;
-import java.util.Collection;
 
 import com.tibco.as.io.Field;
 import com.tibco.as.io.file.text.TextFileExport;
@@ -27,7 +26,7 @@ public class DelimitedExporter extends TextFileExporter<DelimitedExport> {
 
 	@Override
 	protected TextFileOutputStream getOutputStream(File file,
-			TextFileExport export, Collection<Field> fields) {
+			TextFileExport export, Field[] fields) {
 		return new DelimitedOutputStream(file, (DelimitedExport) export, fields);
 	}
 

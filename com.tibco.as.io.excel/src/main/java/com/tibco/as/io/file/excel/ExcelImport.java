@@ -1,8 +1,5 @@
 package com.tibco.as.io.file.excel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.tibco.as.io.Field;
 import com.tibco.as.io.Import;
 
@@ -12,13 +9,13 @@ public class ExcelImport extends Import {
 
 	private String sheetName;
 
-	private Collection<Field> fields = new ArrayList<Field>();
+	private Field[] fields;
 
-	public Collection<Field> getFields() {
+	public Field[] getFields() {
 		return fields;
 	}
 
-	public void setFields(Collection<Field> fields) {
+	public void setFields(Field... fields) {
 		this.fields = fields;
 	}
 
@@ -48,9 +45,11 @@ public class ExcelImport extends Import {
 	public void copyTo(ExcelImport target) {
 		target.header = header;
 		target.sheetName = sheetName;
-		target.fields = new ArrayList<Field>();
-		for (Field field : fields) {
-			target.fields.add(field.clone());
+		if (fields != null) {
+			target.fields = new Field[fields.length];
+			for (int index = 0; index < fields.length; index++) {
+				target.fields[index] = fields[index].clone();
+			}
 		}
 		super.copyTo(target);
 	}

@@ -1,7 +1,5 @@
 package com.tibco.as.convert;
 
-import java.util.Collection;
-
 import com.tibco.as.accessors.ITupleAccessor;
 import com.tibco.as.space.Tuple;
 
@@ -9,9 +7,8 @@ public abstract class TupleToObjectConverter<T> implements IConverter<Tuple, T> 
 
 	private ITupleAccessor[] accessors;
 
-	public TupleToObjectConverter(Collection<ITupleAccessor> accessors) {
-		this.accessors = accessors
-				.toArray(new ITupleAccessor[accessors.size()]);
+	public TupleToObjectConverter(ITupleAccessor[] accessors) {
+		this.accessors = accessors;
 	}
 
 	@Override

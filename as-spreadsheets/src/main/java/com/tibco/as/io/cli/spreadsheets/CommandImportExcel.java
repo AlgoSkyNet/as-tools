@@ -53,7 +53,10 @@ public class CommandImportExcel extends CommandImport {
 		transfer.setHeader(header);
 		transfer.getAttributes().putAll(formats.getConversion());
 		transfer.setSheetName(sheetName);
-		transfer.setFields(FieldUtils.getFields(fieldDefs));
+		if (fieldDefs != null) {
+			transfer.setFields(FieldUtils.getFields(fieldDefs
+					.toArray(new String[fieldDefs.size()])));
+		}
 	}
 
 	@Override

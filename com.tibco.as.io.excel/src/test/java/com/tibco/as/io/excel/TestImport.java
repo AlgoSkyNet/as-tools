@@ -55,11 +55,10 @@ public class TestImport extends TestBase {
 	}
 
 	private void configure(ExcelImport config) {
-		config.setFields(Arrays.asList(
-				new Field("Field1", FieldType.LONG, true), new Field("Field2",
-						FieldType.DATETIME, false, true), new Field("Field3",
-						FieldType.CHAR, false, true), new Field("Field4",
-						FieldType.BOOLEAN, false, true)));
+		config.setFields(new Field("Field1", FieldType.LONG, true), new Field(
+				"Field2", FieldType.DATETIME, false, true), new Field("Field3",
+				FieldType.CHAR, false, true), new Field("Field4",
+				FieldType.BOOLEAN, false, true));
 	}
 
 	@Test

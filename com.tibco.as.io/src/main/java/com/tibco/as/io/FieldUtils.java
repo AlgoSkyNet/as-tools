@@ -2,9 +2,6 @@ package com.tibco.as.io;
 
 import java.text.MessageFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,38 +36,44 @@ public class FieldUtils {
 
 	}
 
-	public static Collection<FieldDef> getFieldDefs(Collection<Field> fields) {
-		Collection<FieldDef> fieldDefs = new ArrayList<FieldDef>();
-		for (Field field : fields) {
-			fieldDefs.add(getFieldDef(field));
+	public static FieldDef[] getFieldDefs(Field[] fields) {
+		FieldDef[] fieldDefs = new FieldDef[fields.length];
+		for (int index = 0; index < fields.length; index++) {
+			fieldDefs[index] = getFieldDef(fields[index]);
 		}
 		return fieldDefs;
 	}
 
-	public static List<FieldDef> getFieldDefs(SpaceDef spaceDef,
-			Collection<Field> fields) {
-		setFields(fields, spaceDef);
-		List<FieldDef> fieldDefs = new ArrayList<FieldDef>();
-		for (Field field : fields) {
-			fieldDefs.add(getFieldDef(field));
+	public static FieldDef[] getFieldDefs(SpaceDef spaceDef, Field[] fields) {
+		Field[] array = getFields(fields, spaceDef);
+		FieldDef[] fieldDefs = new FieldDef[array.length];
+		for (int index = 0; index < array.length; index++) {
+			fieldDefs[index] = getFieldDef(array[index]);
 		}
 		return fieldDefs;
 	}
 
-	public static void setFields(Collection<Field> fields, SpaceDef spaceDef) {
-		if (fields.isEmpty()) {
-			for (FieldDef fieldDef : spaceDef.getFieldDefs()) {
-				Field field = new Field();
-				field.setName(fieldDef.getName());
-				fields.add(field);
+	public static Field[] getFields(Field[] fields, SpaceDef spaceDef) {
+		Field[] result = fields;
+		if (fields == null || fields.length == 0) {
+			FieldDef[] fieldDefs = getFieldDefs(spaceDef);
+			result = new Field[fieldDefs.length];
+			for (int index = 0; index < fieldDefs.length; index++) {
+				result[index] = new Field();
+				result[index].setName(fieldDefs[index].getName());
 			}
 		}
-		for (Field field : fields) {
-			if (field.getName() == null) {
-				continue;
+		for (Field field : result) {
+			if (field.getName() != null) {
+				getField(spaceDef, field.getName()).copyTo(field);
 			}
-			getField(spaceDef, field.getName()).copyTo(field);
 		}
+		return result;
+	}
+
+	private static FieldDef[] getFieldDefs(SpaceDef spaceDef) {
+		return spaceDef.getFieldDefs().toArray(
+				new FieldDef[spaceDef.getFieldDefs().size()]);
 	}
 
 	public static Field getField(SpaceDef spaceDef, String fieldName) {
@@ -85,8 +88,7 @@ public class FieldUtils {
 		return field;
 	}
 
-	public static SpaceDef createSpaceDef(String spaceName,
-			Collection<Field> fields) {
+	public static SpaceDef createSpaceDef(String spaceName, Field[] fields) {
 		SpaceDef spaceDef = SpaceDef.create(spaceName);
 		for (FieldDef fieldDef : getFieldDefs(fields)) {
 			if (fieldDef != null) {
@@ -101,22 +103,21 @@ public class FieldUtils {
 		return spaceDef;
 	}
 
-	public static List<Field> getFields(Collection<String> fieldDefs) {
+	public static Field[] getFields(String[] fieldDefs) {
 		FieldFormat format = new FieldFormat();
-		List<Field> fields = new ArrayList<Field>();
-		if (fieldDefs != null) {
-			for (String fieldDef : fieldDefs) {
-				Field field = new Field();
-				if (fieldDef != null && !fieldDef.isEmpty()) {
-					try {
-						field = format.parseObject(fieldDef);
-					} catch (ParseException e) {
-						logger.log(Level.SEVERE, MessageFormat.format(
-								"Could not parse field def {0}", fieldDef), e);
-					}
+		Field[] fields = new Field[fieldDefs.length];
+		for (int index = 0; index < fieldDefs.length; index++) {
+			Field field = new Field();
+			String fieldDef = fieldDefs[index];
+			if (fieldDef != null && !fieldDef.isEmpty()) {
+				try {
+					field = format.parseObject(fieldDef);
+				} catch (ParseException e) {
+					logger.log(Level.SEVERE, MessageFormat.format(
+							"Could not parse field def {0}", fieldDef), e);
 				}
-				fields.add(field);
 			}
+			fields[index] = field;
 		}
 		return fields;
 	}
@@ -124,14 +125,12 @@ public class FieldUtils {
 	@SuppressWarnings("rawtypes")
 	public static <T> TupleToArrayConverter<T> getTupleToArrayConverter(
 			ConverterFactory converterFactory, SpaceDef spaceDef,
-			Collection<Field> fields, Class<T> componentType,
-			Attributes attributes, Class... types)
-			throws UnsupportedConversionException {
-		Collection<ITupleAccessor> accessors = AccessorFactory
-				.create(getFieldDefs(spaceDef, fields));
-		Collection<IConverter> converters = converterFactory
-				.getFieldConverters(attributes, getFieldDefs(spaceDef, fields),
-						types);
+			Field[] fields, Class<T> componentType, Attributes attributes,
+			Class[] types) throws UnsupportedConversionException {
+		ITupleAccessor[] accessors = AccessorFactory.create(getFieldDefs(
+				spaceDef, fields));
+		IConverter[] converters = converterFactory.getConverters(attributes,
+				getFieldDefs(spaceDef, fields), types);
 		return new TupleToArrayConverter<T>(accessors, converters,
 				componentType);
 	}
@@ -139,21 +138,20 @@ public class FieldUtils {
 	@SuppressWarnings("rawtypes")
 	public static <T> ArrayToTupleConverter<T> getArrayToTupleConverter(
 			ConverterFactory converterFactory, SpaceDef spaceDef,
-			Collection<Field> fields, Class<T> componentType,
-			Attributes attributes) throws UnsupportedConversionException {
-		Collection<FieldDef> fieldDefs = getFieldDefs(spaceDef, fields);
-		Collection<ITupleAccessor> accessors = AccessorFactory
-				.create(fieldDefs);
-		Collection<IConverter> converters = converterFactory.getTypeConverters(
-				attributes, componentType, fieldDefs);
+			Field[] fields, Class<T> componentType, Attributes attributes)
+			throws UnsupportedConversionException {
+		FieldDef[] fieldDefs = getFieldDefs(spaceDef, fields);
+		ITupleAccessor[] accessors = AccessorFactory.create(fieldDefs);
+		IConverter[] converters = converterFactory.getConverters(attributes,
+				componentType, fieldDefs);
 		return new ArrayToTupleConverter<T>(accessors, converters);
 	}
 
-	public static Collection<String> format(Collection<Field> fields) {
+	public static String[] format(Field[] fields) {
 		FieldFormat format = new FieldFormat();
-		Collection<String> fieldDefs = new ArrayList<String>();
-		for (Field field : fields) {
-			fieldDefs.add(format.format(field));
+		String[] fieldDefs = new String[fields.length];
+		for (int index = 0; index < fields.length; index++) {
+			fieldDefs[index] = format.format(fields[index]);
 		}
 		return fieldDefs;
 	}
