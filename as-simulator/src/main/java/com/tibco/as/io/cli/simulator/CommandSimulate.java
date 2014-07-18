@@ -13,6 +13,7 @@ import javax.xml.bind.Unmarshaller;
 import com.beust.jcommander.Parameter;
 import com.tibco.as.io.IMetaspaceTransfer;
 import com.tibco.as.io.cli.CommandImport;
+import com.tibco.as.io.simulation.ObjectFactory;
 import com.tibco.as.io.simulation.Simulation;
 import com.tibco.as.io.simulation.SimulationImport;
 import com.tibco.as.io.simulation.SimulationImporter;
@@ -45,9 +46,7 @@ public class CommandSimulate extends CommandImport {
 		super.prepare();
 		for (String file : files) {
 			// Prepare JAXB objects
-			JAXBContext jc = JAXBContext
-					.newInstance(Simulation.class.getPackage().getName(),
-							ClassLoader.getSystemClassLoader());
+			JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
 			InputStream in = new FileInputStream(file);
 			@SuppressWarnings("rawtypes")

@@ -45,7 +45,10 @@ public class MetaspaceManager {
 			instance = new MetaspaceManager();
 			File file = new File(FILENAME);
 			if (file.exists()) {
-				add((Metaspaces) XMLFactory.unmarshall(file));
+				@SuppressWarnings("unchecked")
+				JAXBElement<Metaspaces> element = (JAXBElement<Metaspaces>) XMLFactory
+						.unmarshall(file);
+				add(element.getValue());
 			}
 			InputStream in = ClassLoader.getSystemResourceAsStream(FILENAME);
 			if (in != null) {
@@ -107,11 +110,7 @@ public class MetaspaceManager {
 			JAXBException, IOException {
 		Metaspace ms = Utils.getMetaspace(name);
 		if (ms == null) {
-			com.tibco.as.xml.Metaspace metaspace = getXMLMetaspace(name);
-			if (metaspace == null) {
-				return null;
-			}
-			ms = connect(metaspace);
+			ms = connect(getXMLMetaspace(name));
 		}
 		return ms;
 	}
@@ -123,7 +122,7 @@ public class MetaspaceManager {
 				return metaspace;
 			}
 		}
-		return null;
+		return new com.tibco.as.xml.Metaspace();
 	}
 
 	public static com.tibco.as.xml.Member getMember(Member member)

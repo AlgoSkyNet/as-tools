@@ -145,8 +145,8 @@ public class ConverterFactory {
 		try {
 			JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
-			InputStream in = ClassLoader
-					.getSystemResourceAsStream(resourceName);
+			InputStream in = ObjectFactory.class.getClassLoader()
+					.getResourceAsStream(resourceName);
 			JAXBElement<Config> element = (JAXBElement<Config>) unmarshaller
 					.unmarshal(in);
 			return element.getValue();
