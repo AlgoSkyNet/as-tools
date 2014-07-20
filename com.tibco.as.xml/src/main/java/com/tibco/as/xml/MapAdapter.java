@@ -14,7 +14,7 @@ import org.eclipse.persistence.oxm.annotations.XmlVariableNode;
 
 import com.tibco.as.xml.MapAdapter.AdaptedMap;
 
-public class MapAdapter extends XmlAdapter<AdaptedMap, Map<String, Object>> {
+public class MapAdapter extends XmlAdapter<AdaptedMap, Map<String, String>> {
 
 	public static class AdaptedMap {
 
@@ -29,14 +29,14 @@ public class MapAdapter extends XmlAdapter<AdaptedMap, Map<String, Object>> {
 		public String key;
 
 		@XmlValue
-		public Object value;
+		public String value;
 
 	}
 
 	@Override
-	public AdaptedMap marshal(Map<String, Object> map) throws Exception {
+	public AdaptedMap marshal(Map<String, String> map) throws Exception {
 		AdaptedMap adaptedMap = new AdaptedMap();
-		for (Entry<String, Object> entry : map.entrySet()) {
+		for (Entry<String, String> entry : map.entrySet()) {
 			AdaptedEntry adaptedEntry = new AdaptedEntry();
 			adaptedEntry.key = entry.getKey();
 			adaptedEntry.value = entry.getValue();
@@ -46,9 +46,9 @@ public class MapAdapter extends XmlAdapter<AdaptedMap, Map<String, Object>> {
 	}
 
 	@Override
-	public Map<String, Object> unmarshal(AdaptedMap adaptedMap)
+	public Map<String, String> unmarshal(AdaptedMap adaptedMap)
 			throws Exception {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, String> map = new HashMap<String, String>();
 		for (AdaptedEntry entry : adaptedMap.entries) {
 			map.put(entry.key, entry.value);
 		}

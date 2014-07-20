@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tuple>
-	<field1 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:long">12345</field1>
-	<field2 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:string">12345</field2>
-	<field3 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:dateTime">2001-07-04T12:08:56.235-07:00</field3>
-	<field4 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:base64Binary">gAACA38=</field4>
-	<field5 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:boolean">true</field5>
-	<field6 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:unsignedInt">99</field6>
-	<field7 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:double">12345.12345</field7>
-	<field8 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:float">12.12345</field8>
-	<field9 xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:type="xsd:int">12345</field9>
-	<field10 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsd:short">12345
-	</field10>
+	<field1>12345</field1>
+	<field2>12345</field2>
+	<field3>2001-07-04T12:08:56.235-07:00</field3>
+	<field4>gAACA38=</field4>
+	<field5>true</field5>
+	<field6>c</field6>
+	<field7>12345.12345</field7>
+	<field8>12.12345</field8>
+	<field9>12345</field9>
+	<field10>12345</field10>
 </tuple>

@@ -6,7 +6,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,16 +36,18 @@ import com.tibco.as.space.KeyDef;
 import com.tibco.as.space.MemberDef;
 import com.tibco.as.space.Metaspace;
 import com.tibco.as.space.SpaceDef;
-import com.tibco.as.space.FieldDef.FieldType;
 import com.tibco.as.util.Utils;
 
 public class XMLFactory {
 
-	private static ConverterFactory xmlConverterFactory = new ConverterFactory();
-
-	private static ConverterFactory jsonConverterFactory = new ConverterFactory();
+	private static ConverterFactory xmlCF = new ConverterFactory();
 	static {
-		jsonConverterFactory.setBlobFormat(Blob.BASE64);
+		xmlCF.setBlobFormat(Blob.BASE64);
+	}
+
+	private static ConverterFactory jsonCF = new ConverterFactory();
+	static {
+		jsonCF.setBlobFormat(Blob.BASE64);
 	}
 
 	private static JAXBContext getContext() throws JAXBException {
@@ -108,10 +109,10 @@ public class XMLFactory {
 		return getTuple(xmlTuple.getMap(), spaceDef);
 	}
 
-	public static com.tibco.as.space.Tuple getTuple(Map<String, Object> map,
+	public static com.tibco.as.space.Tuple getTuple(Map<String, String> map,
 			SpaceDef spaceDef) throws UnsupportedConversionException,
 			ConvertException {
-		return getMapToTupleConverter(map, spaceDef).convert(map);
+		return getMapToTupleConverter(spaceDef).convert(map);
 	}
 
 	public static com.tibco.as.space.Tuple getTupleJSON(
@@ -126,34 +127,43 @@ public class XMLFactory {
 		return new Tuple(getMap(tuple, spaceDef));
 	}
 
-	public static Map<String, Object> getMap(com.tibco.as.space.Tuple tuple,
+	public static Map<String, String> getMap(com.tibco.as.space.Tuple tuple,
 			SpaceDef spaceDef) throws UnsupportedConversionException,
 			ConvertException {
 		return getTupleToMapConverter(spaceDef).convert(tuple);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static MapToTupleConverter getMapToTupleConverter(
-			Map<String, Object> map, SpaceDef spaceDef)
-			throws UnsupportedConversionException {
+	public static MapToTupleConverter<String> getMapToTupleConverter(
+			SpaceDef spaceDef) throws UnsupportedConversionException {
 		Map<String, ITupleAccessor> accessors = getAccessors(spaceDef);
-		Map<String, IConverter> converters = getConverters(map, spaceDef);
-		return new MapToTupleConverter(accessors, converters);
+		Map<String, IConverter> converters = new HashMap<String, IConverter>();
+		for (FieldDef fieldDef : spaceDef.getFieldDefs()) {
+			IConverter converter = xmlCF.getConverter(String.class, fieldDef);
+			converters.put(fieldDef.getName(), converter);
+		}
+		return new MapToTupleConverter<String>(accessors, converters);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static MapToTupleConverter getJSONMapToTupleConverter(
+	public static MapToTupleConverter<Object> getJSONMapToTupleConverter(
 			Map<String, Object> map, SpaceDef spaceDef)
 			throws UnsupportedConversionException {
 		Map<String, ITupleAccessor> accessors = getAccessors(spaceDef);
 		Map<String, IConverter> converters = getJSONConverters(map, spaceDef);
-		return new MapToTupleConverter(accessors, converters);
+		return new MapToTupleConverter<Object>(accessors, converters);
 	}
 
-	public static TupleToMapConverter getTupleToMapConverter(SpaceDef spaceDef)
-			throws UnsupportedConversionException {
-		return new TupleToMapConverter(getAccessors(spaceDef),
-				getConverters(spaceDef));
+	@SuppressWarnings("rawtypes")
+	public static TupleToMapConverter<String> getTupleToMapConverter(
+			SpaceDef spaceDef) throws UnsupportedConversionException {
+		Map<String, ITupleAccessor> accessors = getAccessors(spaceDef);
+		Map<String, IConverter> converters = new HashMap<String, IConverter>();
+		for (FieldDef fieldDef : spaceDef.getFieldDefs()) {
+			IConverter converter = xmlCF.getConverter(fieldDef, String.class);
+			converters.put(fieldDef.getName(), converter);
+		}
+		return new TupleToMapConverter<String>(accessors, converters);
 	}
 
 	private static Map<String, ITupleAccessor> getAccessors(SpaceDef spaceDef) {
@@ -165,25 +175,10 @@ public class XMLFactory {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static Map<String, IConverter> getConverters(
-			Map<String, Object> map, SpaceDef spaceDef)
-			throws UnsupportedConversionException {
-		Map<String, IConverter> converters = new HashMap<String, IConverter>();
-		for (Entry<String, Object> entry : map.entrySet()) {
-			String fieldName = entry.getKey();
-			FieldDef fieldDef = spaceDef.getFieldDef(fieldName);
-			IConverter converter = xmlConverterFactory.getConverter(entry
-					.getValue().getClass(), fieldDef);
-			converters.put(fieldName, converter);
-		}
-		return converters;
-	}
-
-	@SuppressWarnings("rawtypes")
 	private static Map<String, IConverter> getJSONConverters(
 			Map<String, Object> map, SpaceDef spaceDef)
 			throws UnsupportedConversionException {
-		return getConverters(map, spaceDef, jsonConverterFactory);
+		return getConverters(map, spaceDef, jsonCF);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -197,23 +192,6 @@ public class XMLFactory {
 			IConverter converter = factory.getConverter(entry.getValue()
 					.getClass(), fieldDef);
 			converters.put(fieldName, converter);
-		}
-		return converters;
-	}
-
-	@SuppressWarnings("rawtypes")
-	private static Map<String, IConverter> getConverters(SpaceDef spaceDef)
-			throws UnsupportedConversionException {
-		Map<String, IConverter> converters = new HashMap<String, IConverter>();
-		for (FieldDef fieldDef : spaceDef.getFieldDefs()) {
-			IConverter converter;
-			if (fieldDef.getType() == FieldType.DATETIME) {
-				converter = xmlConverterFactory.getConverter(fieldDef,
-						Date.class);
-			} else {
-				converter = xmlConverterFactory.getConverter(fieldDef);
-			}
-			converters.put(fieldDef.getName(), converter);
 		}
 		return converters;
 	}

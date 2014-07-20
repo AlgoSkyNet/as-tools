@@ -15,20 +15,20 @@ public class Tuple {
 
 	@XmlPath(".")
 	@XmlJavaTypeAdapter(MapAdapter.class)
-	private Map<String, Object> map;
+	private Map<String, String> map;
 
 	public Tuple() {
 	}
 	
-	public Tuple(Map<String, Object> map) {
+	public Tuple(Map<String, String> map) {
 		this.map = map;
 	}
 
-	public Map<String, Object> getMap() {
+	public Map<String, String> getMap() {
 		return map;
 	}
 
-	public void setMap(Map<String, Object> map) {
+	public void setMap(Map<String, String> map) {
 		this.map = map;
 	}
 

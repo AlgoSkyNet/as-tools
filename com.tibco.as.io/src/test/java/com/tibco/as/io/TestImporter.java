@@ -1,11 +1,10 @@
 package com.tibco.as.io;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,9 +38,6 @@ public class TestImporter extends TestBase {
 				FieldDef.create("average-spend", FieldType.DOUBLE));
 		spaceDef.getFieldDefs().addAll(fieldDefs);
 		spaceDef.setKey("guid");
-		DateFormat dateFormat = new SimpleDateFormat(
-				ConverterFactory.DEFAULT_PATTERN_DATE);
-		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		Calendar calendar1 = Calendar.getInstance();
 		calendar1.clear();
 		calendar1.set(2013, 10, 1);
@@ -51,12 +47,11 @@ public class TestImporter extends TestBase {
 		Calendar calendar3 = Calendar.getInstance();
 		calendar3.clear();
 		calendar3.set(2013, 10, 3);
-		List<String[]> list = Arrays.asList(
-				new String[] { "1", dateFormat.format(calendar1.getTime()),
-						"1.11" },
-				new String[] { "2", dateFormat.format(calendar2.getTime()),
+		List<String[]> list = Arrays.asList(new String[] { "1",
+				DatatypeConverter.printDateTime(calendar1), "1.11" },
+				new String[] { "2", DatatypeConverter.printDateTime(calendar2),
 						"2.22" },
-				new String[] { "3", dateFormat.format(calendar3.getTime()),
+				new String[] { "3", DatatypeConverter.printDateTime(calendar3),
 						"3.33" });
 		Metaspace metaspace = getMetaspace();
 		metaspace.defineSpace(spaceDef);

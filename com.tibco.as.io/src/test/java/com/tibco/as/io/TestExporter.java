@@ -1,13 +1,12 @@
 package com.tibco.as.io;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.Vector;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -113,9 +112,6 @@ public class TestExporter extends TestBase {
 		exporter.addTransfer(export);
 		exporter.execute();
 		Assert.assertEquals(3, outList.size());
-		DateFormat dateFormat = new SimpleDateFormat(
-				ConverterFactory.DEFAULT_PATTERN_DATE);
-		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		for (String[] line : outList) {
 			Calendar calendar = Calendar.getInstance();
 			String guid = line[0];
@@ -128,7 +124,8 @@ public class TestExporter extends TestBase {
 			if (guid.equals("3")) {
 				calendar = calendar3;
 			}
-			Assert.assertEquals(calendar.getTime(), dateFormat.parse(line[1]));
+			Assert.assertEquals(calendar.getTimeInMillis(), DatatypeConverter
+					.parseDateTime(line[1]).getTimeInMillis());
 		}
 	}
 }

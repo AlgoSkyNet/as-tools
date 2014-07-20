@@ -8,8 +8,8 @@ import com.tibco.as.convert.IConverter;
 import com.tibco.as.space.Tuple;
 
 @SuppressWarnings("rawtypes")
-public class MapToTupleConverter implements
-		IConverter<Map<String, Object>, Tuple> {
+public class MapToTupleConverter<T> implements
+		IConverter<Map<String, T>, Tuple> {
 
 	private Map<String, ITupleAccessor> accessors;
 	private Map<String, IConverter> converters;
@@ -22,10 +22,10 @@ public class MapToTupleConverter implements
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Tuple convert(Map<String, Object> map) throws ConvertException {
+	public Tuple convert(Map<String, T> map) throws ConvertException {
 		Tuple tuple = Tuple.create();
 		for (String fieldName : accessors.keySet()) {
-			Object value = map.get(fieldName);
+			T value = map.get(fieldName);
 			if (value == null) {
 				continue;
 			}

@@ -1,10 +1,9 @@
 package com.tibco.as.convert;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -71,12 +70,10 @@ public class TestTypeConverters {
 		IConverter<DateTime, String> converter = getConverter(DateTime.class,
 				String.class);
 		DateTime dateTime = DateTime.create();
-		DateFormat format = new SimpleDateFormat(
-				ConverterFactory.DEFAULT_PATTERN_DATE);
-		format.setTimeZone(TimeZone.getTimeZone("GMT"));
-		String expected = format.format(dateTime.getTime().getTime());
-		String actual = converter.convert(dateTime);
-		Assert.assertEquals(expected, actual);
+		Calendar actual = DatatypeConverter.parseDateTime(converter
+				.convert(dateTime));
+		Assert.assertEquals(dateTime.getTime().getTimeInMillis(),
+				actual.getTimeInMillis());
 	}
 
 	@Test
@@ -98,16 +95,15 @@ public class TestTypeConverters {
 
 	@Test
 	public void testDateTimeToString() throws Exception {
-		DateFormat format = new SimpleDateFormat(
-				ConverterFactory.DEFAULT_PATTERN_DATE);
-		format.setTimeZone(TimeZone.getTimeZone("GMT"));
 		String dateString = "2014-04-18T12:34:56.789";
-		Date date = format.parse(dateString);
-		DateTime dateTime = DateTime.create(date.getTime());
+		Calendar calendar = DatatypeConverter.parseDateTime(dateString);
+		// calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+		DateTime dateTime = DateTime.create(calendar);
 		FieldDef fieldDef = FieldDef.create("field1", FieldType.DATETIME);
 		IConverter<DateTime, String> converter = factory.getConverter(
 				new Attributes(), fieldDef, String.class);
-		Assert.assertEquals(dateString, converter.convert(dateTime));
+		Assert.assertEquals(calendar.getTimeInMillis(), DatatypeConverter
+				.parseDateTime(converter.convert(dateTime)).getTimeInMillis());
 	}
 
 	private <S, T> IConverter<S, T> getConverter(Class<S> from, Class<T> to)

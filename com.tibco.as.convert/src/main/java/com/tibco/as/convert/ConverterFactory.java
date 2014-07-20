@@ -3,7 +3,6 @@ package com.tibco.as.convert;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -22,6 +21,7 @@ import com.tibco.as.convert.format.Base64Format;
 import com.tibco.as.convert.format.BlobFormat;
 import com.tibco.as.convert.format.BooleanFormat;
 import com.tibco.as.convert.format.HexFormat;
+import com.tibco.as.convert.format.ISO8601Format;
 import com.tibco.as.space.FieldDef;
 import com.tibco.as.space.FieldDef.FieldType;
 import com.tibco.as.space.SpaceDef;
@@ -32,8 +32,6 @@ public class ConverterFactory {
 	public enum Blob {
 		BASE64, HEX
 	}
-
-	public static final String DEFAULT_PATTERN_DATE = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
 	public final static String DEFAULT_PATTERN_BOOLEAN = "true|false";
 
@@ -67,18 +65,15 @@ public class ConverterFactory {
 		return pattern;
 	}
 
-	public static DateFormat getDateFormat(Attributes attributes) {
-		DateFormat format = new SimpleDateFormat(getDatePattern(attributes));
-		format.setTimeZone(TimeZone.getTimeZone("GMT"));
-		return format;
-	}
-
-	public static String getDatePattern(Attributes attributes) {
+	public static Format getDateFormat(Attributes attributes) {
 		String pattern = attributes.get(Attribute.FORMAT_DATE);
 		if (pattern == null) {
-			return DEFAULT_PATTERN_DATE;
+			return new ISO8601Format();
+		} else {
+			SimpleDateFormat format = new SimpleDateFormat(pattern);
+			format.setTimeZone(TimeZone.getTimeZone("GMT"));
+			return format;
 		}
-		return pattern;
 	}
 
 	private Collection<Conversion> conversions = new ArrayList<Conversion>();
