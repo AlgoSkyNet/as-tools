@@ -66,14 +66,24 @@ public class ConverterFactory {
 	}
 
 	public static Format getDateFormat(Attributes attributes) {
-		String pattern = attributes.get(Attribute.FORMAT_DATE);
+		return getDateFormat(attributes.get(Attribute.FORMAT_DATE));
+	}
+
+	public static Format getDateFormat(String pattern) {
+		return getDateFormat(pattern, TimeZone.getTimeZone("GMT"));
+	}
+
+	public static Format getDateFormat(String pattern, TimeZone timeZone) {
 		if (pattern == null) {
-			return new ISO8601Format();
+			ISO8601Format format = new ISO8601Format();
+			format.setTimeZone(timeZone);
+			return format;
 		} else {
 			SimpleDateFormat format = new SimpleDateFormat(pattern);
-			format.setTimeZone(TimeZone.getTimeZone("GMT"));
+			format.setTimeZone(timeZone);
 			return format;
 		}
+
 	}
 
 	private Collection<Conversion> conversions = new ArrayList<Conversion>();

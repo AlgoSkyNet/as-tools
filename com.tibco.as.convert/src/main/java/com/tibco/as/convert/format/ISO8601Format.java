@@ -13,7 +13,11 @@ public class ISO8601Format extends Format {
 
 	private static final long serialVersionUID = 6066579310108163156L;
 
-	private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
+	private TimeZone timeZone;
+
+	public void setTimeZone(TimeZone timeZone) {
+		this.timeZone = timeZone;
+	}
 
 	@Override
 	public StringBuffer format(Object obj, StringBuffer buffer,
@@ -29,8 +33,8 @@ public class ISO8601Format extends Format {
 			return null;
 		}
 		Calendar calendar = DatatypeConverter.parseDateTime(source);
-		if (calendar.getTimeZone() == null) {
-			calendar.setTimeZone(GMT);
+		if (calendar.getTimeZone() == null && timeZone != null) {
+			calendar.setTimeZone(timeZone);
 		}
 		position.setIndex(source.length());
 		return calendar.getTime();
