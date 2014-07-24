@@ -1,39 +1,48 @@
 # Configuration
 
 
-Simulations are described in XML files. For example the following configuration: 
+A simulation is described in an XML file in the form:
+
+```xml
+<simulation metaspace="ms">
+	<space name="space1">...</space>
+	<space name="space2">...</space>
+</simulation> 
+```
+
+The simulator will define each space if not already defined, then it will start putting data into the space.  
+The `space` element can have the following attributes:
+* `name`: name of the space to simulate
+* `sleep`: sleep duration in milliseconds between space operations. Default is no sleep.
+* `size`: number of tuples to insert in the space. Default is infinity.
+* `batchSize`: number of tuples to include in each operation. Default is 1000.
+* `distributionRole`: role that the simulator should join the space as. Default is leech.
+* `operation`: operation to perform on the space. Default is put.
+
+For example the following configuration: 
 
 ```xml
 <simulation>
-	<space name="people" size="10" distributionRole="seeder">
-		<fields>
-			<sequence name="id" />
-			<firstName />
-			<lastName />
-			<birthDate name="dob" />
-			<address name="address" />
-			<city name="city" />
-			<regex name="phone" regex="[2-9][0-9]{2}-[0-9]{3}-[0-9]{4}" />
-			<emailAddress name="email" />
-		</fields>
+	<space name="People" size="3" sleep="2000" batchSize="1">
+		<sequence name="ID" />
+		<firstName />
+		<lastName />
+		<birthDate />
+		<address />
+		<city />
+		<regex name="Phone" regex="[2-9][0-9]{2}-[0-9]{3}-[0-9]{4}" />
+		<emailAddress name="Email" />
 	</space>
 </simulation>
 ``` 
 
-results in a space named `people` containing 10 tuples:
+results in a space named `People` containing 3 tuples, each put every 2 seconds:
 
 | ID                    | FirstName                      | LastName                      | BirthDate                  | Address                      | City                      | Phone                      | Email                         |
 |-----------------------|--------------------------------|-------------------------------|----------------------------|------------------------------|---------------------------|----------------------------|-------------------------------|
 | 1                     | Gloria                         | Marks                         | 1971-07-11T16:00:00.000    | 568 Maplecraft Crescent      | Axson                     | 638-875-6170               | jriddle@everyma1l.net         |
 | 2                     | Lee                            | Holcomb                       | 1968-02-20T16:00:00.000    | 1137 Hartford St             | Milledgeville             | 228-385-5324               | stownsend@yah00.net           |
 | 3                     | Charlotte                      | Baker                         | 1967-07-23T16:00:00.000    | 974 Black Path               | Macon                     | 837-813-6375               | lostit@b1zmail.co.uk          |
-| 4                     | Melody                         | Mayo                          | 1968-01-18T16:00:00.000    | 1419 Tileston Trail          | Riverside                 | 343-175-5033               | jparker@everyma1l.com         |
-| 5                     | Kaitlyn                        | Kerr                          | 1975-04-02T16:00:00.000    | 1751 Fairall Boulevard       | Hoboken                   | 621-731-8387               | mbaird@gma1l.biz              |
-| 6                     | Jeff                           | Hoover                        | 1964-03-01T16:00:00.000    | 541 Joyce Park               | Abbeville                 | 553-044-8831               | dhowell@yah00.com             |
-| 7                     | Kenneth                        | Kirkland                      | 1971-07-13T16:00:00.000    | 1183 Briarcliff Avenue       | Wrightsville              | 678-488-4816               | phorne@gma1l.biz              |
-| 8                     | Russ                           | Prince                        | 1973-10-31T16:00:00.000    | 904 Davis St                 | Bremen                    | 812-500-3267               | warpit12@gma1l.net            |
-| 9                     | Marty                          | Wilkerson                     | 1984-09-21T16:00:00.000    | 868 Amsterdam Run            | White Oak                 | 338-248-4368               | balvarado@ma1lbox.co.uk       |
-| 10                    | Willie                         | Greene                        | 1965-11-13T16:00:00.000    | 1335 Coburg Trail            | Portal                    | 837-528-2867               | computerothers@gma1l.net      |
 
 
 ### Complete Example
@@ -156,36 +165,6 @@ Here is the schema that configuration files adhere to:
 	</xsd:complexType>
 
 	<xsd:complexType name="space">
-		<xsd:sequence>
-			<xsd:element name="fields" type="fields" />
-		</xsd:sequence>
-		<xsd:attribute name="name" type="xsd:string" use="required" />
-		<xsd:attribute name="sleep" type="xsd:long" />
-		<xsd:attribute name="size" type="xsd:long" />
-		<xsd:attribute name="batchSize" type="xsd:int" />
-		<xsd:attribute name="distributionRole" type="distributionRole" />
-		<xsd:attribute name="operation" type="operation"
-			default="put" />
-	</xsd:complexType>
-
-	<xsd:simpleType name="operation">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="get" />
-			<xsd:enumeration value="load" />
-			<xsd:enumeration value="partial" />
-			<xsd:enumeration value="put" />
-			<xsd:enumeration value="take" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:simpleType name="distributionRole">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="leech" />
-			<xsd:enumeration value="seeder" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:complexType name="fields">
 		<xsd:choice maxOccurs="unbounded">
 			<xsd:element name="blob" type="randomBlob" />
 			<xsd:element name="boolean" type="randomBoolean" />
@@ -219,114 +198,74 @@ Here is the schema that configuration files adhere to:
 			<xsd:element name="suffix" type="suffix" />
 			<xsd:element name="regex" type="regex" />
 		</xsd:choice>
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="sleep" type="xsd:long" />
+		<xsd:attribute name="size" type="xsd:long" />
+		<xsd:attribute name="batchSize" type="xsd:int" />
+		<xsd:attribute name="distributionRole" type="distributionRole" />
+		<xsd:attribute name="operation" type="operation"
+			default="put" />
 	</xsd:complexType>
+
+	<xsd:simpleType name="operation">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="get" />
+			<xsd:enumeration value="load" />
+			<xsd:enumeration value="partial" />
+			<xsd:enumeration value="put" />
+			<xsd:enumeration value="take" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="distributionRole">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="leech" />
+			<xsd:enumeration value="seeder" />
+		</xsd:restriction>
+	</xsd:simpleType>
 
 	<xsd:complexType name="dataValues">
 		<xsd:sequence>
-			<xsd:element name="address" type="addressDataValues" />
-			<xsd:element name="content" type="contentDataValues" />
-			<xsd:element name="name" type="nameDataValues" />
+			<xsd:element name="addresses" type="addresses" minOccurs="0" />
+			<xsd:element name="contents" type="contents" minOccurs="0" />
+			<xsd:element name="names" type="names" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="addressDataValues">
+	<xsd:complexType name="addresses">
 		<xsd:sequence>
-			<xsd:element name="streetNames" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="streetName" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="cities" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="city" type="xsd:string" maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="addressSuffixes">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="addressSuffix" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-
+			<xsd:element name="streetName" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="suffix" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="city" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="contentDataValues">
+	<xsd:complexType name="contents">
 		<xsd:sequence>
-			<xsd:element name="words" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="word" type="xsd:string" maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="businessTypes" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="businessType" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="emailHosts">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="emailHost" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="tlds">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="tld" type="xsd:string" maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
+			<xsd:element name="word" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="businessType" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="emailHost" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="tld" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="nameDataValues">
+	<xsd:complexType name="names">
 		<xsd:sequence>
-			<xsd:element name="firstNames" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="firstName" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="lastNames" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="lastName" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="prefixes">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="prefix" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="suffixes">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="suffix" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
+			<xsd:element name="firstName" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="lastName" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="prefix" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="suffix" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 
