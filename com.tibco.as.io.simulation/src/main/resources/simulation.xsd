@@ -13,36 +13,6 @@
 	</xsd:complexType>
 
 	<xsd:complexType name="space">
-		<xsd:sequence>
-			<xsd:element name="fields" type="fields" />
-		</xsd:sequence>
-		<xsd:attribute name="name" type="xsd:string" use="required" />
-		<xsd:attribute name="sleep" type="xsd:long" />
-		<xsd:attribute name="size" type="xsd:long" />
-		<xsd:attribute name="batchSize" type="xsd:int" />
-		<xsd:attribute name="distributionRole" type="distributionRole" />
-		<xsd:attribute name="operation" type="operation"
-			default="put" />
-	</xsd:complexType>
-
-	<xsd:simpleType name="operation">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="get" />
-			<xsd:enumeration value="load" />
-			<xsd:enumeration value="partial" />
-			<xsd:enumeration value="put" />
-			<xsd:enumeration value="take" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:simpleType name="distributionRole">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="leech" />
-			<xsd:enumeration value="seeder" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:complexType name="fields">
 		<xsd:choice maxOccurs="unbounded">
 			<xsd:element name="blob" type="randomBlob" />
 			<xsd:element name="boolean" type="randomBoolean" />
@@ -76,114 +46,74 @@
 			<xsd:element name="suffix" type="suffix" />
 			<xsd:element name="regex" type="regex" />
 		</xsd:choice>
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="sleep" type="xsd:long" />
+		<xsd:attribute name="size" type="xsd:long" />
+		<xsd:attribute name="batchSize" type="xsd:int" />
+		<xsd:attribute name="distributionRole" type="distributionRole" />
+		<xsd:attribute name="operation" type="operation"
+			default="put" />
 	</xsd:complexType>
+
+	<xsd:simpleType name="operation">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="get" />
+			<xsd:enumeration value="load" />
+			<xsd:enumeration value="partial" />
+			<xsd:enumeration value="put" />
+			<xsd:enumeration value="take" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="distributionRole">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="leech" />
+			<xsd:enumeration value="seeder" />
+		</xsd:restriction>
+	</xsd:simpleType>
 
 	<xsd:complexType name="dataValues">
 		<xsd:sequence>
-			<xsd:element name="address" type="addressDataValues" />
-			<xsd:element name="content" type="contentDataValues" />
-			<xsd:element name="name" type="nameDataValues" />
+			<xsd:element name="addresses" type="addresses" minOccurs="0" />
+			<xsd:element name="contents" type="contents" minOccurs="0" />
+			<xsd:element name="names" type="names" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="addressDataValues">
+	<xsd:complexType name="addresses">
 		<xsd:sequence>
-			<xsd:element name="streetNames" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="streetName" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="cities" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="city" type="xsd:string" maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="addressSuffixes">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="addressSuffix" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-
+			<xsd:element name="streetName" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="suffix" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="city" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="contentDataValues">
+	<xsd:complexType name="contents">
 		<xsd:sequence>
-			<xsd:element name="words" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="word" type="xsd:string" maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="businessTypes" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="businessType" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="emailHosts">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="emailHost" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="tlds">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="tld" type="xsd:string" maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
+			<xsd:element name="word" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="businessType" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="emailHost" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="tld" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="nameDataValues">
+	<xsd:complexType name="names">
 		<xsd:sequence>
-			<xsd:element name="firstNames" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="firstName" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="lastNames" minOccurs="0">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="lastName" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="prefixes">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="prefix" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="suffixes">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="suffix" type="xsd:string"
-							maxOccurs="unbounded" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
+			<xsd:element name="firstName" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="lastName" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="prefix" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="suffix" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 

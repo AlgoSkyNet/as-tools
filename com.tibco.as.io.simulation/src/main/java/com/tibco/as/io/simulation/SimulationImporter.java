@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import org.fluttercode.datafactory.impl.DataFactory;
+
 import com.tibco.as.accessors.AccessorFactory;
 import com.tibco.as.accessors.ITupleAccessor;
 import com.tibco.as.convert.Attributes;
@@ -26,18 +28,39 @@ import com.tibco.as.util.Utils;
 
 public class SimulationImporter extends Importer<Object[]> {
 
-	private ConverterFactory factory = new ConverterFactory();
+	private ConverterFactory converterFactory = new ConverterFactory();
 
 	private Random random = new Random();
 
-	private ValueProviderFactory valueProviderFactory = new ValueProviderFactory(
-			random);
+	private ValueProviderFactory valueProviderFactory;
 
 	private Simulation simulation;
 
 	public SimulationImporter(Metaspace metaspace, Simulation simulation) {
 		super(metaspace);
 		this.simulation = simulation;
+		valueProviderFactory = new ValueProviderFactory(
+				getDataFactory(simulation), random);
+	}
+
+	private DataFactory getDataFactory(Simulation simulation) {
+		DataFactory dataFactory = new DataFactory();
+		if (simulation.getDataValues() != null) {
+			if (simulation.getDataValues().getAddresses() != null) {
+				dataFactory.setAddressDataValues(new CustomAddressDataValues(
+						simulation.getDataValues().getAddresses()));
+			}
+
+			if (simulation.getDataValues().getContents() != null) {
+				dataFactory.setContentDataValues(new CustomContentDataValues(
+						simulation.getDataValues().getContents()));
+			}
+			if (simulation.getDataValues().getNames() != null) {
+				dataFactory.setNameDataValues(new CustomNameDataValues(
+						simulation.getDataValues().getNames()));
+			}
+		}
+		return dataFactory;
 	}
 
 	@Override
@@ -102,14 +125,14 @@ public class SimulationImporter extends Importer<Object[]> {
 		SimulationImport simulation = (SimulationImport) config;
 		Collection<Field> fields = new ArrayList<Field>();
 		if (simulation.getSpace() != null) {
-			for (SimField simField : simulation.getSpace().getFields()
+			for (SimField simField : simulation.getSpace()
 					.getBlobOrBooleanOrConstant()) {
 				Field f = new Field();
 				if (simField.getName() == null) {
 					simField.setName(simField.getClass().getSimpleName());
 				}
 				f.setName(simField.getName());
-				f.setType(factory.getFieldType(getType(simField)));
+				f.setType(converterFactory.getFieldType(getType(simField)));
 				f.setKey(simField.isKey());
 				f.setNullable(simField.isNullable());
 				fields.add(f);
@@ -125,10 +148,7 @@ public class SimulationImporter extends Importer<Object[]> {
 	}
 
 	private List<SimField> getFields(Space space) {
-		if (space.getFields() == null) {
-			space.setFields(new Fields());
-		}
-		return space.getFields().getBlobOrBooleanOrConstant();
+		return space.getBlobOrBooleanOrConstant();
 	}
 
 	// private SimField createField(FieldType fieldType) {
@@ -165,8 +185,8 @@ public class SimulationImporter extends Importer<Object[]> {
 		FieldDef[] fieldDefs = Utils.getFieldDefs(spaceDef);
 		ITupleAccessor[] accessors = AccessorFactory.create(fieldDefs);
 		Class[] types = getTypes(getFields(space));
-		IConverter[] converters = factory.getConverters(new Attributes(),
-				types, fieldDefs);
+		IConverter[] converters = converterFactory.getConverters(
+				new Attributes(), types, fieldDefs);
 		return new ArrayToTupleConverter<Object>(accessors, converters);
 	}
 
@@ -253,7 +273,7 @@ public class SimulationImporter extends Importer<Object[]> {
 		SimulationImport config = (SimulationImport) transfer;
 		Space space = config.getSpace();
 		Collection<IValueProvider> providers = new ArrayList<IValueProvider>();
-		for (SimField field : space.getFields().getBlobOrBooleanOrConstant()) {
+		for (SimField field : space.getBlobOrBooleanOrConstant()) {
 			providers.add(valueProviderFactory.create(field));
 		}
 		return new SimulationInputStream(config,

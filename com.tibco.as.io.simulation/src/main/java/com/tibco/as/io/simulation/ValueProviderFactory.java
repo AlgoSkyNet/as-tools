@@ -39,11 +39,12 @@ import com.tibco.as.io.simulation.provider.SuffixProvider;
 
 public class ValueProviderFactory {
 
-	private final static DataFactory df = new DataFactory();
-
 	private Random random;
 
-	public ValueProviderFactory(Random random) {
+	private DataFactory df;
+
+	public ValueProviderFactory(DataFactory dataFactory, Random random) {
+		this.df = dataFactory;
 		this.random = random;
 	}
 

@@ -17,17 +17,20 @@ public class RandomWordProvider implements IValueProvider {
 
 	@Override
 	public String getValue() {
-		if (field.getMinLength() == null)
-			if (field.isExactLength() == null)
-				if (field.getLength() == null)
+		if (field.getMinLength() == null) {
+			if (field.isExactLength() == null) {
+				if (field.getLength() == null) {
 					return df.getRandomWord();
-				else
+				} else {
 					return df.getRandomWord(field.getLength());
-			else
+				}
+			} else {
 				return df.getRandomWord(field.getLength(),
 						field.isExactLength());
-		else
+			}
+		} else {
 			return df.getRandomWord(field.getMinLength(), field.getMaxLength());
+		}
 	}
 
 }
