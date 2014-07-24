@@ -4,7 +4,7 @@
 A simulation is described in an XML file in the form:
 
 ```xml
-<simulation metaspace="ms">
+<simulation>
 	<space name="space1">...</space>
 	<space name="space2">...</space>
 </simulation> 
@@ -20,7 +20,6 @@ The `space` element can have the following attributes:
 * `operation`: operation to perform on the space. Default is put.
 
 For example the following configuration: 
-
 ```xml
 <simulation>
 	<space name="People" size="3" sleep="2000" batchSize="1">
@@ -35,7 +34,6 @@ For example the following configuration:
 	</space>
 </simulation>
 ``` 
-
 results in a space named `People` containing 3 tuples, each put every 2 seconds:
 
 | ID                    | FirstName                      | LastName                      | BirthDate                  | Address                      | City                      | Phone                      | Email                         |
@@ -49,8 +47,8 @@ results in a space named `People` containing 3 tuples, each put every 2 seconds:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<simulation metaspace="sim"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+<simulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xsi:noNamespaceSchemaLocation="simulation.xsd">
 	<dataValues>
 		<addresses>
