@@ -1,4 +1,4 @@
 as-tools
 ========
 
-Command line tools for TIBCO ActiveSpaces. For documentation, please visit http://activespaces.tibco.com
+Command line tools for TIBCO ActiveSpaces. For download and documentation, please visit http://activespaces.tibco.com
