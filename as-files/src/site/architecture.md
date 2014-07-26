@@ -3,12 +3,12 @@
 
 ## Import
 
-![Architecture Diagram](images/architecture.png "Import Process")
+![Architecture Diagram](images/architecture.svg "Import Process")
 
 
 ### Reading
 
-The file is read by a single thread that parses each line into a string array which is then put into the work queue.
+The file is read by a single thread that parses each line into a string array and puts it in the work queue.
 
 
 ### Writing

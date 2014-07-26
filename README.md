@@ -15,7 +15,7 @@ Delimited Files is a utility to import/export CSV files.
 
 ### [Usage](as-files/src/site/usage.md)
 
-### [FAW](as-files/src/site/faq.md)
+### [FAQ](as-files/src/site/faq.md)
 
 
 # Spreadsheets
@@ -28,7 +28,7 @@ Spreadsheets is a utility to import/export Excel spreadsheets.
 
 ### [Usage](as-spreadsheets/src/site/usage.md)
 
-### [FAW](as-spreadsheets/src/site/faq.md)
+### [FAQ](as-spreadsheets/src/site/faq.md)
 
 
 # Simulator

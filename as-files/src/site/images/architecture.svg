@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="426.925px" height="188.117px" viewBox="0 0 426.925 188.117" enable-background="new 0 0 426.925 188.117"
+	 xml:space="preserve">
+<g>
+	<rect y="73.592" fill="#5783C3" width="65.916" height="40.933"/>
+	<text transform="matrix(1 0 0 1 24.21 90.3799)"><tspan x="0" y="0" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="12">File</tspan><tspan x="-8.729" y="14.4" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="12">Reader</tspan></text>
+</g>
+<g>
+	<g>
+		<rect x="128.333" y="73.592" fill="#5783C3" width="65.916" height="40.933"/>
+		<ellipse fill="#5783C3" cx="128.333" cy="94.058" rx="11.523" ry="20.467"/>
+	</g>
+	<text transform="matrix(1 0 0 1 142.3838 90.3804)"><tspan x="0" y="0" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="12">Work</tspan><tspan x="-3.612" y="14.4" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="12">Queue</tspan></text>
+	<ellipse fill="#5783C3" stroke="#FFFFFF" stroke-miterlimit="10" cx="194.25" cy="94.058" rx="11.523" ry="20.467"/>
+</g>
+<g>
+	<g>
+		<rect x="256.667" fill="#5783C3" width="65.916" height="40.933"/>
+		<text transform="matrix(1 0 0 1 269.8799 23.9883)" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="12">Writer 1</text>
+	</g>
+	<g>
+		<rect x="256.667" y="49.061" fill="#5783C3" width="65.916" height="40.933"/>
+		<text transform="matrix(1 0 0 1 269.8794 73.0493)" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="12">Writer 2</text>
+	</g>
+	<g>
+		<rect x="256.667" y="147.183" fill="#5783C3" width="65.916" height="40.934"/>
+		<text transform="matrix(1 0 0 1 269.6284 171.1704)" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="12">Writer n</text>
+	</g>
+	<g>
+		<rect x="256.668" y="98.122" fill="#5783C3" width="65.916" height="40.933"/>
+		<text transform="matrix(1 0 0 1 285.9004 122.1099)" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="12">...</text>
+	</g>
+</g>
+<g>
+	<rect x="377.646" y="74.342" fill="#5783C3" width="48.778" height="39.432"/>
+	<ellipse fill="#5783C3" cx="402.036" cy="113.774" rx="24.389" ry="6.894"/>
+	<ellipse fill="#5783C3" stroke="#FFFFFF" stroke-miterlimit="10" cx="402.036" cy="74.343" rx="24.389" ry="6.894"/>
+	<text transform="matrix(1 0 0 1 387.0771 101.0269)" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="12">Space</text>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#5783C3" stroke-miterlimit="10" x1="65.916" y1="94.058" x2="109.75" y2="94.058"/>
+		<g>
+			<polygon fill="#5783C3" points="116.81,94.058 106.861,98.124 109.222,94.058 106.861,89.994 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#5783C3" stroke-miterlimit="10" x1="194.25" y1="94.058" x2="252.101" y2="25.851"/>
+		<g>
+			<polygon fill="#5783C3" points="256.668,20.466 253.333,30.684 251.76,26.253 247.133,25.425 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#5783C3" stroke-miterlimit="10" x1="196.979" y1="94.058" x2="250.136" y2="72.211"/>
+		<g>
+			<polygon fill="#5783C3" points="256.667,69.527 249.01,77.07 249.648,72.412 245.919,69.55 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#5783C3" stroke-miterlimit="10" x1="196.979" y1="94.058" x2="250.137" y2="115.905"/>
+		<g>
+			<polygon fill="#5783C3" points="256.668,118.588 245.92,118.567 249.649,115.704 249.011,111.047 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#5783C3" stroke-miterlimit="10" x1="196.979" y1="94.058" x2="252.22" y2="162.167"/>
+		<g>
+			<polygon fill="#5783C3" points="256.668,167.65 247.243,162.484 251.888,161.756 253.557,157.362 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#5783C3" stroke-miterlimit="10" x1="322.582" y1="20.466" x2="372.93" y2="76.539"/>
+		<g>
+			<polygon fill="#5783C3" points="377.646,81.792 367.975,77.105 372.577,76.146 374.023,71.674 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#5783C3" stroke-miterlimit="10" x1="322.582" y1="67.449" x2="371.111" y2="87.318"/>
+		<g>
+			<polygon fill="#5783C3" points="377.646,89.994 366.897,89.986 370.623,87.118 369.979,82.462 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#5783C3" stroke-miterlimit="10" x1="322.582" y1="118.588" x2="371.027" y2="100.582"/>
+		<g>
+			<polygon fill="#5783C3" points="377.646,98.122 369.736,105.398 370.532,100.766 366.903,97.778 			"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<line fill="none" stroke="#5783C3" stroke-miterlimit="10" x1="322.582" y1="167.65" x2="372.929" y2="111.577"/>
+		<g>
+			<polygon fill="#5783C3" points="377.646,106.323 374.023,116.442 372.576,111.97 367.975,111.011 			"/>
+		</g>
+	</g>
+</g>
+</svg>
