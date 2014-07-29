@@ -39,20 +39,20 @@ public class MetaspaceManager {
 	private MetaspaceManager() {
 	}
 
+	@SuppressWarnings("unchecked")
 	public static MetaspaceManager getInstance() throws JAXBException,
 			IOException, ASException {
 		if (instance == null) {
 			instance = new MetaspaceManager();
 			File file = new File(FILENAME);
 			if (file.exists()) {
-				@SuppressWarnings("unchecked")
 				JAXBElement<Metaspaces> element = (JAXBElement<Metaspaces>) XMLFactory
 						.unmarshall(file);
 				add(element.getValue());
 			}
 			InputStream in = ClassLoader.getSystemResourceAsStream(FILENAME);
 			if (in != null) {
-				@SuppressWarnings("unchecked")
+
 				JAXBElement<Metaspaces> element = (JAXBElement<Metaspaces>) XMLFactory
 						.unmarshall(in);
 				add(element.getValue());

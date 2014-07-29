@@ -12,9 +12,6 @@ import com.tibco.as.space.ASException;
 import com.tibco.as.space.FieldDef;
 import com.tibco.as.space.FieldDef.FieldType;
 import com.tibco.as.space.SpaceDef;
-import com.tibco.as.xml.Field;
-import com.tibco.as.xml.MetaspaceManager;
-import com.tibco.as.xml.Space;
 
 public class TestMetaspaceManager {
 
@@ -34,7 +31,7 @@ public class TestMetaspaceManager {
 		Space space = XMLFactory.getSpace(spaceDef);
 		Assert.assertEquals(spaceDef.getName(), space.getName());
 		FieldDef fieldDef = spaceDef.getFieldDefs().iterator().next();
-		Field field = space.getField().get(0);
+		Field field = space.getFields().getField().get(0);
 		Assert.assertEquals(fieldDef.getName(), field.getName());
 		Assert.assertEquals(fieldDef.getType(), field.getType());
 		Assert.assertEquals(true, field.isKey());

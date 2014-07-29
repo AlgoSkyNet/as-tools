@@ -196,8 +196,8 @@ public class XMLFactory {
 		return converters;
 	}
 
-	public static com.tibco.as.xml.Space getSpace(SpaceDef spaceDef) {
-		com.tibco.as.xml.Space space = new com.tibco.as.xml.Space();
+	public static Space getSpace(SpaceDef spaceDef) {
+		Space space = new Space();
 		space.setCachePolicy(spaceDef.getCachePolicy());
 		space.setCapacity(spaceDef.getCapacity());
 		space.setDistributionPolicy(spaceDef.getDistributionPolicy());
@@ -238,6 +238,7 @@ public class XMLFactory {
 		space.setUpdateTransport(spaceDef.getUpdateTransport());
 		space.setVirtualNodeCount(spaceDef.getVirtualNodeCount());
 		space.setWriteTimeout(spaceDef.getWriteTimeout());
+		Fields fields = new Fields();
 		Collection<String> distribution = new ArrayList<String>();
 		if (Utils.hasSpaceDefMethod("getDistributionFields")) {
 			if (spaceDef.getDistributionFields() != null) {
@@ -259,18 +260,21 @@ public class XMLFactory {
 			if (Utils.hasFieldDefMethod("isEncrypted")) {
 				field.setEncrypted(fieldDef.isEncrypted());
 			}
-			space.getField().add(field);
+			fields.getField().add(field);
 		}
+		space.setFields(fields);
+		Indexes indexes = new Indexes();
 		for (IndexDef indexDef : spaceDef.getIndexDefList()) {
 			Index index = new Index();
 			index.setName(indexDef.getName());
 			index.setType(indexDef.getIndexType());
-			space.getIndex().add(index);
+			indexes.getIndex().add(index);
 		}
+		space.setIndexes(indexes);
 		return space;
 	}
 
-	public static SpaceDef getSpaceDef(com.tibco.as.xml.Space space) {
+	public static SpaceDef getSpaceDef(Space space) {
 		SpaceDef spaceDef = SpaceDef.create();
 		if (space.getCachePolicy() != null) {
 			spaceDef.setCachePolicy(space.getCachePolicy());
@@ -369,23 +373,26 @@ public class XMLFactory {
 		}
 		Collection<String> keys = new ArrayList<String>();
 		Collection<String> distribution = new ArrayList<String>();
-		for (Field field : space.getField()) {
-			FieldDef fieldDef = FieldDef.create(field.getName(),
-					field.getType());
-			if (field.isEncrypted() != null) {
-				if (Utils.hasFieldDefMethod("setEncrypted")) {
-					fieldDef.setEncrypted(field.isEncrypted());
+		Fields fields = space.getFields();
+		if (fields != null) {
+			for (Field field : fields.getField()) {
+				FieldDef fieldDef = FieldDef.create(field.getName(),
+						field.getType());
+				if (field.isEncrypted() != null) {
+					if (Utils.hasFieldDefMethod("setEncrypted")) {
+						fieldDef.setEncrypted(field.isEncrypted());
+					}
 				}
-			}
-			if (field.isNullable() != null) {
-				fieldDef.setNullable(field.isNullable());
-			}
-			spaceDef.putFieldDef(fieldDef);
-			if (Boolean.TRUE.equals(field.isKey())) {
-				keys.add(field.getName());
-			}
-			if (Boolean.TRUE.equals(field.isDistribution())) {
-				distribution.add(field.getName());
+				if (field.isNullable() != null) {
+					fieldDef.setNullable(field.isNullable());
+				}
+				spaceDef.putFieldDef(fieldDef);
+				if (Boolean.TRUE.equals(field.isKey())) {
+					keys.add(field.getName());
+				}
+				if (Boolean.TRUE.equals(field.isDistribution())) {
+					distribution.add(field.getName());
+				}
 			}
 		}
 		KeyDef keyDef = spaceDef.getKeyDef();
@@ -401,12 +408,15 @@ public class XMLFactory {
 						.toArray(new String[distribution.size()]));
 			}
 		}
-		for (Index index : space.getIndex()) {
-			IndexDef indexDef = IndexDef.create(index.getName());
-			indexDef.setIndexType(index.getType());
-			indexDef.setFieldNames(index.getField().toArray(
-					new String[index.getField().size()]));
-			spaceDef.addIndexDef(indexDef);
+		Indexes indexes = space.getIndexes();
+		if (indexes != null) {
+			for (Index index : indexes.getIndex()) {
+				IndexDef indexDef = IndexDef.create(index.getName());
+				indexDef.setIndexType(index.getType());
+				indexDef.setFieldNames(index.getField().toArray(
+						new String[index.getField().size()]));
+				spaceDef.addIndexDef(indexDef);
+			}
 		}
 		return spaceDef;
 	}
