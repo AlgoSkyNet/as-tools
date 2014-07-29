@@ -4,6 +4,30 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
 	version="2.1">
 	<jaxb:bindings schemaLocation="activespaces.xsd" node="/xs:schema">
+		<jaxb:bindings
+			node="//xs:complexType[@name='space']//xs:element[@name='field']">
+			<jaxb:property name="fields" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='space']//xs:element[@name='index']">
+			<jaxb:property name="indexes" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='index']//xs:element[@name='field']">
+			<jaxb:property name="fields" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='members']//xs:element[@name='member']">
+			<jaxb:property name="members" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='spaces']//xs:element[@name='space']">
+			<jaxb:property name="spaces" />
+		</jaxb:bindings>
+		<jaxb:bindings
+			node="//xs:complexType[@name='spaceMemberStats']//xs:element[@name='spaceMemberStat']">
+			<jaxb:property name="spaceMemberStats" />
+		</jaxb:bindings>
 		<jaxb:bindings node="//xs:simpleType[@name='indexType']">
 			<jaxb:javaType name="com.tibco.as.space.IndexDef.IndexType"
 				parseMethod="com.tibco.as.xml.Adapter.parseIndexType" printMethod="com.tibco.as.xml.Adapter.printIndexType" />

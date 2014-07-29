@@ -103,7 +103,7 @@ public class TestXML {
 				.unmarshall(ClassLoader.getSystemResourceAsStream("space1.xml"));
 		Space space1 = element.getValue();
 		assertEquals("space1", space1.getName());
-		List<Field> fields = space1.getFields().getField();
+		List<Field> fields = space1.getFields();
 		assertEquals(2, fields.size());
 		assertEquals("field1", fields.get(0).getName());
 		assertEquals("field2", fields.get(1).getName());
@@ -186,33 +186,23 @@ public class TestXML {
 		Field field2 = new Field();
 		field2.setName("field2");
 		field2.setType(FieldType.STRING);
-		Fields fields = new Fields();
-		fields.getField().add(field1);
-		fields.getField().add(field2);
-		space1.setFields(fields);
+		space1.getFields().add(field1);
+		space1.getFields().add(field2);
 		Index index1 = new Index();
 		index1.setName("index1");
-		index1.getField().add("field1");
+		index1.getFields().add("field1");
 		Index index2 = new Index();
 		index2.setName("index2");
-		index2.getField().add("field2");
-		Indexes indexes = new Indexes();
-		indexes.getIndex().add(index1);
-		indexes.getIndex().add(index2);
-		space1.setIndexes(indexes);
+		index2.getFields().add("field2");
+		space1.getIndexes().add(index1);
+		space1.getIndexes().add(index2);
 		Document document = XMLFactory.marshallToDocument(new ObjectFactory()
 				.createSpace(space1));
 		Element element = document.getDocumentElement();
 		Assert.assertEquals("space", element.getTagName());
 		Assert.assertEquals(space1.getName(), element.getAttribute("name"));
 		NodeList nodeList = element.getChildNodes();
-		Assert.assertEquals(2, nodeList.getLength());
-		Element fieldsElement = (Element) nodeList.item(0);
-		Assert.assertEquals("fields", fieldsElement.getTagName());
-		Assert.assertEquals(2, fieldsElement.getChildNodes().getLength());
-		Element indexesElement = (Element) nodeList.item(1);
-		Assert.assertEquals("indexes", indexesElement.getTagName());
-		Assert.assertEquals(2, indexesElement.getChildNodes().getLength());
+		Assert.assertEquals(4, nodeList.getLength());
 	}
 
 	protected SpaceDef getSpaceDef() {

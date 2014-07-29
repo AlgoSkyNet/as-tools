@@ -238,7 +238,6 @@ public class XMLFactory {
 		space.setUpdateTransport(spaceDef.getUpdateTransport());
 		space.setVirtualNodeCount(spaceDef.getVirtualNodeCount());
 		space.setWriteTimeout(spaceDef.getWriteTimeout());
-		Fields fields = new Fields();
 		Collection<String> distribution = new ArrayList<String>();
 		if (Utils.hasSpaceDefMethod("getDistributionFields")) {
 			if (spaceDef.getDistributionFields() != null) {
@@ -260,17 +259,14 @@ public class XMLFactory {
 			if (Utils.hasFieldDefMethod("isEncrypted")) {
 				field.setEncrypted(fieldDef.isEncrypted());
 			}
-			fields.getField().add(field);
+			space.getFields().add(field);
 		}
-		space.setFields(fields);
-		Indexes indexes = new Indexes();
 		for (IndexDef indexDef : spaceDef.getIndexDefList()) {
 			Index index = new Index();
 			index.setName(indexDef.getName());
 			index.setType(indexDef.getIndexType());
-			indexes.getIndex().add(index);
+			space.getIndexes().add(index);
 		}
-		space.setIndexes(indexes);
 		return space;
 	}
 
@@ -373,26 +369,23 @@ public class XMLFactory {
 		}
 		Collection<String> keys = new ArrayList<String>();
 		Collection<String> distribution = new ArrayList<String>();
-		Fields fields = space.getFields();
-		if (fields != null) {
-			for (Field field : fields.getField()) {
-				FieldDef fieldDef = FieldDef.create(field.getName(),
-						field.getType());
-				if (field.isEncrypted() != null) {
-					if (Utils.hasFieldDefMethod("setEncrypted")) {
-						fieldDef.setEncrypted(field.isEncrypted());
-					}
+		for (Field field : space.getFields()) {
+			FieldDef fieldDef = FieldDef.create(field.getName(),
+					field.getType());
+			if (field.isEncrypted() != null) {
+				if (Utils.hasFieldDefMethod("setEncrypted")) {
+					fieldDef.setEncrypted(field.isEncrypted());
 				}
-				if (field.isNullable() != null) {
-					fieldDef.setNullable(field.isNullable());
-				}
-				spaceDef.putFieldDef(fieldDef);
-				if (Boolean.TRUE.equals(field.isKey())) {
-					keys.add(field.getName());
-				}
-				if (Boolean.TRUE.equals(field.isDistribution())) {
-					distribution.add(field.getName());
-				}
+			}
+			if (field.isNullable() != null) {
+				fieldDef.setNullable(field.isNullable());
+			}
+			spaceDef.putFieldDef(fieldDef);
+			if (Boolean.TRUE.equals(field.isKey())) {
+				keys.add(field.getName());
+			}
+			if (Boolean.TRUE.equals(field.isDistribution())) {
+				distribution.add(field.getName());
 			}
 		}
 		KeyDef keyDef = spaceDef.getKeyDef();
@@ -408,15 +401,12 @@ public class XMLFactory {
 						.toArray(new String[distribution.size()]));
 			}
 		}
-		Indexes indexes = space.getIndexes();
-		if (indexes != null) {
-			for (Index index : indexes.getIndex()) {
-				IndexDef indexDef = IndexDef.create(index.getName());
-				indexDef.setIndexType(index.getType());
-				indexDef.setFieldNames(index.getField().toArray(
-						new String[index.getField().size()]));
-				spaceDef.addIndexDef(indexDef);
-			}
+		for (Index index : space.getIndexes()) {
+			IndexDef indexDef = IndexDef.create(index.getName());
+			indexDef.setIndexType(index.getType());
+			indexDef.setFieldNames(index.getFields().toArray(
+					new String[index.getFields().size()]));
+			spaceDef.addIndexDef(indexDef);
 		}
 		return spaceDef;
 	}

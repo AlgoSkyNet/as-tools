@@ -59,8 +59,10 @@
 
 	<xsd:complexType name="space">
 		<xsd:sequence>
-			<xsd:element name="fields" type="fields" />
-			<xsd:element name="indexes" type="indexes" />
+			<xsd:element name="field" type="field" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="index" type="index" minOccurs="0"
+				maxOccurs="unbounded" />
 		</xsd:sequence>
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="capacity" type="xsd:long" />
@@ -94,13 +96,6 @@
 		<xsd:attribute name="writeTimeout" type="xsd:long" />
 	</xsd:complexType>
 
-	<xsd:complexType name="fields">
-		<xsd:sequence>
-			<xsd:element name="field" type="field" minOccurs="0"
-				maxOccurs="unbounded" />
-		</xsd:sequence>
-	</xsd:complexType>
-
 	<xsd:complexType name="field">
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="encrypted" type="xsd:boolean" />
@@ -108,13 +103,6 @@
 		<xsd:attribute name="distribution" type="xsd:boolean" />
 		<xsd:attribute name="nullable" type="xsd:boolean" />
 		<xsd:attribute name="type" type="fieldType" />
-	</xsd:complexType>
-
-	<xsd:complexType name="indexes">
-		<xsd:sequence>
-			<xsd:element name="index" type="index" minOccurs="0"
-				maxOccurs="unbounded" />
-		</xsd:sequence>
 	</xsd:complexType>
 
 	<xsd:simpleType name="lockScope">
