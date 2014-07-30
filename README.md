@@ -9,7 +9,7 @@ Delimited Files is a utility to import/export CSV files.
 
 ### [Get Started](as-files/src/site/index.md)
 
-### [Introduction](as-files/src/site/introduction.md)
+### [Configuration](as-files/src/site/configuration.md)
 
 ### [Architecture](as-files/src/site/architecture.md)
 
@@ -24,7 +24,7 @@ Spreadsheets is a utility to import/export Excel spreadsheets.
 
 ### [Get Started](as-spreadsheets/src/site/index.md)
 
-### [Introduction](as-spreadsheets/src/site/introduction.md)
+### [Configuration](as-spreadsheets/src/site/configuration.md)
 
 ### [Usage](as-spreadsheets/src/site/usage.md)
 

@@ -57,12 +57,12 @@
 			<item name="Spreadsheets" href="index.html" />
 		</breadcrumbs>
 		<links>
-			<item name="Introduction" href="introduction.html" />
+			<item name="Configuration" href="configuration.html" />
 			<item name="Usage" href="usage.html" />
 			<item name="FAQ" href="faq.html" />
 		</links>
 		<menu name="Documentation" inherit="bottom">
-			<item name="Introduction" href="introduction.html" />
+			<item name="Configuration" href="configuration.html" />
 			<item name="Usage" href="usage.html" />
 			<item name="FAQ" href="faq.html" />
 		</menu>

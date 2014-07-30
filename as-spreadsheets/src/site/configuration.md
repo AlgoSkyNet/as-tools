@@ -1,4 +1,4 @@
-# Introduction
+# Configuration
 
 Spreadsheets is a command line tool to import/export Excel spreadsheets.
 
