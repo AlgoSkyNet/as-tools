@@ -11,7 +11,7 @@ All AS Tools projects are built in Java using [Apache Maven](http://maven.apache
 After you have installed Maven run the following command to add the ActiveSpaces Java library to your local Maven repository:
 
 ```
-mvn install:install-file -Dfile=$AS_HOME/lib/as-common.jar -DgroupId=com.tibco.as -DartifactId=as-common -Dversion=2.1.2 -Dpackaging=jar
+mvn install:install-file -Dfile=$AS_HOME/lib/as-common.jar -DgroupId=com.tibco.as -DartifactId=as-common -Dversion=2.1.3 -Dpackaging=jar
 ```
 
 
