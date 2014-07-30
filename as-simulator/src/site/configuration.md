@@ -1,7 +1,7 @@
 # Configuration
 
 
-A simulation is described in an XML file in the form:
+Simulations are described in XML files in the form:
 
 ```xml
 <simulation>
@@ -43,10 +43,10 @@ results in a space named `People` containing 3 tuples, each put every 2 seconds:
 | 3                     | Charlotte                      | Baker                         | 1967-07-23T16:00:00.000    | 974 Black Path               | Macon                     | 837-813-6375               | lostit@b1zmail.co.uk          |
 
 
-### Complete Example
-
-A example that demonstrates all configuration elements is available at [all.xml](../test/resources/all.xml)
-
-### XML Schema
+## XML Schema
 
 The XML schema for configuration files is available at [simulation.xsd](https://github.com/TIBCOSoftware/as-tools/blob/master/com.tibco.as.io.simulation/src/main/resources/simulation.xsd)
+
+## Complete Example
+
+A example that demonstrates all configuration elements is available at [all.xml](../test/resources/all.xml)
