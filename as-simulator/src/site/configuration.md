@@ -49,4 +49,4 @@ The XML schema for configuration files is available at [simulation.xsd](https://
 
 ## Complete Example
 
-A example that demonstrates all configuration elements is available at [all.xml](../test/resources/all.xml)
+A example that demonstrates all configuration elements is available at [all.xml](https://github.com/TIBCOSoftware/as-tools/blob/master/as-simulator/src/test/resources/all.xml)
