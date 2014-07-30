@@ -13,6 +13,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -174,8 +176,7 @@ public class TestXML {
 	}
 
 	@Test
-	public void testMarshallSpace() throws JAXBException, IOException,
-			SAXException, ParserConfigurationException {
+	public void testMarshallSpace() throws Exception {
 		Space space1 = new Space();
 		space1.setName("space1");
 		Field field1 = new Field();
@@ -196,13 +197,18 @@ public class TestXML {
 		index2.getFields().add("field2");
 		space1.getIndexes().add(index1);
 		space1.getIndexes().add(index2);
-		Document document = XMLFactory.marshallToDocument(new ObjectFactory()
-				.createSpace(space1));
-		Element element = document.getDocumentElement();
-		Assert.assertEquals("space", element.getTagName());
-		Assert.assertEquals(space1.getName(), element.getAttribute("name"));
-		NodeList nodeList = element.getChildNodes();
-		Assert.assertEquals(4, nodeList.getLength());
+		JAXBElement<Space> xmlSpace = new ObjectFactory().createSpace(space1);
+		Document actual = XMLFactory.marshallToDocument(xmlSpace);
+		actual.normalize();
+		Document expected = XMLFactory.parse(ClassLoader
+				.getSystemResourceAsStream("space1.xml"));
+		expected.normalize();
+		XMLUnit.setIgnoreAttributeOrder(true);
+		XMLUnit.setIgnoreComments(true);
+		XMLUnit.setIgnoreWhitespace(true);
+		DetailedDiff myDiff = new DetailedDiff(XMLUnit.compareXML(expected,
+				actual));
+		assertEquals(myDiff.toString(), 0, myDiff.getAllDifferences().size());
 	}
 
 	protected SpaceDef getSpaceDef() {

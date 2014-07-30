@@ -1,6 +1,7 @@
 package com.tibco.as.xml;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -18,8 +19,15 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.tibco.as.accessors.AccessorFactory;
 import com.tibco.as.accessors.ITupleAccessor;
@@ -90,6 +98,22 @@ public class XMLFactory {
 		Document document = getDocumentBuilder().newDocument();
 		getMarshaller().marshal(element, document);
 		return document;
+	}
+
+	public static Document parse(InputStream is) throws SAXException,
+			IOException, ParserConfigurationException {
+		return getDocumentBuilder().parse(is);
+	}
+
+	public static String toString(Document document)
+			throws TransformerException {
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer = tf.newTransformer();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		StringWriter writer = new StringWriter();
+		transformer
+				.transform(new DOMSource(document), new StreamResult(writer));
+		return writer.toString();
 	}
 
 	private static DocumentBuilder getDocumentBuilder()
@@ -265,6 +289,9 @@ public class XMLFactory {
 			Index index = new Index();
 			index.setName(indexDef.getName());
 			index.setType(indexDef.getIndexType());
+			for (String fieldName : indexDef.getFieldNames()) {
+				index.getFields().add(fieldName);
+			}
 			space.getIndexes().add(index);
 		}
 		return space;
@@ -341,7 +368,7 @@ public class XMLFactory {
 		if (space.getReadTimeout() != null) {
 			spaceDef.setReadTimeout(space.getReadTimeout());
 		}
-		if (space.getReplicationCount() == null) {
+		if (space.getReplicationCount() != null) {
 			spaceDef.setReplicationCount(space.getReplicationCount());
 		}
 		if (space.getReplicationPolicy() != null) {
@@ -403,7 +430,9 @@ public class XMLFactory {
 		}
 		for (Index index : space.getIndexes()) {
 			IndexDef indexDef = IndexDef.create(index.getName());
-			indexDef.setIndexType(index.getType());
+			if (index.getType() != null) {
+				indexDef.setIndexType(index.getType());
+			}
 			indexDef.setFieldNames(index.getFields().toArray(
 					new String[index.getFields().size()]));
 			spaceDef.addIndexDef(indexDef);

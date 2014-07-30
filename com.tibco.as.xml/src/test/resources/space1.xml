@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<space name="space1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://activespaces.tibco.com/activespaces.xsd">
-	<field name="field1" key="true" type="long" distribution="true" />
+<space name="space1">
+	<field name="field1" key="true" distribution="true" type="long" />
 	<field name="field2" type="string" />
 	<index name="index1">
 		<field>field1</field>
