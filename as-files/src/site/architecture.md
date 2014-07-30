@@ -3,7 +3,7 @@
 
 ## Import
 
-![Architecture Diagram](images/architecture.svg)
+![Architecture Diagram](images/architecture.svgz)
 
 
 ### Reading
