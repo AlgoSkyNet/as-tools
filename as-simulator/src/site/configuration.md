@@ -3,15 +3,16 @@
 
 Simulations are described in XML files in the form:
 
-```xml
+~~~xml
 <simulation>
 	<space name="space1">...</space>
 	<space name="space2">...</space>
 </simulation> 
-```
+~~~
 
 The simulator will define each space if not already defined, then it will start putting data into the space.  
 The `space` element can have the following attributes:
+
 * `name`: name of the space to simulate
 * `sleep`: sleep duration in milliseconds between space operations. Default is no sleep.
 * `size`: number of tuples to insert in the space. Default is infinity.
@@ -19,8 +20,9 @@ The `space` element can have the following attributes:
 * `distributionRole`: role that the simulator should join the space as. Default is leech.
 * `operation`: operation to perform on the space. Default is put.
 
-For example the following configuration: 
-```xml
+For example the following configuration:
+
+~~~xml
 <simulation>
 	<space name="People" size="3" sleep="2000" batchSize="1">
 		<sequence name="ID" />
@@ -33,7 +35,8 @@ For example the following configuration:
 		<emailAddress name="Email" />
 	</space>
 </simulation>
-``` 
+~~~ 
+
 results in a space named `People` containing 3 tuples, each put every 2 seconds:
 
 | ID                    | FirstName                      | LastName                      | BirthDate                  | Address                      | City                      | Phone                      | Email                         |
