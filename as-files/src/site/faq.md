@@ -13,6 +13,7 @@
 3. `Error loading as-common dynamic loadable library`
 
 	Check that the environment variable for your platform is correctly set:
+    
     + Windows: `PATH`
     + Linux: `LD_LIBRARY_PATH`
     + Mac OSX: `DYLD_LIBRARY_PATH`
