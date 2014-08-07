@@ -13,7 +13,7 @@ public class ExcelFormats {
 
 	public Attributes getConversion() {
 		Attributes conversion = new Attributes();
-		conversion.put(Attribute.FORMAT_BLOB, blobFormat);
+		conversion.put(Attribute.BLOB, blobFormat);
 		return conversion;
 	}
 

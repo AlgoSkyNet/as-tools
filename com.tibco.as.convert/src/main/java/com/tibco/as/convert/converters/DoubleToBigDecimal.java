@@ -11,4 +11,5 @@ public class DoubleToBigDecimal implements
 	public BigDecimal convert(Double value) {
 		return BigDecimal.valueOf(value);
 	}
+	
 }

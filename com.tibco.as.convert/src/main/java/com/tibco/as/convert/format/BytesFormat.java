@@ -4,7 +4,7 @@ import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
 
-public abstract class BlobFormat extends Format {
+public abstract class BytesFormat extends Format {
 
 	private static final long serialVersionUID = -4881773911981927769L;
 

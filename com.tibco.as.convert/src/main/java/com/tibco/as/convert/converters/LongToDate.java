@@ -10,5 +10,4 @@ public class LongToDate implements IConverter<Long, Date> {
 	public Date convert(Long value) {
 		return new Date(value);
 	}
-
 }

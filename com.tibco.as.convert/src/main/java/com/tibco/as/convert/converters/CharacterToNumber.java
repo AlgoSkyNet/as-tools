@@ -9,5 +9,5 @@ public class CharacterToNumber implements
 	public Number convert(Character value) {
 		return Character.getNumericValue(value);
 	}
-
+	
 }

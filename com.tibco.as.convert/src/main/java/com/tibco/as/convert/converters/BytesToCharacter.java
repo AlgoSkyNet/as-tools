@@ -2,11 +2,12 @@ package com.tibco.as.convert.converters;
 
 import java.nio.ByteBuffer;
 
-public class BlobToCharacter extends
+public class BytesToCharacter extends
 		AbstractBlobTo<Character> {
 
 	@Override
-	protected Character getNumber(ByteBuffer buffer) {
+	protected Character convert(ByteBuffer buffer) {
 		return buffer.getChar();
 	}
+	
 }

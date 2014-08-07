@@ -8,9 +8,9 @@ public abstract class AbstractBlobTo<T> implements IConverter<byte[], T> {
 
 	@Override
 	public T convert(byte[] value) {
-		return getNumber(ByteBuffer.wrap(value));
+		return convert(ByteBuffer.wrap(value));
 	}
 
-	protected abstract T getNumber(ByteBuffer buffer);
+	protected abstract T convert(ByteBuffer buffer);
 
 }

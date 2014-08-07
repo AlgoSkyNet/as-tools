@@ -4,8 +4,7 @@ import java.nio.ByteBuffer;
 
 import com.tibco.as.convert.IConverter;
 
-public abstract class AbstractToBlob<T> implements
-		IConverter<T, byte[]> {
+public abstract class AbstractToBlob<T> implements IConverter<T, byte[]> {
 
 	int capacity;
 

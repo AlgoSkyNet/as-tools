@@ -1,22 +1,21 @@
 package com.tibco.as.convert;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
-public class ChainedConverter implements IConverter {
+public class ChainedConverter<S, P, T> implements IConverter<S, T> {
 
-	private IConverter codec1;
-	private IConverter codec2;
+	private IConverter<S, P> codec1;
+	private IConverter<P, T> codec2;
 
-	public ChainedConverter(IConverter codec1, IConverter codec2) {
+	public ChainedConverter(IConverter<S, P> codec1, IConverter<P, T> codec2) {
 		this.codec1 = codec1;
 		this.codec2 = codec2;
 	}
 
 	@Override
-	public Object convert(Object value) throws ConvertException {
+	public T convert(S value) throws ConvertException {
 		if (value == null) {
 			return null;
 		}
-		Object value1 = codec1.convert(value);
+		P value1 = codec1.convert(value);
 		if (value1 == null) {
 			return null;
 		}

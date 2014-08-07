@@ -2,11 +2,11 @@ package com.tibco.as.convert.converters;
 
 import java.nio.ByteBuffer;
 
-public class BlobToShort extends AbstractBlobTo<Short> {
+public class BytesToShort extends AbstractBlobTo<Short> {
 
 	@Override
-	protected Short getNumber(ByteBuffer buffer) {
+	protected Short convert(ByteBuffer buffer) {
 		return buffer.getShort();
 	}
-
+	
 }

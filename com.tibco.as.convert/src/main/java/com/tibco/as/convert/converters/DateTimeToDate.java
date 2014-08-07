@@ -11,5 +11,4 @@ public class DateTimeToDate implements IConverter<DateTime, Date> {
 	public Date convert(DateTime value) {
 		return value.getTime().getTime();
 	}
-
 }

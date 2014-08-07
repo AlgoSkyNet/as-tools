@@ -3,9 +3,9 @@ package com.tibco.as.convert.converters;
 import com.tibco.as.convert.Attributes;
 import com.tibco.as.convert.ConverterFactory;
 
-public class StringToBlob extends Parser<byte[]> {
+public class BytesToString extends AbstractFormatter<byte[]> {
 
-	public StringToBlob(Attributes attributes) {
+	public BytesToString(Attributes attributes) {
 		super(ConverterFactory.getBlobFormat(attributes));
 	}
 

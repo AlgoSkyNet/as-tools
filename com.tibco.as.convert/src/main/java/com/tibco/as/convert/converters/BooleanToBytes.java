@@ -2,9 +2,9 @@ package com.tibco.as.convert.converters;
 
 import java.nio.ByteBuffer;
 
-public class BooleanToBlob extends AbstractToBlob<Boolean> {
+public class BooleanToBytes extends AbstractToBlob<Boolean> {
 
-	public BooleanToBlob() {
+	public BooleanToBytes() {
 		super(1);
 	}
 
@@ -12,5 +12,5 @@ public class BooleanToBlob extends AbstractToBlob<Boolean> {
 	protected ByteBuffer put(ByteBuffer buffer, Boolean value) {
 		return buffer.put((byte) (value ? 1 : 0));
 	}
-
+	
 }

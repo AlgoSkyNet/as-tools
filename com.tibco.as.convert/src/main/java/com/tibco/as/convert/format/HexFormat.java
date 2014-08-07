@@ -2,7 +2,7 @@ package com.tibco.as.convert.format;
 
 import javax.xml.bind.DatatypeConverter;
 
-public class HexFormat extends BlobFormat {
+public class HexFormat extends BytesFormat {
 
 	private static final long serialVersionUID = -5241322851358589993L;
 

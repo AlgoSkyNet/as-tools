@@ -52,7 +52,7 @@ public class CommandExportExcel extends CommandExport {
 		super.configure(transfer);
 		transfer.setHeader(!Boolean.TRUE.equals(noHeader));
 		Attributes conversion = formats.getConversion();
-		conversion.put(Attribute.FORMAT_DATE, dateFormat);
+		conversion.put(Attribute.DATE, dateFormat);
 		transfer.getAttributes().putAll(conversion);
 	}
 

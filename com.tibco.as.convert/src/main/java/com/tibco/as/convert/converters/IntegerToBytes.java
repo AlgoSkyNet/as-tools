@@ -2,9 +2,9 @@ package com.tibco.as.convert.converters;
 
 import java.nio.ByteBuffer;
 
-public class IntegerToBlob extends AbstractToBlob<Integer> {
+public class IntegerToBytes extends AbstractToBlob<Integer> {
 
-	public IntegerToBlob() {
+	public IntegerToBytes() {
 		super(Integer.SIZE);
 	}
 
@@ -12,5 +12,5 @@ public class IntegerToBlob extends AbstractToBlob<Integer> {
 	protected ByteBuffer put(ByteBuffer buffer, Integer value) {
 		return buffer.putInt(value);
 	}
-
+	
 }

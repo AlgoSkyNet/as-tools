@@ -2,9 +2,9 @@ package com.tibco.as.convert.converters;
 
 import java.nio.ByteBuffer;
 
-public class ShortToBlob extends AbstractToBlob<Short> {
+public class ShortToBytes extends AbstractToBlob<Short> {
 
-	public ShortToBlob() {
+	public ShortToBytes() {
 		super(Short.SIZE);
 	}
 
@@ -12,5 +12,5 @@ public class ShortToBlob extends AbstractToBlob<Short> {
 	protected ByteBuffer put(ByteBuffer buffer, Short value) {
 		return buffer.putShort(value);
 	}
-
+	
 }

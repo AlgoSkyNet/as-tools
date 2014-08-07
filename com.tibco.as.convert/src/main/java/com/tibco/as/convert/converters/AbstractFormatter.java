@@ -5,20 +5,21 @@ import java.text.Format;
 import com.tibco.as.convert.ConvertException;
 import com.tibco.as.convert.IConverter;
 
-public class Formatter<T> implements IConverter<T, String> {
+public abstract class AbstractFormatter<T> implements IConverter<T, String> {
 
 	private Format format;
 
-	public Formatter(Format format) {
+	public AbstractFormatter(Format format) {
 		this.format = format;
 	}
 
 	@Override
-	public String convert(T value) throws ConvertException {
+	public String convert(T source) throws ConvertException {
 		try {
-			return format.format(value);
+			return format.format(source);
 		} catch (IllegalArgumentException e) {
-			throw new ConvertException(e, value);
+			throw new ConvertException(e, source);
 		}
 	}
+
 }

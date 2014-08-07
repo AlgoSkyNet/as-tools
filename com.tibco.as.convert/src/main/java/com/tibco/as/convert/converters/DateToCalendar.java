@@ -14,4 +14,5 @@ public class DateToCalendar implements IConverter<Date, Calendar> {
 		calendar.setTime(date);
 		return calendar;
 	}
+
 }

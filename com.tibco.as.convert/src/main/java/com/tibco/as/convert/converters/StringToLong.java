@@ -1,15 +1,17 @@
 package com.tibco.as.convert.converters;
 
+import com.tibco.as.convert.Attribute;
 import com.tibco.as.convert.Attributes;
-import com.tibco.as.convert.ChainedConverter;
-import com.tibco.as.convert.ConverterFactory;
 import com.tibco.as.convert.format.LongFormat;
 
-public class StringToLong extends ChainedConverter {
+public class StringToLong extends AbstractNumberParser<Long> {
 
 	public StringToLong(Attributes attributes) {
-		super(new Parser<Number>(ConverterFactory.getNumberFormat(attributes,
-				new LongFormat())), new NumberToLong());
+		super(attributes.get(Attribute.INTEGER), new LongFormat());
+	}
 
+	@Override
+	protected Long convert(Number number) {
+		return number.longValue();
 	}
 }

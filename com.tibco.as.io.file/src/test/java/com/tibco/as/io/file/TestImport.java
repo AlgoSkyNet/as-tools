@@ -75,7 +75,7 @@ public class TestImport extends TestBase {
 		DelimitedImporter importer = new DelimitedImporter(metaspace, dir);
 		import1.setKeepSpaceOpen(true);
 		import1.getAttributes()
-				.put(Attribute.FORMAT_DATE, "MM/dd/yy", "Field2");
+				.put(Attribute.DATE, "MM/dd/yy", "Field2");
 		importer.addTransfer(import1);
 		importer.execute();
 		Space space1 = metaspace.getSpace("space1");
@@ -106,7 +106,7 @@ public class TestImport extends TestBase {
 		DelimitedImporter importer = new DelimitedImporter(metaspace, dir);
 		import1.setKeepSpaceOpen(true);
 		import1.getAttributes()
-				.put(Attribute.FORMAT_DATE, "MM/dd/yy", "Field2");
+				.put(Attribute.DATE, "MM/dd/yy", "Field2");
 		importer.addTransfer(import1);
 		importer.execute();
 		Space space1 = metaspace.getSpace("space1");
@@ -136,7 +136,7 @@ public class TestImport extends TestBase {
 		DelimitedImporter importer = new DelimitedImporter(metaspace, dir);
 		import1.setKeepSpaceOpen(true);
 		import1.getAttributes()
-				.put(Attribute.FORMAT_DATE, "MM/dd/yy", "Field2");
+				.put(Attribute.DATE, "MM/dd/yy", "Field2");
 		importer.addTransfer(import1);
 		importer.execute();
 		Space space1 = metaspace.getSpace(import1.getSpaceName());
@@ -169,7 +169,7 @@ public class TestImport extends TestBase {
 		DelimitedImporter importer = new DelimitedImporter(metaspace, dir);
 		import1.setKeepSpaceOpen(true);
 		import1.getAttributes()
-				.put(Attribute.FORMAT_DATE, "MM/dd/yy", "Field2");
+				.put(Attribute.DATE, "MM/dd/yy", "Field2");
 		importer.addTransfer(import1);
 		importer.execute();
 		Space space1 = metaspace.getSpace(spaceName);

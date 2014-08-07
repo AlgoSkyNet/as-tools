@@ -17,15 +17,19 @@ public class DelimitedFormats {
 	@Parameter(description = "Date/time format", names = { "-datetime_format" })
 	private String dateFormat;
 
-	@Parameter(description = "Number format", names = { "-number_format" })
-	private String numberFormat;
+	@Parameter(description = "Integer format", names = { "-integer_format" })
+	private String integerFormat;
+
+	@Parameter(description = "Decimal format", names = { "-decimal_format" })
+	private String decimalFormat;
 
 	public Attributes getAttributes() {
 		Attributes attributes = new Attributes();
-		attributes.put(Attribute.FORMAT_BLOB, blobFormat);
-		attributes.put(Attribute.FORMAT_BOOLEAN, booleanFormat);
-		attributes.put(Attribute.FORMAT_DATE, dateFormat);
-		attributes.put(Attribute.FORMAT_NUMBER, numberFormat);
+		attributes.put(Attribute.BLOB, blobFormat);
+		attributes.put(Attribute.BOOLEAN, booleanFormat);
+		attributes.put(Attribute.DATE, dateFormat);
+		attributes.put(Attribute.INTEGER, integerFormat);
+		attributes.put(Attribute.DECIMAL, decimalFormat);
 		return attributes;
 	}
 
@@ -54,11 +58,11 @@ public class DelimitedFormats {
 	}
 
 	public String getNumberFormat() {
-		return numberFormat;
+		return integerFormat;
 	}
 
 	public void setNumberFormat(String numberFormat) {
-		this.numberFormat = numberFormat;
+		this.integerFormat = numberFormat;
 	}
 
 }

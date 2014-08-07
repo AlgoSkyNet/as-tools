@@ -222,7 +222,7 @@ public class ExcelExporter extends Exporter<Object[]> {
 			return new BooleanCellAccessor(cellnum);
 		case DATETIME:
 			CellStyle style = workbook.createCellStyle();
-			String pattern = conversion.get(Attribute.FORMAT_DATE,
+			String pattern = conversion.get(Attribute.DATE,
 					fieldDef.getName());
 			if (pattern == null) {
 				pattern = DEFAULT_DATETIME_PATTERN;

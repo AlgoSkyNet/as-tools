@@ -2,10 +2,10 @@ package com.tibco.as.convert.converters;
 
 import java.nio.ByteBuffer;
 
-public class CharacterToBlob extends
+public class CharacterToBytes extends
 		AbstractToBlob<Character> {
 
-	public CharacterToBlob() {
+	public CharacterToBytes() {
 		super(Character.SIZE);
 	}
 
@@ -13,5 +13,5 @@ public class CharacterToBlob extends
 	protected ByteBuffer put(ByteBuffer buffer, Character value) {
 		return buffer.putChar(value);
 	}
-
+	
 }

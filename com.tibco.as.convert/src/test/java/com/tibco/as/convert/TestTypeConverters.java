@@ -95,7 +95,7 @@ public class TestTypeConverters {
 
 	@Test
 	public void testDateTimeToString() throws Exception {
-		String dateString = "2014-04-18T12:34:56.789";
+		String dateString = "2014-04-18T12:34:56.789+01:00";
 		Calendar calendar = DatatypeConverter.parseDateTime(dateString);
 		// calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
 		DateTime dateTime = DateTime.create(calendar);

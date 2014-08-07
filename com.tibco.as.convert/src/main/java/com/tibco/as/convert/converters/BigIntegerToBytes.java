@@ -4,8 +4,7 @@ import java.math.BigInteger;
 
 import com.tibco.as.convert.IConverter;
 
-public class BigIntegerToBlob implements
-		IConverter<BigInteger, byte[]> {
+public class BigIntegerToBytes implements IConverter<BigInteger, byte[]> {
 
 	@Override
 	public byte[] convert(BigInteger value) {

@@ -2,9 +2,9 @@ package com.tibco.as.convert.converters;
 
 import java.nio.ByteBuffer;
 
-public class FloatToBlob extends AbstractToBlob<Float> {
+public class FloatToBytes extends AbstractToBlob<Float> {
 
-	public FloatToBlob() {
+	public FloatToBytes() {
 		super(Float.SIZE);
 	}
 
@@ -12,5 +12,5 @@ public class FloatToBlob extends AbstractToBlob<Float> {
 	protected ByteBuffer put(ByteBuffer buffer, Float value) {
 		return buffer.putFloat(value);
 	}
-
+	
 }

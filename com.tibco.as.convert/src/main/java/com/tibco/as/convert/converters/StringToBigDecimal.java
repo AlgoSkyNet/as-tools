@@ -9,5 +9,5 @@ public class StringToBigDecimal extends
 	protected BigDecimal parse(String string) {
 		return new BigDecimal(string);
 	}
-
+	
 }

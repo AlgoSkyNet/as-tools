@@ -2,9 +2,9 @@ package com.tibco.as.convert.converters;
 
 import java.nio.ByteBuffer;
 
-public class LongToBlob extends AbstractToBlob<Long> {
+public class LongToBytes extends AbstractToBlob<Long> {
 
-	public LongToBlob() {
+	public LongToBytes() {
 		super(Long.SIZE);
 	}
 

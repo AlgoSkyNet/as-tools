@@ -31,8 +31,8 @@ public class TestStringArrays {
 				FieldDef.create("field4", FieldType.INTEGER));
 		spaceDef.getFieldDefs().addAll(fieldDefs);
 		Attributes attributes = new Attributes();
-		attributes.put(Attribute.FORMAT_NUMBER, "#,###");
-		attributes.put(Attribute.FORMAT_NUMBER, "'P'#,###", "field1");
+		attributes.put(Attribute.INTEGER, "#,###");
+		attributes.put(Attribute.INTEGER, "'P'#,###", "field1");
 		ITupleAccessor[] accessors = AccessorFactory.create(spaceDef);
 		IConverter[] converters = factory.getConverters(attributes,
 				String.class, spaceDef);
@@ -54,8 +54,8 @@ public class TestStringArrays {
 				FieldDef.create("field4", FieldType.INTEGER));
 		spaceDef.getFieldDefs().addAll(fieldDefs);
 		Attributes attributes = new Attributes();
-		attributes.put(Attribute.FORMAT_NUMBER, "#,###");
-		attributes.put(Attribute.FORMAT_NUMBER, "'P'#,###", "field1");
+		attributes.put(Attribute.INTEGER, "#,###");
+		attributes.put(Attribute.INTEGER, "'P'#,###", "field1");
 		Tuple tuple = Tuple.create();
 		tuple.putInt("field1", 1000);
 		tuple.putInt("field2", 2000);

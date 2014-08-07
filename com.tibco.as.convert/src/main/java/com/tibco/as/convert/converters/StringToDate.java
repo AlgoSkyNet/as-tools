@@ -1,14 +1,19 @@
 package com.tibco.as.convert.converters;
 
+import java.text.DateFormat;
 import java.util.Date;
 
-import com.tibco.as.convert.Attributes;
-import com.tibco.as.convert.ConverterFactory;
+import com.tibco.as.convert.ConvertException;
 
-public class StringToDate extends Parser<Date> {
+public class StringToDate extends AbstractParser<Date> {
 
-	public StringToDate(Attributes attributes) {
-		super(ConverterFactory.getDateFormat(attributes));
+	public StringToDate(DateFormat format) {
+		super(format);
+	}
+
+	@Override
+	protected Date parse(String string) throws ConvertException {
+		return (Date) parseObject(string);
 	}
 
 }
