@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.tibco.as</groupId>
   <artifactId>as-tools-parent</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ActiveSpaces Tools Parent Project</name>
   <description>Common project for ActiveSpaces tools</description>
@@ -44,6 +44,7 @@
     <module>com.tibco.as.io.excel</module>
     <module>com.tibco.as.io.file</module>
     <module>com.tibco.as.io.simulation</module>
+    <module>xeger</module>
     <module>as-spreadsheets</module>
     <module>as-files</module>
     <module>as-simulator</module>
