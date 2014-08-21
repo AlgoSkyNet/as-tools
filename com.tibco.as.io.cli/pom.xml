@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.tibco.as</groupId>
 		<artifactId>as-tools-parent</artifactId>
-		<version>2.0.0</version>
+		<version>2.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.tibco.as.io</groupId>
 	<artifactId>com.tibco.as.io.cli</artifactId>
@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>com.tibco.as.io</groupId>
 			<artifactId>com.tibco.as.io</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beust</groupId>
