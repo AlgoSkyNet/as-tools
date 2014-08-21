@@ -2,8 +2,11 @@
 
 ### Download
 
-Download the latest release <a href="http://activespaces.tibco.com/nexus/service/local/artifact/maven/redirect?r=snapshots&amp;g=com.tibco.as.io&amp;a=as-spreadsheets&amp;v=1.0.0-SNAPSHOT&amp;e=zip&amp;c=distribution" target="_blank" class="btn btn-primary">as-spreadsheets-1.0.0</a>
-<a href="https://github.com/TIBCOSoftware/as-tools/tree/master/as-spreadsheets" target="_blank" class="btn btn-primary">source code</a>
+Latest release: <a href="http://activespaces.tibco.com/nexus/service/local/artifact/maven/redirect?r=releases&amp;g=com.tibco.as.io&amp;a=as-spreadsheets&amp;v=LATEST&amp;e=zip&amp;c=distribution" target="_blank" class="btn btn-primary">as-spreadsheets-2.0.0</a>
+
+Development build: <a href="http://activespaces.tibco.com/nexus/service/local/artifact/maven/redirect?r=snapshots&amp;g=com.tibco.as.io&amp;a=as-spreadsheets&amp;v=LATEST&amp;e=zip&amp;c=distribution" target="_blank" class="btn btn-primary">as-spreadsheets-2.0.1-SNAPSHOT</a>
+
+Source: <a href="https://github.com/TIBCOSoftware/as-tools/tree/master/as-spreadsheets" target="_blank">as-spreadsheets</a>
 
 <a href="https://raw.githubusercontent.com/TIBCOSoftware/as-tools/master/as-spreadsheets/LICENSE.txt" target="_blank">Licenses</a>
 
