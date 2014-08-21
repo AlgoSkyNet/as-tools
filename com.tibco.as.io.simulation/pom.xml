@@ -22,22 +22,22 @@
 		<dependency>
 			<groupId>com.tibco.as</groupId>
 			<artifactId>com.tibco.as.convert</artifactId>
-			<version>2.0.1-SNAPSHOT</version>
+			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.tibco.as.io</groupId>
 			<artifactId>com.tibco.as.io</artifactId>
-			<version>2.0.1-SNAPSHOT</version>
+			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.fluttercode.datafactory</groupId>
 			<artifactId>datafactory</artifactId>
-			<version>RELEASE</version>
+			<version>0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>nl.flotsam</groupId>
 			<artifactId>xeger</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 
