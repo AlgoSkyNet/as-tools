@@ -193,10 +193,10 @@
       <name>Snapshot Repository</name>
       <url>http://activespaces.tibco.com/nexus/content/repositories/snapshots</url>
     </snapshotRepository>
-    <site>
-      <id>${project.artifactId}</id>
-      <url>${site.deploy.url}</url>
-    </site>
+<!--     <site> -->
+<!--       <id>${project.artifactId}</id> -->
+<!--       <url>${site.deploy.url}</url> -->
+<!--     </site> -->
   </distributionManagement>
 
   <scm>

@@ -42,11 +42,11 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
-		<site>
-			<id>${project.artifactId}</id>
-			<url>${site.deploy.url}jdbcdriver</url>
-		</site>
-	</distributionManagement>
+<!-- 	<distributionManagement> -->
+<!-- 		<site> -->
+<!-- 			<id>${project.artifactId}</id> -->
+<!-- 			<url>${site.deploy.url}jdbcdriver</url> -->
+<!-- 		</site> -->
+<!-- 	</distributionManagement> -->
 
 </project>

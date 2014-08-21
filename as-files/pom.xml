@@ -93,10 +93,10 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
-		<site>
-			<id>${project.artifactId}</id>
-			<url>${site.deploy.url}${project.artifactId}</url>
-		</site>
-	</distributionManagement>
+<!-- 	<distributionManagement> -->
+<!-- 		<site> -->
+<!-- 			<id>${project.artifactId}</id> -->
+<!-- 			<url>${site.deploy.url}${project.artifactId}</url> -->
+<!-- 		</site> -->
+<!-- 	</distributionManagement> -->
 </project>
